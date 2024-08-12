@@ -84,11 +84,6 @@ export default function Projectdetail({ params }) {
     setStatus(status == 1 ? 0 : 1);
   };
 
-  useEffect(() => {
-    fetchProjectDetail();
-    getSpecies();
-  }, [fetchProjectDetail]);
-
   const onSelectFile = (e) => {
     setSelectedImages(e.target.files[0]);
   };
@@ -194,6 +189,12 @@ export default function Projectdetail({ params }) {
       //console.log(galleryimages)
       ();
   }, [apiRoute, params.slug]);
+
+  useEffect(() => {
+    fetchProjectDetail();
+    getSpecies();
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fetchProjectDetail]);
   /**---fetch-project details--- */
 
   if (isLoading) return <Loader />;

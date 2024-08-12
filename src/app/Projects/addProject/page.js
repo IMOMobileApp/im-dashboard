@@ -147,6 +147,7 @@ export default function Addproject() {
   useEffect(() => {
     getSpecies();
     speciesArray;
+      // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [speciesArray]);
 
   const handleChange = (index, e) => {

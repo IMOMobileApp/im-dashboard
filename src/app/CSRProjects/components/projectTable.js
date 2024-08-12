@@ -116,13 +116,9 @@ export default function ProjectTable() {
    };
    fetch(`${apiRoute}/editCSRproject`, requestOptions)
      .then(response => response.text())
-    // .then(result => console.log(result))
      .then(fetchAllProjects) // fetch again all blog api after sending post request of changinh status
-   //  .catch(error => console.log('error', error));     
+    .catch(error => console.log('error', error));     
  };
-
-
-
 
 const fetchAllProjects=useCallback(()=>{
   let data = JSON.stringify({ "userId": `${userId}` });
@@ -136,7 +132,6 @@ const fetchAllProjects=useCallback(()=>{
   axios.request(config)
   .then((response) => { 
     getProjectlist(response.data.Data);
-   // console.log(response.data.Data) 
   })
 //  .catch((error) => {  console.log(error);  });
 
