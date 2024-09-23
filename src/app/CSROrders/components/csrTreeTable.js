@@ -28,6 +28,7 @@ const headCells = [
   { id: "cat_state", numeric: false, disablePadding: false, label: "Image" },
   { id: "cat_img", numeric: false, disablePadding: false, label: "species" },
   { id: "cat_action", numeric: false, disablePadding: false, label: "Action" },
+  { id: "cat_certificate", numeric: false, disablePadding: false, label: "Certificate" },
 ];
 
 function EnhancedTableHead(props) {
@@ -94,7 +95,10 @@ function EnhancedTableToolbar(props) {
 export default function CSRTreeTable(props) {
   const toastId = useRef(null);
   const apiRoute = process.env.API_ROUTE;
-  const userId = process.env.USER_ID;
+  // const userId = process.env.USER_ID;
+  const userData = JSON.parse(localStorage.getItem("loginResponse"));
+  const userId = userData?.Data?.userId;
+  //console.log("first", userId);
   const [selected, setSelected] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(25);
@@ -408,6 +412,27 @@ export default function CSRTreeTable(props) {
                           )}
                         </TableCell>
                       )}
+                       <TableCell align="left" data-attr="">
+                        {row.certificate ? (
+                          <>
+                            <a
+                              href={row.certificate}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              <Button
+                                variant="contained"
+                                size="large"
+                                style={{ backgroundColor: "#d9534f" }}
+                              >
+                                View
+                              </Button>
+                            </a>
+                          </>
+                        ) : (
+                          "No certificate"
+                        )}
+                      </TableCell>
                     </TableRow>
                   );
                 })}

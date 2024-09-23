@@ -268,7 +268,10 @@ svg {
 .dashboard-order-txt {
   margin-left: 10px;
 }
-
+.error-text{
+  font-size: 13px;
+  color: red;
+}
 .dashboard-value-box {
   background-color: #fff;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);

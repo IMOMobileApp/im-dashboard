@@ -11,7 +11,10 @@ import { useRouter } from "next/navigation";
 export default function AddnewCategory() {
   let router = useRouter();
   const apiRoute = process.env.API_ROUTE;
-  const userId = process.env.USER_ID;
+  // const userId = process.env.USER_ID;
+const userData = JSON.parse(localStorage.getItem("loginResponse"));
+const userId = userData?.Data?.userId;
+//console.log("first", userId);
   const toastId = useRef(null);
   const [selectedImages, setSelectedImages] = useState(null);
   const [categoryName, setCategoryName] = useState("");

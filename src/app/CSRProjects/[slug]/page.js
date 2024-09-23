@@ -43,7 +43,9 @@ const modules = {
 export default function Projectdetail({ params }) {
   let router = useRouter();
   const apiRoute = process.env.API_ROUTE;
-  //const [,] = useState();
+  const userData = JSON.parse(localStorage.getItem("loginResponse"));
+  const userId = userData?.Data?.userId;
+  //console.log("first", userId);
   const toastId = useRef(null);
   const [data, setData] = useState(); //API Data
   const [isLoading, setLoading] = useState(true);
@@ -105,7 +107,7 @@ export default function Projectdetail({ params }) {
   const onSelectGallery = async (e) => {
     const nowImage = e.target.files[0];
     let bodyContent = new FormData();
-    bodyContent.append("userId", `${process.env.NEXT_PUBLIC_USERID}`);
+    bodyContent.append("userId", `${userId}`);
     bodyContent.append("projectId", params.slug);
     bodyContent.append("pro_image", nowImage);
     await fetch(`${apiRoute}/addprogallery`, {
@@ -137,7 +139,7 @@ export default function Projectdetail({ params }) {
       redirect: "follow",
       // Adding body or contents to send
       body: JSON.stringify({
-        userId: `${process.env.NEXT_PUBLIC_USERID}`,
+        userId: `${userId}`,
         galId: [imgId],
       }),
     }).then(fetchProjectDetail());
@@ -148,7 +150,7 @@ export default function Projectdetail({ params }) {
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
     var raw = JSON.stringify({
-      userId: `${process.env.NEXT_PUBLIC_USERID}`,
+      userId: `${userId}`,
       proId: params.slug,
     });
     var requestOptions = {
@@ -207,7 +209,7 @@ export default function Projectdetail({ params }) {
     pendingPopup();
 
     let bodyContent = new FormData();
-    bodyContent.append("userId", `${process.env.NEXT_PUBLIC_USERID}`);
+    bodyContent.append("userId", `${userId}`);
     bodyContent.append("proId", data.proId);
     bodyContent.append("project_image", selectedImages);
     bodyContent.append("name", name);
@@ -261,7 +263,7 @@ export default function Projectdetail({ params }) {
     myHeaders.append("Content-Type", "application/json");
 
     var raw = JSON.stringify({
-      userId: `${process.env.NEXT_PUBLIC_USERID}`,
+      userId: `${userId}`,
       proId: [data.proId],
     });
 
@@ -311,7 +313,7 @@ export default function Projectdetail({ params }) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          userId: `${process.env.NEXT_PUBLIC_USERID}`,
+          userId: `${userId}`,
           speciesArray: speciesArray,
         }),
       }

@@ -16,14 +16,18 @@ import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
+import Image from "next/image";
 
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
 export default function Addproject() {
   let router = useRouter();
   const toastId = useRef(null);
+  const userData = JSON.parse(localStorage.getItem("loginResponse"));
+  const userId = userData?.Data?.userId;
+  //console.log("first", userId);
   const [isLoading, setLoading] = useState(true);
-  const [description, setDescription] = useState("<p></p>");
+  const [description, setDescription] = useState();
   const [name, setName] = useState();
   const [shortDesc, setShortDesc] = useState();
   const [area, setArea] = useState("");
@@ -35,13 +39,30 @@ export default function Addproject() {
   const [selectedImages, setSelectedImages] = useState();
   const [speciesArray, setSpeciesArray] = useState([]); //fetch and store all species array
   const [formValues, setFormValues] = useState([{ name: "", total: "" }]);
-
+  const [error, setError] = useState({
+    name: false,
+    shortDesc: false,
+    description: false,
+    sequence: false,
+    area: false,
+    state: false,
+    district: false,
+    longitude: false,
+    latitude: false,
+    pincode: false,
+    projectType: false,
+    species: false,
+    logo: false,
+    thumbnail: false,
+    quantity: false,
+  });
   const [poweredby, setPoweredby] = useState();
   const [poweredlogo, setPoweredlogo] = useState(null);
-  const [sequence, setSequence] = useState();
+  const [sequence, setSequence] = useState("");
   const [isButtonEnabled, setIsButtonEnabled] = useState(true);
 
   const onSelectLogo = (e) => {
+    setError({ ...error, logo: false, thumbnail: false });
     setPoweredlogo(e.target.files[0]);
     //  console.log(selectedImages)
   };
@@ -55,6 +76,7 @@ export default function Addproject() {
   const [opt2, setOpt2] = useState("zodiac");
   const [ans, setAns] = useState("project");
   const handleAns = (event) => {
+    setError({ ...error, projectType: false });
     if (event.target.value == "project") {
       setAns("project");
     } else {
@@ -63,9 +85,49 @@ export default function Addproject() {
   };
   /*-------------------------------------------------------update project-----------------------------------------------------------------*/
   async function uploadWithFormData() {
+    const newError = {
+      name: !name,
+      shortDesc: !shortDesc,
+      description: !description,
+      sequence: !sequence,
+      area: !area,
+      state: !state,
+      district: !district,
+      longitude: !longitude,
+      latitude: !latitude,
+      pincode: !pincode,
+      projectType: !ans,
+      species: !formValues,
+      logo: !poweredlogo,
+      thumbnail: !selectedImages,
+      quantity: !formValues,
+    };
+
+    setError(newError);
+
+    if (
+      newError.name ||
+      newError.shortDesc ||
+      newError.description ||
+      newError.sequence ||
+      newError.area ||
+      newError.state ||
+      newError.district ||
+      newError.longitude ||
+      newError.latitude ||
+      newError.pincode ||
+      newError.projectType ||
+      newError.species ||
+      newError.logo ||
+      newError.thumbnail ||
+      newError.quantity
+    ) {
+      return; // Don't call the API if fields are empty
+    }
+
     pendingPopup();
     let bodyContent = new FormData();
-    bodyContent.append("userId", `${process.env.NEXT_PUBLIC_USERID}`);
+    bodyContent.append("userId", `${userId}`);
     bodyContent.append("name", name);
     bodyContent.append("project_image", selectedImages);
     bodyContent.append("description", description);
@@ -87,6 +149,7 @@ export default function Addproject() {
       `${process.env.NEXT_PUBLIC_API_ROUTE}/addproject`,
       { method: "POST", body: bodyContent }
     );
+
     setIsButtonEnabled(false);
     const data1 = await response.json();
 
@@ -106,11 +169,10 @@ export default function Addproject() {
       setIsButtonEnabled(true);
     }
 
-    {
-      data1.Status === true ? successPopup() : failPopup();
-    }
-    {
-      data1.Status === true ? router.push("/Projects") : "";
+    if (data1.Status === true) {
+      successPopup();
+    } else {
+      failPopup();
     }
   }
   function throttle(func, limit) {
@@ -134,7 +196,7 @@ export default function Addproject() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          userId: `${process.env.NEXT_PUBLIC_USERID}`,
+          userId: `${userId}`,
           speciesArray: speciesArray,
         }),
       }
@@ -147,10 +209,11 @@ export default function Addproject() {
   useEffect(() => {
     getSpecies();
     speciesArray;
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [speciesArray]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleChange = (index, e) => {
+    setError({ ...error, species: false });
     setFormValues((prevFormValues) => {
       const newFormValues = [...prevFormValues];
       newFormValues[index] = { ...newFormValues[index], name: e.target.value };
@@ -159,6 +222,7 @@ export default function Addproject() {
   };
 
   const handleChange1 = (index, e) => {
+    setError({ ...error, quantity: false });
     setFormValues((prevFormValues) => {
       const newFormValues = [...prevFormValues];
       newFormValues[index] = { ...newFormValues[index], total: e.target.value };
@@ -175,11 +239,9 @@ export default function Addproject() {
     newFormValues.splice(i, 1);
     setFormValues(newFormValues);
   };
-
-  let handleSubmit = (event) => {
-    event.preventDefault();
-    alert(JSON.stringify(formValues));
-    //console.log(formValues.length)
+  const handleQuillChange = (value) => {
+    setError({ ...error, description: false });
+    setDescription(value);
   };
   /**------------------------------------------------------------fetch species list- &functionality------- */
 
@@ -224,8 +286,12 @@ export default function Addproject() {
                       value={name}
                       onChange={(e) => {
                         setName(e.target.value);
+                        setError({ ...error, name: false });
                       }}
                     />
+                    {error.name && (
+                      <span className="error-text">Name is required.</span>
+                    )}
                   </div>
                 </div>
               </div>
@@ -238,7 +304,6 @@ export default function Addproject() {
                   <div className="input-field">
                     <FormControl fullWidth>
                       <Select
-                        defaultValue={opt1}
                         value={ans}
                         onChange={handleAns}
                         style={{ fontSize: "14px" }}
@@ -246,11 +311,15 @@ export default function Addproject() {
                         <MenuItem value={opt1}>{opt1}</MenuItem>
                         <MenuItem value={opt2}>{opt2}</MenuItem>
                       </Select>
+                      {error.projectType && (
+                        <span className="error-text">
+                          Project Type is required.
+                        </span>
+                      )}
                     </FormControl>
                   </div>
                 </div>
               </div>
-
               <div className="row">
                 <div className="col-md-4">
                   <div className="input-head">Short Description</div>
@@ -258,7 +327,6 @@ export default function Addproject() {
                 <div className="col-md-8">
                   <div className="input-field">
                     <Textarea
-                      disabled={false}
                       minRows={2}
                       size="lg"
                       variant="soft"
@@ -266,9 +334,13 @@ export default function Addproject() {
                       value={shortDesc}
                       onChange={(e) => {
                         setShortDesc(e.target.value);
+                        setError({ ...error, shortDesc: false });
                       }}
                       style={{ padding: "12px 15px", fontSize: "15px" }}
                     />
+                    {error.shortDesc && (
+                      <span className="error-text">shortDesc is required.</span>
+                    )}
                   </div>
                 </div>
               </div>
@@ -284,6 +356,12 @@ export default function Addproject() {
                     className="input-field"
                     style={{ border: "1px dashed #d5d6d7", padding: "20px" }}
                   >
+                    <Image
+                      src={selectedImages}
+                      alt="project image"
+                      width={200}
+                      height={200}
+                    />
                     {/* <Image src={selectedImages} alt="project image"  width={200} height={200}/> */}
                     {/* {selectedImages.map((i,r)=>{return <Image src={i.pro_image}  width={200} height={200} key={i._id} alt="project gallery"/> })} */}
                     <p></p>
@@ -303,8 +381,10 @@ export default function Addproject() {
                         style={{ opacity: "0" }}
                       />
                     </Button>{" "}
+                    {error.thumbnail && (
+                      <span className="error-text">Thumbnail is required.</span>
+                    )}
                     <br />
-                    {/* { selectedImages === ! null ? '' : selectedImages.name} */}
                     {selectedImages?.name}
                   </div>
                 </div>
@@ -335,8 +415,11 @@ export default function Addproject() {
                         style={{ opacity: "0" }}
                       />
                     </Button>
-                    <p></p>
-
+                    {error.logo && (
+                      <span className="error-text">
+                        {"  "}Logo is required.
+                      </span>
+                    )}
                     {poweredlogo === null ? "" : poweredlogo.name}
                   </div>
                 </div>
@@ -377,8 +460,14 @@ export default function Addproject() {
                       size="lg"
                       style={{ padding: "12px 15px", fontSize: "15px" }}
                       value={sequence}
-                      onChange={(e) => setSequence(e.target.value)}
+                      onChange={(e) => {
+                        setSequence(e.target.value);
+                        setError({ ...error, sequence: false });
+                      }}
                     />
+                    {error.sequence && (
+                      <span className="error-text">Sequence is required.</span>
+                    )}
                   </div>
                 </div>
               </div>
@@ -423,6 +512,11 @@ export default function Addproject() {
                                   </MenuItem>
                                 ))}
                             </Select>
+                            {error.formValues && (
+                              <span className="error-text">
+                                Species is required.
+                              </span>
+                            )}
                           </FormControl>
                         </div>
                       </div>
@@ -438,6 +532,11 @@ export default function Addproject() {
                             style={{ padding: "12px 15px", fontSize: "15px" }}
                             placeholder=""
                           />
+                          {error.quantity && (
+                            <span className="error-text">
+                              Quantity is required.
+                            </span>
+                          )}
                         </div>
                       </div>
                       {index ? (
@@ -492,8 +591,14 @@ export default function Addproject() {
                       size="lg"
                       style={{ padding: "12px 15px", fontSize: "15px" }}
                       value={area}
-                      onChange={(e) => setArea(e.target.value)}
+                      onChange={(e) => {
+                        setArea(e.target.value);
+                        setError({ ...error, area: false });
+                      }}
                     />
+                    {error.area && (
+                      <span className="error-text">Area is required.</span>
+                    )}
                   </div>
                 </div>
               </div>
@@ -510,8 +615,14 @@ export default function Addproject() {
                       size="lg"
                       style={{ padding: "12px 15px", fontSize: "15px" }}
                       value={district}
-                      onChange={(e) => setDistrict(e.target.value)}
+                      onChange={(e) => {
+                        setDistrict(e.target.value);
+                        setError({ ...error, district: false });
+                      }}
                     />
+                    {error.district && (
+                      <span className="error-text">District is required.</span>
+                    )}
                   </div>
                 </div>
               </div>
@@ -528,8 +639,14 @@ export default function Addproject() {
                       size="lg"
                       style={{ padding: "12px 15px", fontSize: "15px" }}
                       value={state}
-                      onChange={(e) => setState(e.target.value)}
+                      onChange={(e) => {
+                        setState(e.target.value);
+                        setError({ ...error, state: false });
+                      }}
                     />
+                    {error.state && (
+                      <span className="error-text">State is required.</span>
+                    )}
                   </div>
                 </div>
               </div>
@@ -546,8 +663,14 @@ export default function Addproject() {
                       size="lg"
                       style={{ padding: "12px 15px", fontSize: "15px" }}
                       value={pincode}
-                      onChange={(e) => setPincode(e.target.value)}
+                      onChange={(e) => {
+                        setPincode(e.target.value);
+                        setError({ ...error, pincode: false });
+                      }}
                     />
+                    {error.pincode && (
+                      <span className="error-text">Pincode is required.</span>
+                    )}
                   </div>
                 </div>
               </div>
@@ -559,13 +682,20 @@ export default function Addproject() {
                 <div className="col-md-8">
                   <div className="input-field">
                     <Input
+                      type="number"
                       placeholder=""
                       variant="soft"
                       size="lg"
                       style={{ padding: "12px 15px", fontSize: "15px" }}
                       value={latitude}
-                      onChange={(e) => setLatitude(e.target.value)}
+                      onChange={(e) => {
+                        setLatitude(e.target.value);
+                        setError({ ...error, latitude: false });
+                      }}
                     />
+                    {error.latitude && (
+                      <span className="error-text">Latitude is required.</span>
+                    )}
                   </div>
                 </div>
               </div>
@@ -577,13 +707,20 @@ export default function Addproject() {
                 <div className="col-md-8">
                   <div className="input-field">
                     <Input
+                      type="number"
                       placeholder=""
                       variant="soft"
                       size="lg"
                       style={{ padding: "12px 15px", fontSize: "15px" }}
                       value={longitude}
-                      onChange={(e) => setLongitude(e.target.value)}
+                      onChange={(e) => {
+                        setLongitude(e.target.value);
+                        setError({ ...error, longitude: false });
+                      }}
                     />
+                    {error.longitude && (
+                      <span className="error-text">Longitude is required.</span>
+                    )}
                   </div>
                 </div>
               </div>
@@ -598,9 +735,15 @@ export default function Addproject() {
                     <ReactQuill
                       theme="snow"
                       value={description}
-                      onChange={setDescription}
-                      style={{ height: "200px", marginBottom: "100px" }}
+                      onChange={handleQuillChange}
+                      style={{
+                        height: "200px",
+                        marginBottom: error.description ? "40px" : "80px",
+                      }}
                     />
+                    {error.description && (
+                      <span className="error-text">Details are required.</span>
+                    )}
                   </div>
                 </div>
               </div>

@@ -10,7 +10,9 @@ import Link from "next/link";
 
 export default function Gicimpacct() {
   const apiRoute = process.env.API_ROUTE;
-  //const [,] = useState();
+  const userData = JSON.parse(localStorage.getItem("loginResponse"));
+  const userId = userData?.Data?.userId;
+  //console.log("first", userId);
   const toastId = useRef(null);
   const [data, setData] = useState(); //API Data
   const [isLoading, setLoading] = useState(true);
@@ -23,7 +25,7 @@ export default function Gicimpacct() {
   const fetchCaretakerDetail = useCallback(() => {
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
-    var raw = JSON.stringify({ userId: `${process.env.NEXT_PUBLIC_USERID}` });
+    var raw = JSON.stringify({ userId: `${userId}` });
     var requestOptions = {
       method: "POST",
       headers: myHeaders,
@@ -58,7 +60,7 @@ export default function Gicimpacct() {
     const myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
     const raw = JSON.stringify({
-      userId: `${process.env.NEXT_PUBLIC_USERID}`,
+      userId: `${userId}`,
       saplingPlanted: data,
       co2Absorbed: co2,
       literProduced: o2,

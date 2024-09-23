@@ -20,6 +20,9 @@ const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
 export default function Addproject() {
   let router = useRouter();
+  const userData = JSON.parse(localStorage.getItem("loginResponse"));
+  const userId = userData?.Data?.userId;
+  //console.log("first", userId);
   const toastId = useRef(null);
   const [description, setDescription] = useState("<p></p>");
   const [name, setName] = useState();
@@ -31,7 +34,7 @@ export default function Addproject() {
   const [latitude, setLatitude] = useState();
   const [longitude, setLongitude] = useState();
   const [selectedImages, setSelectedImages] = useState();
-  const [speciesArray, setSpeciesArray] = useState([]); 
+  const [speciesArray, setSpeciesArray] = useState([]);
   const [formValues, setFormValues] = useState([{ name: "", total: "" }]);
   const [isButtonEnabled, setIsButtonEnabled] = useState(true);
   const [poweredby, setPoweredby] = useState();
@@ -62,7 +65,7 @@ export default function Addproject() {
   async function uploadWithFormData() {
     pendingPopup();
     let bodyContent = new FormData();
-    bodyContent.append("userId", `${process.env.NEXT_PUBLIC_USERID}`);
+    bodyContent.append("userId", `${userId}`);
     bodyContent.append("name", name);
     bodyContent.append("project_image", selectedImages);
     bodyContent.append("description", description);
@@ -134,7 +137,7 @@ export default function Addproject() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          userId: `${process.env.NEXT_PUBLIC_USERID}`,
+          userId: `${userId}`,
           speciesArray: speciesArray,
         }),
       }

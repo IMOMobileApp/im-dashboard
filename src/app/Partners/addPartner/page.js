@@ -17,7 +17,9 @@ import Select from "@mui/material/Select";
 export default function Caretakerdetail() {
   let router = useRouter();
   const apiRoute = process.env.API_ROUTE;
-  //const [,] = useState();
+  const userData = JSON.parse(localStorage.getItem("loginResponse"));
+const userId = userData?.Data?.userId;
+//console.log("first", userId);
   const toastId = useRef(null);
   const [name, setName] = useState("");
   const [designation, setDesignation] = useState();
@@ -38,7 +40,7 @@ export default function Caretakerdetail() {
   async function uploadWithFormData() {
     pendingPopup();
     let bodyContent = new FormData();
-    bodyContent.append("userId", `${process.env.NEXT_PUBLIC_USERID}`);
+    bodyContent.append("userId", `${userId}`);
     bodyContent.append("add_image", selectedImages);
     bodyContent.append("name", name);
     bodyContent.append("designation", designation);

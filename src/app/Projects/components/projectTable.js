@@ -103,7 +103,10 @@ function EnhancedTableToolbar(props) {
 
 export default function ProjectTable() {
   const apiRoute = process.env.API_ROUTE;
-  const userId = process.env.USER_ID;
+  // const userId = process.env.USER_ID;
+const userData = JSON.parse(localStorage.getItem("loginResponse"));
+const userId = userData?.Data?.userId;
+//console.log("first", userId);
   const [selected, setSelected] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(25);
@@ -129,7 +132,7 @@ export default function ProjectTable() {
   const changeProjectStatus = (event) => {
     //setChecked(!checked)
     let bodyContent = new FormData();
-    bodyContent.append("userId", `${process.env.NEXT_PUBLIC_USERID}`);
+    bodyContent.append("userId", `${userId}`);
 
     bodyContent.append("area", event.area);
     bodyContent.append("description", event.description);

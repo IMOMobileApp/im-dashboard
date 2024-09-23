@@ -24,12 +24,14 @@ export default function Caretakerdetail({ params } ){
   const [designation, setDesignation] = useState()
   const [status, setStatus] = useState();
   const [content, setContent] = useState()
- 
+  const userData = JSON.parse(localStorage.getItem("loginResponse"));
+  const userId = userData?.Data?.userId;
+  //console.log("first", userId);
 
     const fetchCaretakerDetail=useCallback(()=>{
       var myHeaders = new Headers();
       myHeaders.append("Content-Type", "application/json");
-      var raw = JSON.stringify({  "userId": `${process.env.NEXT_PUBLIC_USERID}`, "catId": params.slug });
+      var raw = JSON.stringify({  "userId": `${userId}`, "catId": params.slug });
       var requestOptions = { method: 'POST', headers: myHeaders, body: raw, redirect: 'follow'  };
       fetch(`${apiRoute}/governancecatdetail`, requestOptions)
         .then(response => response.json())
@@ -57,7 +59,7 @@ async function uploadWithFormData() {
    const myHeaders = new Headers();
    myHeaders.append("Content-Type", "application/json");
       const raw = JSON.stringify({
-       "userId":  `${process.env.NEXT_PUBLIC_USERID}`,
+       "userId":  `${userId}`,
        "catId": data.catId,
        "catName": name,
        "sequence": designation,
@@ -99,7 +101,7 @@ async function deleteBlog(){
   myHeaders.append("Content-Type", "application/json");
   
   var raw = JSON.stringify({
-    "userId": `${process.env.NEXT_PUBLIC_USERID}`,
+    "userId": `${userId}`,
     "governId": [data.governId]
   });
   

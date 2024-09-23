@@ -10,7 +10,10 @@ import PendingTreeTable from "../components/pendingTreeTable";
 
 export default function Pendingdetail({ params }) {
   const apiRoute = process.env.API_ROUTE;
-  const userId = process.env.USER_ID;
+  // const userId = process.env.USER_ID;
+const userData = JSON.parse(localStorage.getItem("loginResponse"));
+const userId = userData?.Data?.userId;
+//console.log("first", userId);
   let router = useRouter();
 
   const toastId = useRef(null);

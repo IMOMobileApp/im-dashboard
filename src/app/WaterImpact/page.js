@@ -9,6 +9,9 @@ import { toast } from "react-toastify";
 
 export default function Waterimpacct() {
   const apiRoute = process.env.API_ROUTE;
+  const userData = JSON.parse(localStorage.getItem("loginResponse"));
+const userId = userData?.Data?.userId;
+//console.log("first", userId);
   const toastId = useRef(null);
   const [data, setData] = useState(); //API Data
   const [isLoading, setLoading] = useState(true);
@@ -19,7 +22,7 @@ export default function Waterimpacct() {
   const fetchCaretakerDetail = useCallback(() => {
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
-    var raw = JSON.stringify({ userId: `${process.env.NEXT_PUBLIC_USERID}` });
+    var raw = JSON.stringify({ userId: `${userId}` });
     var requestOptions = {
       method: "POST",
       headers: myHeaders,
@@ -52,7 +55,7 @@ export default function Waterimpacct() {
     const myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
     const raw = JSON.stringify({
-      userId: `${process.env.NEXT_PUBLIC_USERID}`,
+      userId: `${userId}`,
       waterSaved: data,
       harvestSystem: co2,
       driedBorewell: o2,

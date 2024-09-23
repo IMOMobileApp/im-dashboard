@@ -14,7 +14,10 @@ import UploadFileIcon from "@mui/icons-material/UploadFile";
 
 export default function AddSpecies() {
   const apiRoute = process.env.API_ROUTE;
-  const userId = process.env.USER_ID;
+  // const userId = process.env.USER_ID;
+const userData = JSON.parse(localStorage.getItem("loginResponse"));
+const userId = userData?.Data?.userId;
+//console.log("first", userId);
   let router = useRouter();
   const toastId = useRef(null);
   const [name, setName] = useState();
@@ -49,7 +52,7 @@ export default function AddSpecies() {
     };
 
     let bodyContent = new FormData();
-    bodyContent.append("userId", `${process.env.NEXT_PUBLIC_USERID}`);
+    bodyContent.append("userId", `${userId}`);
     bodyContent.append("name", name);
     bodyContent.append("scienceName", scienceName);
     bodyContent.append("description", shotDesc);

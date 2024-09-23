@@ -17,9 +17,12 @@ import DirectionsWalkOutlinedIcon from "@mui/icons-material/DirectionsWalkOutlin
 import CurrencyExchangeOutlinedIcon from "@mui/icons-material/CurrencyExchangeOutlined";
 import Loader from "@/app/component/Loader";
 import ProjectTable from "@/app/Projects/components/projectTable";
+import Link from "next/link";
 
 const apiRoute = process.env.API_ROUTE;
-const userId = process.env.USER_ID;
+const userData = JSON.parse(localStorage.getItem("loginResponse"));
+const userId = userData?.Data?.userId;
+//console.log("first", userId);
 
 var myHeaders = new Headers();
 myHeaders.append("Content-Type", "application/json");
@@ -63,11 +66,11 @@ export default function Dashboard() {
               >
                 <LayersIcon style={{ fontSize: "45px" }} />
                 <p>Today&apos;s Order</p>
-                <b> {data?.Data.Orders.today.orders}</b>
+                <b> {data?.Data?.Orders?.today?.orders}</b>
                 <br />
                 <span>
-                  Amount : ₹ {data?.Data.Orders.today.amount} Coin : ₹
-                  {data?.Data.Orders.today.coin}
+                  Amount : ₹ {data?.Data?.Orders?.today?.amount} Coin : ₹
+                  {data?.Data?.Orders?.today?.coin}
                 </span>
               </div>
 
@@ -77,11 +80,11 @@ export default function Dashboard() {
               >
                 <LayersIcon style={{ fontSize: "45px" }} />
                 <p>Yesterday Orders</p>
-                <b> {data?.Data.Orders.yesterday.orders}</b>
+                <b> {data?.Data?.Orders?.yesterday?.orders}</b>
                 <br />
                 <span>
-                  Amount : ₹ {data?.Data.Orders.yesterday.amount} Coin : ₹{" "}
-                  {data?.Data.Orders.yesterday.coin}
+                  Amount : ₹ {data?.Data?.Orders?.yesterday?.amount} Coin : ₹{" "}
+                  {data?.Data?.Orders?.yesterday?.coin}
                 </span>
               </div>
 
@@ -91,11 +94,11 @@ export default function Dashboard() {
               >
                 <ShoppingCartOutlinedIcon style={{ fontSize: "45px" }} />
                 <p>This Month Order</p>
-                <b>{data?.Data.Orders.month.orders}</b>
+                <b>{data?.Data?.Orders?.month?.orders}</b>
                 <br />
                 <span>
-                  Amount : ₹ {data?.Data.Orders.month.amount} Coin : ₹{" "}
-                  {data?.Data.Orders.month.coin}
+                  Amount : ₹ {data?.Data?.Orders?.month?.amount} Coin : ₹{" "}
+                  {data?.Data?.Orders?.month?.coin}
                 </span>
               </div>
 
@@ -105,11 +108,11 @@ export default function Dashboard() {
               >
                 <StyleSharpIcon style={{ fontSize: "45px" }} />
                 <p>All-Time Order</p>
-                <b>{data?.Data.Orders.all.orders}</b>
+                <b>{data?.Data?.Orders?.all?.orders}</b>
                 <br />
                 <span>
-                  Amount : ₹ {data?.Data.Orders.all.amount} Coin : ₹{" "}
-                  {data?.Data.Orders.all.coin}
+                  Amount : ₹ {data?.Data?.Orders?.all?.amount} Coin : ₹{" "}
+                  {data?.Data?.Orders?.all?.coin}
                 </span>
               </div>
             </div>
@@ -127,12 +130,11 @@ export default function Dashboard() {
                   <ShoppingCartOutlinedIcon style={{ color: "#d03801" }} />
                 </div>
                 <div className="dashboard-order-txt">
-                  <span>Total Order</span>
-                  <p>{data?.Data.OrderStatus.totalOrder}</p>
+                  <span>Total Orders</span>
+                  <p>{data?.Data?.OrderStatus?.totalOrder}</p>
                 </div>
               </div>
-
-              <div className="dashboard-order-box">
+              <Link href="/NewOrders" className="dashboard-order-box">
                 <div
                   className="dashboard-order-icon"
                   style={{ backgroundColor: "#e1effe" }}
@@ -140,12 +142,11 @@ export default function Dashboard() {
                   <AutorenewSharpIcon style={{ color: "#1c64f2" }} />
                 </div>
                 <div className="dashboard-order-txt">
-                  <span>Orders Pending</span>
-                  <p>{data?.Data.OrderStatus.pendingOrder}</p>
+                  <span>New Orders</span>
+                  <p>{data?.Data?.OrderStatus?.pendingOrder}</p>
                 </div>
-              </div>
-
-              <div className="dashboard-order-box">
+              </Link>
+              <Link href="/PendingOrders" className="dashboard-order-box">
                 <div
                   className="dashboard-order-icon"
                   style={{ backgroundColor: "#d5f5f6" }}
@@ -153,12 +154,11 @@ export default function Dashboard() {
                   <LocalShippingSharpIcon style={{ color: "#047481" }} />
                 </div>
                 <div className="dashboard-order-txt">
-                  <span>Orders Processing</span>
-                  <p>{data?.Data.OrderStatus.processOrder}</p>
+                  <span>Processing Orders</span>
+                  <p>{data?.Data?.OrderStatus?.processOrder}</p>
                 </div>
-              </div>
-
-              <div className="dashboard-order-box">
+              </Link>
+              <Link href="/FulfilledOrders" className="dashboard-order-box">
                 <div
                   className="dashboard-order-icon"
                   style={{ backgroundColor: "#def7ec" }}
@@ -166,10 +166,10 @@ export default function Dashboard() {
                   <DoneSharpIcon style={{ color: "#057a55" }} />
                 </div>
                 <div className="dashboard-order-txt">
-                  <span>Orders Delivered</span>
-                  <p>{data?.Data.OrderStatus.deliverOrder}</p>
+                  <span>Delivered Orders</span>
+                  <p>{data?.Data?.OrderStatus?.deliverOrder}</p>
                 </div>
-              </div>
+              </Link>
             </div>
           </div>
         </div>
@@ -190,7 +190,7 @@ export default function Dashboard() {
         </div>
 
         <div className="row">
-          <div className="col-md-2">
+          <Link href="/Trees" className="col-md-2">
             <div
               className="dashboard-value-box"
               style={{
@@ -209,15 +209,15 @@ export default function Dashboard() {
               </div>
               <div className="dashboard-value-box-count">
                 <span>
-                  This Week : <b>{data?.Data.Trees.weekTree}</b>
+                  This Week : <b>{data?.Data?.Trees?.weekTree}</b>
                 </span>
                 <span>
-                  Total : <b>{data?.Data.Trees.totalTree}</b>
+                  Total : <b>{data?.Data?.Trees?.totalTree}</b>
                 </span>
               </div>
             </div>
-          </div>
-          <div className="col-md-2">
+          </Link>
+          <Link href="/Users"  className="col-md-2">
             <div
               className="dashboard-value-box"
               style={{
@@ -236,14 +236,14 @@ export default function Dashboard() {
               </div>
               <div className="dashboard-value-box-count">
                 <span>
-                  This Week : <b>{data?.Data.Users.weekUser}</b>
+                  This Week : <b>{data?.Data?.Users?.weekUser}</b>
                 </span>
                 <span>
-                  Total : <b>{data?.Data.Users.totalUser}</b>
+                  Total : <b>{data?.Data?.Users?.totalUser}</b>
                 </span>
               </div>
             </div>
-          </div>
+          </Link>
           <div className="col-md-2">
             <div
               className="dashboard-value-box"
@@ -253,7 +253,7 @@ export default function Dashboard() {
               }}
             >
               <div className="dashboard-value-box-icon">
-                <span>Trees</span>
+                <span>Activity</span>
                 <div
                   className="dashboard-value-box-icon1"
                   style={{ borderColor: "#a855f7cc" }}
@@ -263,15 +263,15 @@ export default function Dashboard() {
               </div>
               <div className="dashboard-value-box-count">
                 <span>
-                  This Week : <b>{data?.Data.Post.weekPost}</b>
+                  This Week : <b>{data?.Data?.Post?.weekPost}</b>
                 </span>
                 <span>
-                  Total : <b>{data?.Data.Post.totalPost}</b>
+                  Total : <b>{data?.Data?.Post?.totalPost}</b>
                 </span>
               </div>
             </div>
           </div>
-          <div className="col-md-2">
+          <Link href="/caretakers"  className="col-md-2">
             <div
               className="dashboard-value-box"
               style={{
@@ -291,11 +291,11 @@ export default function Dashboard() {
               <div className="dashboard-value-box-count">
                 {/* <span>This Week : <b>{data.Data.Post.weekPost}</b></span>  */}
                 <span>
-                  Total : <b>{data?.Data.careTaker}</b>
+                  Total : <b>{data?.Data?.careTaker}</b>
                 </span>
               </div>
             </div>
-          </div>
+          </Link>
           <div className="col-md-2">
             <div
               className="dashboard-value-box"
@@ -315,10 +315,10 @@ export default function Dashboard() {
               </div>
               <div className="dashboard-value-box-count">
                 <span>
-                  This Week : <b>{data?.Data.Steps.weekSteps}</b>
+                  This Week : <b>{data?.Data?.Steps?.weekSteps}</b>
                 </span>
                 <span>
-                  Total : <b>{data?.Data.Steps.totalSteps}</b>
+                  Total : <b>{data?.Data?.Steps?.totalSteps}</b>
                 </span>
               </div>
             </div>
@@ -345,7 +345,7 @@ export default function Dashboard() {
               <div className="dashboard-value-box-count">
                 {/* <span>This Week : <b>{data.Data.Post.weekPost}</b></span>  */}
                 <span>
-                  Total : <b>{data?.Data.coinDisbursed}</b>
+                  Total : <b>{data?.Data?.coinDisbursed}</b>
                 </span>
               </div>
             </div>

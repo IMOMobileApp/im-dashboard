@@ -15,11 +15,13 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Paper from "@mui/material/Paper";
 import Image from "next/image";
+import { Button } from "@mui/material";
 
 const headCells = [
   { id: "treeId", numeric: false, disablePadding: false, label: "Tree Id" },
   { id: "cat_state", numeric: false, disablePadding: false, label: "Image" },
-  { id: "cat_img", numeric: false, disablePadding: false, label: "species" },
+  { id: "cat_img", numeric: false, disablePadding: false, label: "Species" },
+  { id: "cat_certificate", numeric: false, disablePadding: false, label: "Certificate" },
 ];
 
 function EnhancedTableHead(props) {
@@ -85,7 +87,10 @@ function EnhancedTableToolbar(props) {
 
 export default function RedeemTreeTable(props) {
   const apiRoute = process.env.API_ROUTE;
-  const userId = process.env.USER_ID;
+  // const userId = process.env.USER_ID;
+  const userData = JSON.parse(localStorage.getItem("loginResponse"));
+  const userId = userData?.Data?.userId;
+  //console.log("first", userId);
   const [selected, setSelected] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(25);
@@ -187,10 +192,28 @@ export default function RedeemTreeTable(props) {
                       <TableCell align="left" data-attr="">
                         {row.species}
                       </TableCell>
-                      {/* <TableCell align="left">{row.height}</TableCell>
-                    <TableCell align="left">{row.width}</TableCell> */}
-                      {/* <TableCell align="left" data-attr=""><Link href={`FulfilledOrders/${props.orderURL}`}><span className="dashboard-table-icon"><BorderColorIcon /></span></Link></TableCell> */}
-                    </TableRow>
+                      <TableCell align="left" data-attr="">
+                        {row.certificate ? (
+                          <>
+                            <a
+                              href={row.certificate}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              <Button
+                                variant="contained"
+                                size="large"
+                                style={{ backgroundColor: "#d9534f" }}
+                              >
+                                View
+                              </Button>
+                            </a>
+                          </>
+                        ) : (
+                          "No certificate"
+                        )}
+                      </TableCell>
+                      </TableRow>
                   );
                 })}
                 {emptyRows > 0 && (

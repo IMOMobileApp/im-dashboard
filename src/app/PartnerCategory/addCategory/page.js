@@ -22,7 +22,9 @@ export default function Caretakerdetail({ params } ){
   
   let router= useRouter();
   const apiRoute = process.env.API_ROUTE;
-  //const [,] = useState();
+  const userData = JSON.parse(localStorage.getItem("loginResponse"));
+  const userId = userData?.Data?.userId;
+  //console.log("first", userId);
   const toastId = useRef(null);
   const [data, setData] = useState(); //API Data
   const [name, setName]= useState('')
@@ -37,7 +39,7 @@ async function uploadWithFormData() {
    const myHeaders = new Headers();
    myHeaders.append("Content-Type", "application/json");
       const raw = JSON.stringify({
-       "userId":  `${process.env.NEXT_PUBLIC_USERID}`,
+       "userId":  `${userId}`,
        "catName": name,
        "sequence": designation,
        "status": 1,

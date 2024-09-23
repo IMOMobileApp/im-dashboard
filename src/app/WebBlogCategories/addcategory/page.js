@@ -10,7 +10,10 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 export default function AddSpecies() {
   const apiRoute = process.env.API_ROUTE;
-  const userId = process.env.USER_ID;
+  // const userId = process.env.USER_ID;
+  const userData = JSON.parse(localStorage.getItem("loginResponse"));
+  const userId = userData?.Data?.userId;
+  //console.log("first", userId);
   let router = useRouter();
   const toastId = useRef(null);
   const [name, setName] = useState();
@@ -33,7 +36,7 @@ export default function AddSpecies() {
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
     var raw = JSON.stringify({
-      userId: `${process.env.NEXT_PUBLIC_USERID}`,
+      userId: `${userId}`,
       categoryName: name,
       status: 1,
     });

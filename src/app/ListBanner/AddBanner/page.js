@@ -12,7 +12,10 @@ import Link from "next/link";
 
 export default function AddnewProduct() {
   const apiRoute = process.env.API_ROUTE;
-  const userId = process.env.USER_ID;
+  // const userId = process.env.USER_ID;
+const userData = JSON.parse(localStorage.getItem("loginResponse"));
+const userId = userData?.Data?.userId;
+//console.log("first", userId);
   const toastId = useRef(null);
   const [selectedImages, setSelectedImages] = useState(null);
   const [bannerName, setBannerName] = useState("banner new");

@@ -17,7 +17,9 @@ import Textarea from "@mui/joy/Textarea";
 export default function Caretakerdetail({ params }) {
   let router = useRouter();
   const apiRoute = process.env.API_ROUTE;
-  //const [,] = useState();
+  const userData = JSON.parse(localStorage.getItem("loginResponse"));
+  const userId = userData?.Data?.userId;
+  //console.log("first", userId);
   const toastId = useRef(null);
   const [data, setData] = useState(); //API Data
   const [isLoading, setLoading] = useState(true);
@@ -36,7 +38,7 @@ export default function Caretakerdetail({ params }) {
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
     var raw = JSON.stringify({
-      userId: `${process.env.NEXT_PUBLIC_USERID}`,
+      userId: `${userId}`,
       speciesId: params.slug,
     });
     var requestOptions = {
@@ -74,7 +76,7 @@ export default function Caretakerdetail({ params }) {
     };
 
     let bodyContent = new FormData();
-    bodyContent.append("userId", `${process.env.NEXT_PUBLIC_USERID}`);
+    bodyContent.append("userId", `${userId}`);
     bodyContent.append("speciesId", params.slug);
     bodyContent.append("name", name);
     bodyContent.append("scienceName", scienceName);
@@ -111,7 +113,7 @@ export default function Caretakerdetail({ params }) {
     //   var myHeaders = new Headers();
     // myHeaders.append("Content-Type", "application/json");
     // var raw = JSON.stringify({
-    //   "userId": `${process.env.NEXT_PUBLIC_USERID}`,
+    //   "userId": `${userId}`,
     //   "speciesId": params.slug,
     //   "name": name,
     //   "scienceName": scienceName,

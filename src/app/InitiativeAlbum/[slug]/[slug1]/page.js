@@ -21,7 +21,10 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 
 export default function Addblog({ params }) {
   const apiRoute = process.env.API_ROUTE;
-  const userId = process.env.USER_ID;
+  // const userId = process.env.USER_ID;
+  const userData = JSON.parse(localStorage.getItem("loginResponse"));
+  const userId = userData?.Data?.userId;
+  //console.log("first", userId);
   let router = useRouter();
   const toastId = useRef(null);
 
@@ -103,7 +106,7 @@ export default function Addblog({ params }) {
     const nowImage = Array.from(e.target.files);
     console.log(nowImage, typeof nowImage);
     let bodyContent = new FormData();
-    bodyContent.append("userId", `${process.env.NEXT_PUBLIC_USERID}`);
+    bodyContent.append("userId", `${userId}`);
     bodyContent.append("catId", `${params.slug1}`);
     //bodyContent.append("album_image", nowImage);
     bodyContent.append("status", status);
@@ -144,7 +147,7 @@ export default function Addblog({ params }) {
       redirect: "follow",
       // Adding body or contents to send
       body: JSON.stringify({
-        userId: `${process.env.NEXT_PUBLIC_USERID}`,
+        userId: `${userId}`,
         albumId: [imgId],
       }),
     }).then(fetchAllalbumImages());

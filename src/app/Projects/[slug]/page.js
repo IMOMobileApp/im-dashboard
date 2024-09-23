@@ -43,13 +43,12 @@ const modules = {
 export default function Projectdetail({ params }) {
   let router = useRouter();
   const apiRoute = process.env.API_ROUTE;
-  //const [,] = useState();
+  const userData = JSON.parse(localStorage.getItem("loginResponse"));
+  const userId = userData?.Data?.userId;
   const toastId = useRef(null);
   const [data, setData] = useState(); //API Data
   const [isLoading, setLoading] = useState(true);
-  const [description, setDescription] = useState(
-    "<p>hey this is text editor</p>"
-  );
+  const [description, setDescription] = useState();
   const [name, setName] = useState();
   const [shortDesc, setShortDesc] = useState();
   const [area, setArea] = useState("");
@@ -61,17 +60,34 @@ export default function Projectdetail({ params }) {
   const [selectedImages, setSelectedImages] = useState(null);
   const [galleryimages, setGalleryimages] = useState([]);
   const [status, setStatus] = useState(1);
-  const [speciesArray, setSpeciesArray] = useState([]); //fetch and store all species array
+  const [speciesArray, setSpeciesArray] = useState([]);
+  const [isButtonEnabled, setIsButtonEnabled] = useState(true);
   const [formValues, setFormValues] = useState([
     { name: "", total: "", planted: "" },
   ]);
   const [isEditable, setEditable] = useState();
   const [sequence, setSequence] = useState();
-
   const [poweredby, setPoweredby] = useState();
   const [poweredlogo, setPoweredlogo] = useState(null);
-
+  const [error, setError] = useState({
+    name: false,
+    shortDesc: false,
+    description: false,
+    sequence: false,
+    area: false,
+    state: false,
+    district: false,
+    longitude: false,
+    latitude: false,
+    pincode: false,
+    projectType: false,
+    species: false,
+    logo: false,
+    thumbnail: false,
+    quantity: false,
+  });
   const onSelectLogo = (e) => {
+    setError({ ...error, logo: false });
     setPoweredlogo(e.target.files[0]);
     //  console.log(selectedImages)
   };
@@ -81,18 +97,12 @@ export default function Projectdetail({ params }) {
   };
 
   const onSelectFile = (e) => {
+    setError({ ...error, thumbnail: false });
     setSelectedImages(e.target.files[0]);
   };
 
   const handleQuillChange = (value) => {
-    const letterSpacing = "20px";
-    const fontSize = "18px";
-    const fontFamily = "Montserrat, sans-serif";
-    // Replace <p> with <div> in the HTML content
-    //  const modifiedContent = value.replace(/<p>/g, `<div>`).replace(/<\/p>/g, '</div>');
-
-    // Set the modified content to state
-    //setDescription(modifiedContent);
+    setError({ ...error, description: false });
     setDescription(value);
   };
 
@@ -100,13 +110,14 @@ export default function Projectdetail({ params }) {
   const [opt2, setOpt2] = useState("zodiac");
   const [ans, setAns] = useState();
   const handleAns = (event) => {
+    setError({ ...error, projectType: false });
     setAns(event.target.value);
   };
   /**---------------fetch project gallery----------- */
   const onSelectGallery = async (e) => {
     const nowImage = e.target.files[0];
     let bodyContent = new FormData();
-    bodyContent.append("userId", `${process.env.NEXT_PUBLIC_USERID}`);
+    bodyContent.append("userId", `${userId}`);
     bodyContent.append("projectId", params.slug);
     bodyContent.append("pro_image", nowImage);
     await fetch(`${apiRoute}/addprogallery`, {
@@ -139,18 +150,17 @@ export default function Projectdetail({ params }) {
       redirect: "follow",
       // Adding body or contents to send
       body: JSON.stringify({
-        userId: `${process.env.NEXT_PUBLIC_USERID}`,
+        userId: `${userId}`,
         galId: [imgId],
       }),
     }).then(fetchProjectDetail());
   };
-  /**---delete gallery image-------- */
-  /**---fetch-project details--- */
+
   const fetchProjectDetail = useCallback(() => {
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
     var raw = JSON.stringify({
-      userId: `${process.env.NEXT_PUBLIC_USERID}`,
+      userId: `${userId}`,
       proId: params.slug,
     });
     var requestOptions = {
@@ -191,21 +201,60 @@ export default function Projectdetail({ params }) {
   useEffect(() => {
     fetchProjectDetail();
     getSpecies();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ fetchProjectDetail]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fetchProjectDetail]);
   /**---fetch-project details--- */
 
   if (isLoading) return <Loader />;
   if (!data) return <p>No profile data</p>;
   /*-------------------------------------------------------update project-------------------------------------------------------------------------------*/
   async function uploadWithFormData() {
+    const newError = {
+      name: !name,
+      shortDesc: !shortDesc,
+      description: !description,
+      sequence: !sequence,
+      area: !area,
+      state: !state,
+      district: !district,
+      longitude: !longitude,
+      latitude: !latitude,
+      pincode: !pincode,
+      projectType: !ans,
+      species: !formValues,
+      logo: !poweredlogo,
+      thumbnail: !selectedImages,
+      quantity: !formValues,
+    };
+
+    setError(newError);
+
+    if (
+      newError.name ||
+      newError.shortDesc ||
+      newError.description ||
+      newError.sequence ||
+      newError.area ||
+      newError.state ||
+      newError.district ||
+      newError.longitude ||
+      newError.latitude ||
+      newError.pincode ||
+      newError.projectType ||
+      newError.species ||
+      newError.logo ||
+      newError.thumbnail ||
+      newError.quantity
+    ) {
+      return; // Don't call the API if fields are empty
+    }
     const modifiedContent = description
       .replace(/<p>/g, `<div>`)
       .replace(/<\/p>/g, "</div>");
     pendingPopup();
 
     let bodyContent = new FormData();
-    bodyContent.append("userId", `${process.env.NEXT_PUBLIC_USERID}`);
+    bodyContent.append("userId", `${userId}`);
     bodyContent.append("proId", data.projectId);
     bodyContent.append("project_image", selectedImages);
     bodyContent.append("name", name);
@@ -228,20 +277,24 @@ export default function Projectdetail({ params }) {
       `${process.env.NEXT_PUBLIC_API_ROUTE}/editproject`,
       { method: "POST", body: bodyContent }
     );
-
+    setIsButtonEnabled(false);
     const data1 = await response.json();
     // console.log(data1)
 
     function successPopup() {
       toast.success(`${data1.Message}`);
       toast.dismiss(toastId.current);
+      setIsButtonEnabled(false);
+      router.push("/Projects");
     }
     function failPopup() {
       toast.error(`${data1.Message}`);
       toast.dismiss(toastId.current);
+      setIsButtonEnabled(true);
     }
     function pendingPopup() {
       toastId.current = toast.loading("Updating Project");
+      setIsButtonEnabled(true);
     }
 
     {
@@ -256,7 +309,7 @@ export default function Projectdetail({ params }) {
     myHeaders.append("Content-Type", "application/json");
 
     var raw = JSON.stringify({
-      userId: `${process.env.NEXT_PUBLIC_USERID}`,
+      userId: `${userId}`,
       proId: [data.projectId],
     });
 
@@ -306,7 +359,7 @@ export default function Projectdetail({ params }) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          userId: `${process.env.NEXT_PUBLIC_USERID}`,
+          userId: `${userId}`,
           speciesArray: speciesArray,
         }),
       }
@@ -317,6 +370,7 @@ export default function Projectdetail({ params }) {
   }
 
   const handleChange = (index, e) => {
+    setError({ ...error, species: false });
     setFormValues((prevFormValues) => {
       const newFormValues = [...prevFormValues];
       newFormValues[index] = { ...newFormValues[index], name: e.target.value };
@@ -325,18 +379,11 @@ export default function Projectdetail({ params }) {
   };
 
   const handleChange1 = (index, e) => {
+    setError({ ...error, quantity: false });
     setFormValues((prevFormValues) => {
       const newFormValues = [...prevFormValues];
       newFormValues[index] = { ...newFormValues[index], total: e.target.value };
       return newFormValues;
-      // if(   e.target.value < newFormValues[index].total){
-      //   newFormValues[index] = { ...newFormValues[index] };
-      //   return newFormValues;
-      // }
-      // else{
-      //   newFormValues[index] = { ...newFormValues[index], total: e.target.value };
-      //   return newFormValues;
-      // }
     });
   };
 
@@ -349,7 +396,19 @@ export default function Projectdetail({ params }) {
     newFormValues.splice(i, 1);
     setFormValues(newFormValues);
   };
+  function throttle(func, limit) {
+    let inThrottle;
+    return function () {
+      const args = arguments;
+      if (!inThrottle) {
+        func.apply(null, args);
+        inThrottle = true;
+        setTimeout(() => (inThrottle = false), limit);
+      }
+    };
+  }
 
+  const throttledUpload = throttle(uploadWithFormData, 5000);
   /**------------------------------------------------------------fetch species list- &functionality------- */
 
   /**---------------------------------------------------------------------------------------------------------------------------------------- */
@@ -393,8 +452,12 @@ export default function Projectdetail({ params }) {
                       value={name}
                       onChange={(e) => {
                         setName(e.target.value);
+                        setError({ ...error, name: false });
                       }}
                     />
+                    {error.name && (
+                      <span className="error-text">Name is required.</span>
+                    )}
                   </div>
                 </div>
               </div>
@@ -415,6 +478,11 @@ export default function Projectdetail({ params }) {
                         <MenuItem value={opt1}>{opt1}</MenuItem>
                         <MenuItem value={opt2}>{opt2}</MenuItem>
                       </Select>
+                      {error.projectType && (
+                        <span className="error-text">
+                          Project Type is required.
+                        </span>
+                      )}
                     </FormControl>
                   </div>
                 </div>
@@ -435,9 +503,13 @@ export default function Projectdetail({ params }) {
                       value={shortDesc}
                       onChange={(e) => {
                         setShortDesc(e.target.value);
+                        setError({ ...error, shortDesc: false });
                       }}
                       style={{ padding: "12px 15px", fontSize: "15px" }}
                     />
+                    {error.shortDesc && (
+                      <span className="error-text">shortDesc is required.</span>
+                    )}
                   </div>
                 </div>
               </div>
@@ -474,7 +546,11 @@ export default function Projectdetail({ params }) {
                         style={{ opacity: "0" }}
                       />
                     </Button>
-
+                    {error.logo && (
+                      <span className="error-text">
+                        {"  "}Logo is required.
+                      </span>
+                    )}
                     {poweredlogo === !null ? "" : poweredlogo.name}
                   </div>
                 </div>
@@ -515,8 +591,14 @@ export default function Projectdetail({ params }) {
                       size="lg"
                       style={{ padding: "12px 15px", fontSize: "15px" }}
                       value={sequence}
-                      onChange={(e) => setSequence(e.target.value)}
+                      onChange={(e) => {
+                        setSequence(e.target.value);
+                        setError({ ...error, sequence: false });
+                      }}
                     />
+                    {error.sequence && (
+                      <span className="error-text">Sequence is required.</span>
+                    )}
                   </div>
                 </div>
               </div>
@@ -567,6 +649,11 @@ export default function Projectdetail({ params }) {
                                   </MenuItem>
                                 ))}
                             </Select>
+                            {error.formValues && (
+                              <span className="error-text">
+                                Species is required.
+                              </span>
+                            )}
                           </FormControl>
                         </div>
                       </div>
@@ -597,6 +684,11 @@ export default function Projectdetail({ params }) {
                             placeholder=""
                             disabled
                           />
+                          {error.quantity && (
+                            <span className="error-text">
+                              Quantity is required.
+                            </span>
+                          )}
                         </div>
                       </div>
                       {index ? (
@@ -664,8 +756,6 @@ export default function Projectdetail({ params }) {
                       width={200}
                       height={200}
                     />
-                    {/* {selectedImages.map((i,r)=>{return <Image src={i.pro_image}  width={200} height={200} key={i._id} alt="project gallery"/> })} */}
-                    <p></p>
                     <br />
                     <Button
                       component="label"
@@ -682,6 +772,9 @@ export default function Projectdetail({ params }) {
                         style={{ opacity: "0" }}
                       />
                     </Button>{" "}
+                    {error.thumbnail && (
+                      <span className="error-text">Thumbnail is required.</span>
+                    )}
                     <br />
                     {selectedImages === !null ? "" : selectedImages.name}
                   </div>
@@ -771,8 +864,14 @@ export default function Projectdetail({ params }) {
                       size="lg"
                       style={{ padding: "12px 15px", fontSize: "15px" }}
                       value={area}
-                      onChange={(e) => setArea(e.target.value)}
+                      onChange={(e) => {
+                        setArea(e.target.value);
+                        setError({ ...error, area: false });
+                      }}
                     />
+                    {error.area && (
+                      <span className="error-text">Area is required.</span>
+                    )}
                   </div>
                 </div>
               </div>
@@ -789,8 +888,14 @@ export default function Projectdetail({ params }) {
                       size="lg"
                       style={{ padding: "12px 15px", fontSize: "15px" }}
                       value={district}
-                      onChange={(e) => setDistrict(e.target.value)}
+                      onChange={(e) => {
+                        setDistrict(e.target.value);
+                        setError({ ...error, district: false });
+                      }}
                     />
+                    {error.district && (
+                      <span className="error-text">District is required.</span>
+                    )}
                   </div>
                 </div>
               </div>
@@ -807,8 +912,14 @@ export default function Projectdetail({ params }) {
                       size="lg"
                       style={{ padding: "12px 15px", fontSize: "15px" }}
                       value={state}
-                      onChange={(e) => setState(e.target.value)}
+                      onChange={(e) => {
+                        setState(e.target.value);
+                        setError({ ...error, state: false });
+                      }}
                     />
+                    {error.state && (
+                      <span className="error-text">State is required.</span>
+                    )}
                   </div>
                 </div>
               </div>
@@ -825,8 +936,14 @@ export default function Projectdetail({ params }) {
                       size="lg"
                       style={{ padding: "12px 15px", fontSize: "15px" }}
                       value={pincode}
-                      onChange={(e) => setPincode(e.target.value)}
+                      onChange={(e) => {
+                        setPincode(e.target.value);
+                        setError({ ...error, pincode: false });
+                      }}
                     />
+                    {error.pincode && (
+                      <span className="error-text">Pincode is required.</span>
+                    )}
                   </div>
                 </div>
               </div>
@@ -838,13 +955,20 @@ export default function Projectdetail({ params }) {
                 <div className="col-md-8">
                   <div className="input-field">
                     <Input
+                      type="number"
                       placeholder=""
                       variant="soft"
                       size="lg"
                       style={{ padding: "12px 15px", fontSize: "15px" }}
                       value={latitude}
-                      onChange={(e) => setLatitude(e.target.value)}
+                      onChange={(e) => {
+                        setLatitude(e.target.value);
+                        setError({ ...error, latitude: false });
+                      }}
                     />
+                    {error.latitude && (
+                      <span className="error-text">Latitude is required.</span>
+                    )}
                   </div>
                 </div>
               </div>
@@ -856,13 +980,20 @@ export default function Projectdetail({ params }) {
                 <div className="col-md-8">
                   <div className="input-field">
                     <Input
+                      type="number"
                       placeholder=""
                       variant="soft"
                       size="lg"
                       style={{ padding: "12px 15px", fontSize: "15px" }}
                       value={longitude}
-                      onChange={(e) => setLongitude(e.target.value)}
+                      onChange={(e) => {
+                        setLongitude(e.target.value);
+                        setError({ ...error, longitude: false });
+                      }}
                     />
+                    {error.longitude && (
+                      <span className="error-text">Longitude is required.</span>
+                    )}
                   </div>
                 </div>
               </div>
@@ -900,6 +1031,9 @@ export default function Projectdetail({ params }) {
                       modules={modules}
                       style={{ height: "400px", marginBottom: "100px" }}
                     />
+                    {error.description && (
+                      <span className="error-text">Details are required.</span>
+                    )}
                   </div>
                 </div>
               </div>
@@ -963,7 +1097,8 @@ export default function Projectdetail({ params }) {
                     variant="contained"
                     color="success"
                     style={{ width: "100%", fontSize: "15px", padding: "10px" }}
-                    onClick={uploadWithFormData}
+                    onClick={throttledUpload}
+                    disabled={!isButtonEnabled}
                   >
                     {" "}
                     Update Project

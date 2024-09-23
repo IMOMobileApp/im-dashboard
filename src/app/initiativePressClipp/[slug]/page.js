@@ -1,9 +1,5 @@
 "use client";
 import { useEffect, useState, useRef, useCallback } from "react";
-import Input from "@mui/joy/Input";
-import Switch from "@mui/material/Switch";
-import Button from "@mui/material/Button";
-import UploadFileIcon from "@mui/icons-material/UploadFile";
 import { toast } from "react-toastify";
 import FormData from "form-data";
 import Link from "next/link";
@@ -15,7 +11,10 @@ import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 
 export default function AddImages({ params }) {
   const apiRoute = process.env.API_ROUTE;
-  const userId = process.env.USER_ID;
+  // const userId = process.env.USER_ID;
+  const userData = JSON.parse(localStorage.getItem("loginResponse"));
+  const userId = userData?.Data?.userId;
+  //console.log("first", userId);
   let router = useRouter();
   const toastId = useRef(null);
 
@@ -41,34 +40,6 @@ export default function AddImages({ params }) {
     }
   };
 
-  /**---fetch all album--- */
-
-  // const fetchAllWebcategoryAPI=useCallback(()=>{
-  //   let data = JSON.stringify({
-  //      "userId": `${userId}` ,
-  //      "initiativeId":`${params.slug}`,
-
-  //     });
-  //   let config = {
-  //     method: 'post',
-  //     maxBodyLength: Infinity,
-  //     url: `${apiRoute}/listwebimage`,
-  //     headers: {  'Content-Type': 'application/json' },
-  //     data : data
-  //   };
-  //   axios.request(config)
-  //   .then((response) => {
-  //     setData(response.data.Data);
-  //     setTitle(response.data.Data.title)
-  //     setStatus(response.data.Data.status)
-  //     setSelectedImages(response.data.Data.image)
-  //     setDate(response.data.Data.date)
-  //     setLoading(false)
-  //   })
-  // }, [apiRoute, userId, date])
-
-  /**----fetch all album----- */
-  /**---fetch all gallery album images--- */
   const fetchAllalbumImages = useCallback(() => {
     let data = JSON.stringify({
       userId: `${userId}`,
@@ -94,10 +65,9 @@ export default function AddImages({ params }) {
     const nowImage = e.target.files[0];
     console.log(nowImage);
     let bodyContent = new FormData();
-    bodyContent.append("userId", `${process.env.NEXT_PUBLIC_USERID}`);
+    bodyContent.append("userId", `${userId}`);
     bodyContent.append("catId", `${params.slug1}`);
     bodyContent.append("status", status);
-
 
     await fetch(`${apiRoute}/addalbum`, {
       method: "POST",
@@ -125,7 +95,7 @@ export default function AddImages({ params }) {
       redirect: "follow",
       // Adding body or contents to send
       body: JSON.stringify({
-        userId: `${process.env.NEXT_PUBLIC_USERID}`,
+        userId: `${userId}`,
         imageId: [imgId],
       }),
     }).then(fetchAllalbumImages());
