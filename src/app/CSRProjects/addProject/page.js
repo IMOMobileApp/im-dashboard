@@ -15,6 +15,7 @@ import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
+import Image from "next/image";
 
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
@@ -34,11 +35,13 @@ export default function Addproject() {
   const [latitude, setLatitude] = useState();
   const [longitude, setLongitude] = useState();
   const [selectedImages, setSelectedImages] = useState();
+  const [imagePreview, setImagePreview] = useState();
   const [speciesArray, setSpeciesArray] = useState([]);
   const [formValues, setFormValues] = useState([{ name: "", total: "" }]);
   const [isButtonEnabled, setIsButtonEnabled] = useState(true);
   const [poweredby, setPoweredby] = useState();
   const [poweredlogo, setPoweredlogo] = useState(null);
+  const [logoPreview, setLogoPreview] = useState();
   const [sequence, setSequence] = useState();
   const [username, setUsername] = useState();
   const [useremail, setUseremail] = useState();
@@ -46,10 +49,44 @@ export default function Addproject() {
 
   const onSelectLogo = (e) => {
     setPoweredlogo(e.target.files[0]);
+    const selectedFile = e.target.files[0];
+
+    if (selectedFile) {
+      const reader = new FileReader();
+
+      reader.onload = (event) => {
+        const fileURL = event.target.result;
+        setLogoPreview(fileURL);
+      };
+
+      reader.onerror = (error) => {
+        console.error("Error reading file:", error);
+        setError({ ...error, logo: false });
+      };
+
+      reader.readAsDataURL(selectedFile);
+    }
   };
 
   const onSelectFile = (e) => {
     setSelectedImages(e.target.files[0]);
+    const selectedFile = e.target.files[0];
+
+    if (selectedFile) {
+      const reader = new FileReader();
+
+      reader.onload = (event) => {
+        const fileURL = event.target.result;
+        setImagePreview(fileURL);
+      };
+
+      reader.onerror = (error) => {
+        console.error("Error reading file:", error);
+        setError({ ...error, logo: false });
+      };
+
+      reader.readAsDataURL(selectedFile);
+    }
   };
 
   const [opt1, setOpt1] = useState("CSR");
@@ -97,7 +134,7 @@ export default function Addproject() {
       setIsButtonEnabled(false);
       toast.success(`${data1.Message}`);
       toast.dismiss(toastId.current);
-      router.push("/CSRProjects");
+      router.back();
     }
     function failPopup() {
       toast.error(`${data1.Message}`);
@@ -282,7 +319,14 @@ export default function Addproject() {
                     className="input-field"
                     style={{ border: "1px dashed #d5d6d7", padding: "20px" }}
                   >
-                    <p></p>
+                     {imagePreview && (
+                      <Image
+                        src={imagePreview}
+                        alt="project image"
+                        width={200}
+                        height={200}
+                      />
+                    )}
                     <br />
                     <Button
                       component="label"
@@ -313,7 +357,14 @@ export default function Addproject() {
                   <div
                     className="input-field"
                     style={{ border: "1px dashed #d5d6d7", padding: "20px" }}
-                  >
+                  >{logoPreview && (
+                    <Image
+                      src={logoPreview}
+                      alt="project image"
+                      width={200}
+                      height={200}
+                    />
+                  )}
                     <Button
                       component="label"
                       variant="contained"

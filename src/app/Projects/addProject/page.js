@@ -193,7 +193,7 @@ export default function Addproject() {
       toast.success(`${data1.Message}`);
       toast.dismiss(toastId.current);
       setIsButtonEnabled(false);
-      router.push("/Projects");
+      router.back();
     }
     function failPopup() {
       toast.error(`${data1.Message}`);

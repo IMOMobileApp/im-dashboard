@@ -317,7 +317,7 @@ export default function Projectdetail({ params }) {
     function successPopup() {
       toast.success(`${data1.Message}`);
       toast.dismiss(toastId.current);
-      setIsButtonEnabled(false);
+      setIsButtonEnabled(false);router.back();
       router.push("/Projects");
     }
     function failPopup() {

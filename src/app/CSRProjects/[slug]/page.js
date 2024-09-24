@@ -61,6 +61,7 @@ export default function Projectdetail({ params }) {
   const [latitude, setLatitude] = useState();
   const [longitude, setLongitude] = useState();
   const [selectedImages, setSelectedImages] = useState(null);
+  const [imagePreview, setImagePreview] = useState();
   const [galleryimages, setGalleryimages] = useState([]);
   const [status, setStatus] = useState(1);
   const [speciesArray, setSpeciesArray] = useState([]); //fetch and store all species array
@@ -69,9 +70,9 @@ export default function Projectdetail({ params }) {
   ]);
   const [isEditable, setEditable] = useState();
   const [sequence, setSequence] = useState();
-
   const [poweredby, setPoweredby] = useState();
   const [poweredlogo, setPoweredlogo] = useState(null);
+  const [logoPreview, setLogoPreview] = useState();
 
   const [username, setUsername] = useState();
   const [useremail, setUseremail] = useState();
@@ -79,7 +80,23 @@ export default function Projectdetail({ params }) {
 
   const onSelectLogo = (e) => {
     setPoweredlogo(e.target.files[0]);
-    //  console.log(selectedImages)
+    const selectedFile = e.target.files[0];
+
+    if (selectedFile) {
+      const reader = new FileReader();
+
+      reader.onload = (event) => {
+        const fileURL = event.target.result;
+        setLogoPreview(fileURL);
+      };
+
+      reader.onerror = (error) => {
+        console.error("Error reading file:", error);
+        setError({ ...error, logo: false });
+      };
+
+      reader.readAsDataURL(selectedFile);
+    }
   };
 
   const changeProjectStatus = () => {
@@ -88,6 +105,23 @@ export default function Projectdetail({ params }) {
 
   const onSelectFile = (e) => {
     setSelectedImages(e.target.files[0]);
+    const selectedFile = e.target.files[0];
+
+    if (selectedFile) {
+      const reader = new FileReader();
+
+      reader.onload = (event) => {
+        const fileURL = event.target.result;
+        setImagePreview(fileURL);
+      };
+
+      reader.onerror = (error) => {
+        console.error("Error reading file:", error);
+        setError({ ...error, logo: false });
+      };
+
+      reader.readAsDataURL(selectedFile);
+    }
   };
 
   const handleQuillChange = (value) => {
@@ -195,7 +229,7 @@ export default function Projectdetail({ params }) {
   useEffect(() => {
     fetchProjectDetail();
     getSpecies();
-      // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fetchProjectDetail]);
   /**---fetch-project details--- */
 
@@ -242,6 +276,7 @@ export default function Projectdetail({ params }) {
     function successPopup() {
       toast.success(`${data1.Message}`);
       toast.dismiss(toastId.current);
+      router.back();
     }
     function failPopup() {
       toast.error(`${data1.Message}`);
@@ -458,13 +493,21 @@ export default function Projectdetail({ params }) {
                     className="input-field"
                     style={{ border: "1px dashed #d5d6d7", padding: "20px" }}
                   >
-                    <Image
-                      src={data.poweredImage}
-                      alt={data.name}
-                      width={200}
-                      height={200}
-                    />
-
+                    {logoPreview ? (
+                      <Image
+                        src={logoPreview}
+                        alt={data.name}
+                        width={200}
+                        height={200}
+                      />
+                    ) : (
+                      <Image
+                        src={data.poweredImage}
+                        alt={data.name}
+                        width={200}
+                        height={200}
+                      />
+                    )}
                     <Button
                       component="label"
                       variant="contained"
@@ -726,12 +769,21 @@ export default function Projectdetail({ params }) {
                     className="input-field"
                     style={{ border: "1px dashed #d5d6d7", padding: "20px" }}
                   >
-                    <Image
-                      src={selectedImages}
-                      alt="project image"
-                      width={200}
-                      height={200}
-                    />
+                   {imagePreview ? (
+                      <Image
+                        src={imagePreview}
+                        alt={data.name}
+                        width={200}
+                        height={200}
+                      />
+                    ) : (
+                      <Image
+                        src={data.image}
+                        alt={data.name}
+                        width={200}
+                        height={200}
+                      />
+                    )}
                     {/* {selectedImages.map((i,r)=>{return <Image src={i.pro_image}  width={200} height={200} key={i._id} alt="project gallery"/> })} */}
                     <p></p>
                     <br />
