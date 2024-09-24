@@ -19,27 +19,26 @@ import Loader from "@/app/component/Loader";
 import ProjectTable from "@/app/Projects/components/projectTable";
 import Link from "next/link";
 
-const apiRoute = process.env.API_ROUTE;
-const userData = JSON.parse(localStorage.getItem("loginResponse"));
-const userId = userData?.Data?.userId;
-//console.log("first", userId);
-
-var myHeaders = new Headers();
-myHeaders.append("Content-Type", "application/json");
-
-var raw = JSON.stringify({
-  userId: `${userId}`,
-});
-var requestOptions = {
-  method: "POST",
-  headers: myHeaders,
-  body: raw,
-  redirect: "follow",
-};
-
 export default function Dashboard() {
   const [data, setData] = useState();
-
+  const apiRoute = process.env.API_ROUTE;
+  const userData = JSON.parse(localStorage.getItem("loginResponse"));
+  const userId = userData?.Data?.userId;
+  console.log("first", userId);
+  
+  var myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+  
+  var raw = JSON.stringify({
+    userId: `${userId}`,
+  });
+  var requestOptions = {
+    method: "POST",
+    headers: myHeaders,
+    body: raw,
+    redirect: "follow",
+  };
+  
   useEffect(() => {
     async function getData() {
       const res = await fetch(`${apiRoute}/adminhome`, requestOptions);

@@ -57,7 +57,8 @@ export default function Projectdetail({ params }) {
   const [pincode, setPincode] = useState();
   const [latitude, setLatitude] = useState();
   const [longitude, setLongitude] = useState();
-  const [selectedImages, setSelectedImages] = useState(null);
+  const [selectedPreviewImages, setSelectedPreviewImages] = useState(null);
+  const [imagePreview, setImagePreview] = useState();
   const [galleryimages, setGalleryimages] = useState([]);
   const [status, setStatus] = useState(1);
   const [speciesArray, setSpeciesArray] = useState([]);
@@ -69,6 +70,7 @@ export default function Projectdetail({ params }) {
   const [sequence, setSequence] = useState();
   const [poweredby, setPoweredby] = useState();
   const [poweredlogo, setPoweredlogo] = useState(null);
+  const [logoPreview, setLogoPreview] = useState();
   const [error, setError] = useState({
     name: false,
     shortDesc: false,
@@ -86,19 +88,53 @@ export default function Projectdetail({ params }) {
     thumbnail: false,
     quantity: false,
   });
+
   const onSelectLogo = (e) => {
     setError({ ...error, logo: false });
     setPoweredlogo(e.target.files[0]);
-    //  console.log(selectedImages)
-  };
+    const selectedFile = e.target.files[0];
 
-  const changeProjectStatus = () => {
-    setStatus(status == 1 ? 0 : 1);
+    if (selectedFile) {
+      const reader = new FileReader();
+
+      reader.onload = (event) => {
+        const fileURL = event.target.result;
+        setLogoPreview(fileURL);
+      };
+
+      reader.onerror = (error) => {
+        console.error("Error reading file:", error);
+        setError({ ...error, logo: false });
+      };
+
+      reader.readAsDataURL(selectedFile);
+    }
   };
 
   const onSelectFile = (e) => {
     setError({ ...error, thumbnail: false });
-    setSelectedImages(e.target.files[0]);
+    setSelectedPreviewImages(e.target.files[0]);
+    const selectedFile = e.target.files[0];
+
+    if (selectedFile) {
+      const reader = new FileReader();
+
+      reader.onload = (event) => {
+        const fileURL = event.target.result;
+        setImagePreview(fileURL);
+      };
+
+      reader.onerror = (error) => {
+        console.error("Error reading file:", error);
+        setError({ ...error, logo: false });
+      };
+
+      reader.readAsDataURL(selectedFile);
+    }
+  };
+
+  const changeProjectStatus = () => {
+    setStatus(status == 1 ? 0 : 1);
   };
 
   const handleQuillChange = (value) => {
@@ -123,17 +159,13 @@ export default function Projectdetail({ params }) {
     await fetch(`${apiRoute}/addprogallery`, {
       // Adding method type
       method: "POST",
-      // Adding body or contents to send
       body: bodyContent,
-    })
-      // Converting to JSON
-      .then(() => {
-        // Adding a delay of 4 seconds (4000 milliseconds) before calling fetchProjectDetail()
-        setTimeout(() => {
-          fetchProjectDetail();
-        }, 100);
-      });
-    // .then(fetchProjectDetail())
+    }).then(() => {
+      // Adding a delay of 4 seconds (4000 milliseconds) before calling fetchProjectDetail()
+      setTimeout(() => {
+        fetchProjectDetail();
+      }, 100);
+    });
   };
 
   /**---------------fetch project gallery----------- */
@@ -174,7 +206,7 @@ export default function Projectdetail({ params }) {
       .then((result) => {
         setData(result.Data);
         setGalleryimages(result.imageGallery);
-        setSelectedImages(result.Data.image);
+        setSelectedPreviewImages(result.Data.image);
         setDescription(result.Data.description);
         setName(result.Data.name);
         setShortDesc(result.Data.short_desc);
@@ -221,12 +253,13 @@ export default function Projectdetail({ params }) {
       latitude: !latitude,
       pincode: !pincode,
       projectType: !ans,
-      species: !formValues,
+      species: formValues[0].name?.length === 0 || !formValues[0].total,
+      // Uncomment this if need to add validation for this field also
+      // || formValues[0].planted === 0,
       logo: !poweredlogo,
-      thumbnail: !selectedImages,
+      thumbnail: !selectedPreviewImages,
       quantity: !formValues,
     };
-
     setError(newError);
 
     if (
@@ -256,7 +289,7 @@ export default function Projectdetail({ params }) {
     let bodyContent = new FormData();
     bodyContent.append("userId", `${userId}`);
     bodyContent.append("proId", data.projectId);
-    bodyContent.append("project_image", selectedImages);
+    bodyContent.append("project_image", selectedPreviewImages);
     bodyContent.append("name", name);
     bodyContent.append("short_desc", shortDesc);
     bodyContent.append("description", modifiedContent);
@@ -324,9 +357,6 @@ export default function Projectdetail({ params }) {
       `${process.env.NEXT_PUBLIC_API_ROUTE}/deleteproject`,
       requestOptions
     );
-    // .then(response => response.text())
-    // .then(result => console.log(result))
-    // .catch(error => console.log('error', error));
 
     let deleteData = await deleteResponse.json();
 
@@ -523,13 +553,21 @@ export default function Projectdetail({ params }) {
                     className="input-field"
                     style={{ border: "1px dashed #d5d6d7", padding: "20px" }}
                   >
-                    <Image
-                      src={data.poweredImage}
-                      alt={data.name}
-                      width={200}
-                      height={200}
-                    />
-
+                    {logoPreview ? (
+                      <Image
+                        src={logoPreview}
+                        alt={data.name}
+                        width={200}
+                        height={200}
+                      />
+                    ) : (
+                      <Image
+                        src={data.poweredImage}
+                        alt={data.name}
+                        width={200}
+                        height={200}
+                      />
+                    )}
                     <Button
                       component="label"
                       variant="contained"
@@ -608,6 +646,7 @@ export default function Projectdetail({ params }) {
                 <div className="col-md-4">
                   <div className="input-head">Species</div>
                 </div>
+
                 <div className="col-md-8">
                   <div className="row">
                     <div className="col-md-4">
@@ -650,6 +689,11 @@ export default function Projectdetail({ params }) {
                                 ))}
                             </Select>
                             {error.formValues && (
+                              <span className="error-text">
+                                Species is required.
+                              </span>
+                            )}
+                            {error.species && (
                               <span className="error-text">
                                 Species is required.
                               </span>
@@ -750,13 +794,22 @@ export default function Projectdetail({ params }) {
                     className="input-field"
                     style={{ border: "1px dashed #d5d6d7", padding: "20px" }}
                   >
-                    <Image
-                      src={selectedImages}
-                      alt="project image"
-                      width={200}
-                      height={200}
-                    />
-                    <br />
+                    {imagePreview ? (
+                      <Image
+                        src={imagePreview}
+                        alt={data.name}
+                        width={200}
+                        height={200}
+                      />
+                    ) : (
+                      <Image
+                        src={data.image}
+                        alt={data.name}
+                        width={200}
+                        height={200}
+                      />
+                    )}
+
                     <Button
                       component="label"
                       variant="contained"
@@ -768,15 +821,16 @@ export default function Projectdetail({ params }) {
                         type="file"
                         name="images"
                         onChange={onSelectFile}
-                        accept="image/png , image/jpeg, image/webp"
+                        accept="image/png, image/jpeg, image/webp"
                         style={{ opacity: "0" }}
                       />
-                    </Button>{" "}
+                    </Button>
                     {error.thumbnail && (
                       <span className="error-text">Thumbnail is required.</span>
                     )}
-                    <br />
-                    {selectedImages === !null ? "" : selectedImages.name}
+                    {selectedPreviewImages === !null
+                      ? ""
+                      : selectedPreviewImages.name}
                   </div>
                 </div>
               </div>

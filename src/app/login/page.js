@@ -22,7 +22,10 @@ export default function Login() {
   const getLogin = async () => {
     setSendvalid(true);
     try {
-      const requestData = { email: email, password: password };
+      const requestData = {
+        email: email && email.trim(),
+        password: password && password.trim(),
+      };
       await dispatch(login(requestData));
     } catch (error) {
       // Handle error
@@ -46,6 +49,8 @@ export default function Login() {
     const userID = loginCredentials?.Status;
     if (userID) {
       router.push("/dashboard");
+    } else {
+      router.push("/login");
     }
 
     if (sendvalid) {
