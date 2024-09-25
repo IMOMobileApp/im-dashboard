@@ -122,7 +122,25 @@ export default function EnhancedTable({ setArrFunc }) {
   const [originalRows, setOriginalRows] = useState([]);
   const [searched, setSearched] = useState("");
   /*----------------search const------------------*/
+  const fetchAllBlogsAPI = useCallback(() => {
+    let data = JSON.stringify({ userId: `${userId}` });
+    let config = {
+      method: "post",
+      maxBodyLength: Infinity,
+      url: `${apiRoute}/subAdminList`,
+      headers: { "Content-Type": "application/json" },
+      data: data,
+    };
+    axios.request(config).then((response) => {
+      getBloglist(response?.data?.Data);
+      setOriginalRows(response?.data?.Data);
+      console.log(response);
+    });
+  }, [apiRoute, userId]);
 
+  useEffect(() => {
+    fetchAllBlogsAPI();
+  }, [fetchAllBlogsAPI]);
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -165,25 +183,7 @@ export default function EnhancedTable({ setArrFunc }) {
         );
       });
   };
-  const fetchAllBlogsAPI = useCallback(() => {
-    let data = JSON.stringify({ userId: `${userId}` });
-    let config = {
-      method: "post",
-      maxBodyLength: Infinity,
-      url: `${apiRoute}/subAdminList`,
-      headers: { "Content-Type": "application/json" },
-      data: data,
-    };
-    axios.request(config).then((response) => {
-      getBloglist(response?.data?.Data);
-      setOriginalRows(response.data.Data);
-      console.log(response);
-    });
-  }, [apiRoute, userId]);
 
-  useEffect(() => {
-    fetchAllBlogsAPI();
-  }, [fetchAllBlogsAPI]);
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {

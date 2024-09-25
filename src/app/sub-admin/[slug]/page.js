@@ -8,6 +8,8 @@ import Loader from "@/app/component/Loader";
 import Link from "next/link";
 import { Grid } from "@mui/material";
 import { useRouter } from "next/navigation";
+import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import { toast } from "react-toastify";
 import axios from "axios";
 
@@ -51,7 +53,11 @@ export default function Userdetail({ params }) {
   const [phone, setPhone] = useState();
   const [password, setPassword] = useState();
   const [status, setStatus] = useState();
-  console.log(status);
+  const [showPassword, setShowPassword] = useState(false);
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
 
   const handleOrder = (event) => {
     setOrderView(event.target.checked);
@@ -100,11 +106,15 @@ export default function Userdetail({ params }) {
   };
   const handleCertificate = (event) => {
     setCertificateView(event.target.checked);
+    setGicView(event.target.checked);
+    setWfwView(event.target.checked);
   };
   const handleGic = (event) => {
+    setCertificateView(event.target.checked);
     setGicView(event.target.checked);
   };
   const handleWfw = (event) => {
+    setCertificateView(event.target.checked);
     setWfwView(event.target.checked);
   };
   const handleGift = (event) => {
@@ -115,29 +125,43 @@ export default function Userdetail({ params }) {
   };
   const handleWebsite = (event) => {
     setWebsiteView(event.target.checked);
+    setInitiativeView(event.target.checked);
+    setBrochureView(event.target.checked);
+    setBannerView(event.target.checked);
+    setWaterImpactView(event.target.checked); 
+    setGitImpactView(event.target.checked);
+    setWebBlogView(event.target.checked);
+    setSeoView(event.target.checked);
   };
   const handleWebBlog = (event) => {
+    setWebsiteView(event.target.checked);
     setWebBlogView(event.target.checked);
   };
   const handleInitiative = (event) => {
+    setWebsiteView(event.target.checked);
     setInitiativeView(event.target.checked);
   };
   const handleGitImpact = (event) => {
+    setWebsiteView(event.target.checked);
     setGitImpactView(event.target.checked);
   };
   const handleWater = (event) => {
+    setWebsiteView(event.target.checked);
     setWaterImpactView(event.target.checked);
   };
   const handleBanner = (event) => {
+    setWebsiteView(event.target.checked);
     setBannerView(event.target.checked);
   };
   const handleBochure = (event) => {
+    setWebsiteView(event.target.checked);
     setBrochureView(event.target.checked);
   };
   const handleSeo = (event) => {
+    setWebsiteView(event.target.checked);
     setSeoView(event.target.checked);
   };
- 
+
   useEffect(() => {
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
@@ -183,7 +207,7 @@ export default function Userdetail({ params }) {
         setEmail(result?.Data?.email);
         setPhone(result?.Data?.phone);
         setPassword(result?.Data?.password);
-        setStatus(result?.Data?.status)
+        setStatus(result?.Data?.status);
         setLoading(false);
       });
   }, [params.slug, apiRoute, userId]);
@@ -236,7 +260,7 @@ export default function Userdetail({ params }) {
       data: data,
     };
 
-    toastId.current = toast.loading("Updating Detail");
+    // toastId.current = toast.loading("Updating Detail");
 
     const response = await axios.request(config);
     const data1 = response.data;
@@ -379,9 +403,9 @@ export default function Userdetail({ params }) {
                   <div className="input-head">Password</div>
                 </div>
                 <div className="col-md-8">
-                  <div className="input-field">
+                  <div className="input-field" style={{ position: "relative" }}>
                     <Input
-                      type="password"
+                      type={showPassword ? "text" : "password"}
                       placeholder=""
                       variant="soft"
                       size="lg"
@@ -389,10 +413,26 @@ export default function Userdetail({ params }) {
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                     />
+                    <span
+                      onClick={togglePasswordVisibility}
+                      style={{
+                        position: "absolute",
+                        right: "10px",
+                        top: "50%",
+                        transform: "translateY(-50%)",
+                        cursor: "pointer",
+                      }}
+                    >
+                      {showPassword ? (
+                        <VisibilityOffIcon />
+                      ) : (
+                        <RemoveRedEyeIcon />
+                      )}
+                    </span>
                   </div>
                 </div>
               </div>
-            
+
               <Grid>
                 <div
                   style={{

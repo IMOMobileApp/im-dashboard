@@ -24,11 +24,10 @@ export default function Dashboard() {
   const apiRoute = process.env.API_ROUTE;
   const userData = JSON.parse(localStorage.getItem("loginResponse"));
   const userId = userData?.Data?.userId;
-  console.log("first", userId);
-  
+  const adminType = userData?.Data?.adminType;
   var myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
-  
+
   var raw = JSON.stringify({
     userId: `${userId}`,
   });
@@ -38,7 +37,7 @@ export default function Dashboard() {
     body: raw,
     redirect: "follow",
   };
-  
+
   useEffect(() => {
     async function getData() {
       const res = await fetch(`${apiRoute}/adminhome`, requestOptions);
@@ -54,126 +53,141 @@ export default function Dashboard() {
 
   return (
     <>
-      <div className="container">
-        <div className="row">
-          <div className="col-md-12">
-            <h3>Dashboard Overview</h3>
-            <div className="dashboard-sale-box-row">
-              <div
-                className="dashboard-sale-box"
-                style={{ backgroundColor: "#0694a2" }}
-              >
-                <LayersIcon style={{ fontSize: "45px" }} />
-                <p>Today&apos;s Order</p>
-                <b> {data?.Data?.Orders?.today?.orders}</b>
-                <br />
-                <span>
-                  Amount : ₹ {data?.Data?.Orders?.today?.amount} Coin : ₹
-                  {data?.Data?.Orders?.today?.coin}
-                </span>
-              </div>
+      {adminType === "subAdmin" ? (
+        <div
+        style={{
+          fontSize: "60px",
+          fontWeight:700,
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "80vh", // Takes up full viewport height
+          textAlign: "center", // Ensures text is centered if needed
+        }}
+        >
+          DASHBOARD
+        </div>
+      ) : (
+        <div className="container">
+          <div className="row">
+            <div className="col-md-12">
+              <h3>Dashboard Overview</h3>
+              <div className="dashboard-sale-box-row">
+                <div
+                  className="dashboard-sale-box"
+                  style={{ backgroundColor: "#0694a2" }}
+                >
+                  <LayersIcon style={{ fontSize: "45px" }} />
+                  <p>Today&apos;s Order</p>
+                  <b> {data?.Data?.Orders?.today?.orders}</b>
+                  <br />
+                  <span>
+                    Amount : ₹ {data?.Data?.Orders?.today?.amount} Coin : ₹
+                    {data?.Data?.Orders?.today?.coin}
+                  </span>
+                </div>
 
-              <div
-                className="dashboard-sale-box"
-                style={{ backgroundColor: "#ff8a4c" }}
-              >
-                <LayersIcon style={{ fontSize: "45px" }} />
-                <p>Yesterday Orders</p>
-                <b> {data?.Data?.Orders?.yesterday?.orders}</b>
-                <br />
-                <span>
-                  Amount : ₹ {data?.Data?.Orders?.yesterday?.amount} Coin : ₹{" "}
-                  {data?.Data?.Orders?.yesterday?.coin}
-                </span>
-              </div>
+                <div
+                  className="dashboard-sale-box"
+                  style={{ backgroundColor: "#ff8a4c" }}
+                >
+                  <LayersIcon style={{ fontSize: "45px" }} />
+                  <p>Yesterday Orders</p>
+                  <b> {data?.Data?.Orders?.yesterday?.orders}</b>
+                  <br />
+                  <span>
+                    Amount : ₹ {data?.Data?.Orders?.yesterday?.amount} Coin : ₹{" "}
+                    {data?.Data?.Orders?.yesterday?.coin}
+                  </span>
+                </div>
 
-              <div
-                className="dashboard-sale-box"
-                style={{ backgroundColor: "#3f83f8" }}
-              >
-                <ShoppingCartOutlinedIcon style={{ fontSize: "45px" }} />
-                <p>This Month Order</p>
-                <b>{data?.Data?.Orders?.month?.orders}</b>
-                <br />
-                <span>
-                  Amount : ₹ {data?.Data?.Orders?.month?.amount} Coin : ₹{" "}
-                  {data?.Data?.Orders?.month?.coin}
-                </span>
-              </div>
+                <div
+                  className="dashboard-sale-box"
+                  style={{ backgroundColor: "#3f83f8" }}
+                >
+                  <ShoppingCartOutlinedIcon style={{ fontSize: "45px" }} />
+                  <p>This Month Order</p>
+                  <b>{data?.Data?.Orders?.month?.orders}</b>
+                  <br />
+                  <span>
+                    Amount : ₹ {data?.Data?.Orders?.month?.amount} Coin : ₹{" "}
+                    {data?.Data?.Orders?.month?.coin}
+                  </span>
+                </div>
 
-              <div
-                className="dashboard-sale-box"
-                style={{ backgroundColor: "#0e9f6e" }}
-              >
-                <StyleSharpIcon style={{ fontSize: "45px" }} />
-                <p>All-Time Order</p>
-                <b>{data?.Data?.Orders?.all?.orders}</b>
-                <br />
-                <span>
-                  Amount : ₹ {data?.Data?.Orders?.all?.amount} Coin : ₹{" "}
-                  {data?.Data?.Orders?.all?.coin}
-                </span>
+                <div
+                  className="dashboard-sale-box"
+                  style={{ backgroundColor: "#0e9f6e" }}
+                >
+                  <StyleSharpIcon style={{ fontSize: "45px" }} />
+                  <p>All-Time Order</p>
+                  <b>{data?.Data?.Orders?.all?.orders}</b>
+                  <br />
+                  <span>
+                    Amount : ₹ {data?.Data?.Orders?.all?.amount} Coin : ₹{" "}
+                    {data?.Data?.Orders?.all?.coin}
+                  </span>
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <div className="row">
-          <div className="col-md-12">
-            <div className="dashboard-order-row">
-              <div className="dashboard-order-box">
-                <div
-                  className="dashboard-order-icon"
-                  style={{ backgroundColor: "#feecdc" }}
-                >
-                  <ShoppingCartOutlinedIcon style={{ color: "#d03801" }} />
+          <div className="row">
+            <div className="col-md-12">
+              <div className="dashboard-order-row">
+                <div className="dashboard-order-box">
+                  <div
+                    className="dashboard-order-icon"
+                    style={{ backgroundColor: "#feecdc" }}
+                  >
+                    <ShoppingCartOutlinedIcon style={{ color: "#d03801" }} />
+                  </div>
+                  <div className="dashboard-order-txt">
+                    <span>Total Orders</span>
+                    <p>{data?.Data?.OrderStatus?.totalOrder}</p>
+                  </div>
                 </div>
-                <div className="dashboard-order-txt">
-                  <span>Total Orders</span>
-                  <p>{data?.Data?.OrderStatus?.totalOrder}</p>
-                </div>
+                <Link href="/NewOrders" className="dashboard-order-box">
+                  <div
+                    className="dashboard-order-icon"
+                    style={{ backgroundColor: "#e1effe" }}
+                  >
+                    <AutorenewSharpIcon style={{ color: "#1c64f2" }} />
+                  </div>
+                  <div className="dashboard-order-txt">
+                    <span>New Orders</span>
+                    <p>{data?.Data?.OrderStatus?.pendingOrder}</p>
+                  </div>
+                </Link>
+                <Link href="/PendingOrders" className="dashboard-order-box">
+                  <div
+                    className="dashboard-order-icon"
+                    style={{ backgroundColor: "#d5f5f6" }}
+                  >
+                    <LocalShippingSharpIcon style={{ color: "#047481" }} />
+                  </div>
+                  <div className="dashboard-order-txt">
+                    <span>Processing Orders</span>
+                    <p>{data?.Data?.OrderStatus?.processOrder}</p>
+                  </div>
+                </Link>
+                <Link href="/FulfilledOrders" className="dashboard-order-box">
+                  <div
+                    className="dashboard-order-icon"
+                    style={{ backgroundColor: "#def7ec" }}
+                  >
+                    <DoneSharpIcon style={{ color: "#057a55" }} />
+                  </div>
+                  <div className="dashboard-order-txt">
+                    <span>Delivered Orders</span>
+                    <p>{data?.Data?.OrderStatus?.deliverOrder}</p>
+                  </div>
+                </Link>
               </div>
-              <Link href="/NewOrders" className="dashboard-order-box">
-                <div
-                  className="dashboard-order-icon"
-                  style={{ backgroundColor: "#e1effe" }}
-                >
-                  <AutorenewSharpIcon style={{ color: "#1c64f2" }} />
-                </div>
-                <div className="dashboard-order-txt">
-                  <span>New Orders</span>
-                  <p>{data?.Data?.OrderStatus?.pendingOrder}</p>
-                </div>
-              </Link>
-              <Link href="/PendingOrders" className="dashboard-order-box">
-                <div
-                  className="dashboard-order-icon"
-                  style={{ backgroundColor: "#d5f5f6" }}
-                >
-                  <LocalShippingSharpIcon style={{ color: "#047481" }} />
-                </div>
-                <div className="dashboard-order-txt">
-                  <span>Processing Orders</span>
-                  <p>{data?.Data?.OrderStatus?.processOrder}</p>
-                </div>
-              </Link>
-              <Link href="/FulfilledOrders" className="dashboard-order-box">
-                <div
-                  className="dashboard-order-icon"
-                  style={{ backgroundColor: "#def7ec" }}
-                >
-                  <DoneSharpIcon style={{ color: "#057a55" }} />
-                </div>
-                <div className="dashboard-order-txt">
-                  <span>Delivered Orders</span>
-                  <p>{data?.Data?.OrderStatus?.deliverOrder}</p>
-                </div>
-              </Link>
             </div>
           </div>
-        </div>
 
-        <div className="row">
+          {/* <div className="row">
           <div className="col-md-6">
             <Suspense fallback={<Loader />}>
               <div className="dashboard-bar-chart">
@@ -186,182 +200,185 @@ export default function Dashboard() {
               <PieChart />
             </div>
           </div>
-        </div>
+        </div> */}
 
-        <div className="row">
-          <Link href="/Trees" className="col-md-2">
-            <div
-              className="dashboard-value-box"
-              style={{
-                backgroundColor: "rgb(56 116 255 / .05)",
-                borderColor: "#3874ffcc",
-              }}
-            >
-              <div className="dashboard-value-box-icon">
-                <span>Trees</span>
-                <div
-                  className="dashboard-value-box-icon1"
-                  style={{ borderColor: "#3874ffcc" }}
-                >
-                  <ParkOutlinedIcon style={{ color: "#3874ffcc" }} />
+          <div className="row">
+            <Link href="/Trees" className="col-md-2">
+              <div
+                className="dashboard-value-box"
+                style={{
+                  backgroundColor: "rgb(56 116 255 / .05)",
+                  borderColor: "#3874ffcc",
+                }}
+              >
+                <div className="dashboard-value-box-icon">
+                  <span>Trees</span>
+                  <div
+                    className="dashboard-value-box-icon1"
+                    style={{ borderColor: "#3874ffcc" }}
+                  >
+                    <ParkOutlinedIcon style={{ color: "#3874ffcc" }} />
+                  </div>
+                </div>
+                <div className="dashboard-value-box-count">
+                  <span>
+                    This Week : <b>{data?.Data?.Trees?.weekTree}</b>
+                  </span>
+                  <span>
+                    Total : <b>{data?.Data?.Trees?.totalTree}</b>
+                  </span>
                 </div>
               </div>
-              <div className="dashboard-value-box-count">
-                <span>
-                  This Week : <b>{data?.Data?.Trees?.weekTree}</b>
-                </span>
-                <span>
-                  Total : <b>{data?.Data?.Trees?.totalTree}</b>
-                </span>
+            </Link>
+            <Link href="/Users" className="col-md-2">
+              <div
+                className="dashboard-value-box"
+                style={{
+                  backgroundColor: "rgb(254 120 49 / .05)",
+                  borderColor: "#fe7831cc",
+                }}
+              >
+                <div className="dashboard-value-box-icon">
+                  <span>Users</span>
+                  <div
+                    className="dashboard-value-box-icon1"
+                    style={{ borderColor: "#fe7831cc" }}
+                  >
+                    <Person3OutlinedIcon style={{ color: "#fe7831cc" }} />
+                  </div>
+                </div>
+                <div className="dashboard-value-box-count">
+                  <span>
+                    This Week : <b>{data?.Data?.Users?.weekUser}</b>
+                  </span>
+                  <span>
+                    Total : <b>{data?.Data?.Users?.totalUser}</b>
+                  </span>
+                </div>
+              </div>
+            </Link>
+            <div className="col-md-2">
+              <div
+                className="dashboard-value-box"
+                style={{
+                  backgroundColor: "rgb(168 85 247 / .05)",
+                  borderColor: "#a855f7cc",
+                }}
+              >
+                <div className="dashboard-value-box-icon">
+                  <span>Activity</span>
+                  <div
+                    className="dashboard-value-box-icon1"
+                    style={{ borderColor: "#a855f7cc" }}
+                  >
+                    <ShareOutlinedIcon style={{ color: "#a855f7cc" }} />
+                  </div>
+                </div>
+                <div className="dashboard-value-box-count">
+                  <span>
+                    This Week : <b>{data?.Data?.Post?.weekPost}</b>
+                  </span>
+                  <span>
+                    Total : <b>{data?.Data?.Post?.totalPost}</b>
+                  </span>
+                </div>
               </div>
             </div>
-          </Link>
-          <Link href="/Users"  className="col-md-2">
-            <div
-              className="dashboard-value-box"
-              style={{
-                backgroundColor: "rgb(254 120 49 / .05)",
-                borderColor: "#fe7831cc",
-              }}
-            >
-              <div className="dashboard-value-box-icon">
-                <span>Users</span>
-                <div
-                  className="dashboard-value-box-icon1"
-                  style={{ borderColor: "#fe7831cc" }}
-                >
-                  <Person3OutlinedIcon style={{ color: "#fe7831cc" }} />
+            <Link href="/caretakers" className="col-md-2">
+              <div
+                className="dashboard-value-box"
+                style={{
+                  backgroundColor: "rgb(6 148 162 / .05)",
+                  borderColor: "#0694a2cc",
+                }}
+              >
+                <div className="dashboard-value-box-icon">
+                  <span>Caretakers</span>
+                  <div
+                    className="dashboard-value-box-icon1"
+                    style={{ borderColor: "#0694a2cc" }}
+                  >
+                    <GroupAddOutlinedIcon style={{ color: "#0694a2cc" }} />
+                  </div>
+                </div>
+                <div className="dashboard-value-box-count">
+                  {/* <span>This Week : <b>{data.Data.Post.weekPost}</b></span>  */}
+                  <span>
+                    Total : <b>{data?.Data?.careTaker}</b>
+                  </span>
                 </div>
               </div>
-              <div className="dashboard-value-box-count">
-                <span>
-                  This Week : <b>{data?.Data?.Users?.weekUser}</b>
-                </span>
-                <span>
-                  Total : <b>{data?.Data?.Users?.totalUser}</b>
-                </span>
+            </Link>
+            <div className="col-md-2">
+              <div
+                className="dashboard-value-box"
+                style={{
+                  backgroundColor: "rgb(255 138 76 / .05)",
+                  borderColor: "#ff8a4ccc",
+                }}
+              >
+                <div className="dashboard-value-box-icon">
+                  <span>Steps count</span>
+                  <div
+                    className="dashboard-value-box-icon1"
+                    style={{ borderColor: "#ff8a4ccc" }}
+                  >
+                    <DirectionsWalkOutlinedIcon
+                      style={{ color: "#ff8a4ccc" }}
+                    />
+                  </div>
+                </div>
+                <div className="dashboard-value-box-count">
+                  <span>
+                    This Week : <b>{data?.Data?.Steps?.weekSteps}</b>
+                  </span>
+                  <span>
+                    Total : <b>{data?.Data?.Steps?.totalSteps}</b>
+                  </span>
+                </div>
               </div>
             </div>
-          </Link>
-          <div className="col-md-2">
-            <div
-              className="dashboard-value-box"
-              style={{
-                backgroundColor: "rgb(168 85 247 / .05)",
-                borderColor: "#a855f7cc",
-              }}
-            >
-              <div className="dashboard-value-box-icon">
-                <span>Activity</span>
-                <div
-                  className="dashboard-value-box-icon1"
-                  style={{ borderColor: "#a855f7cc" }}
-                >
-                  <ShareOutlinedIcon style={{ color: "#a855f7cc" }} />
+            <div className="col-md-2">
+              <div
+                className="dashboard-value-box"
+                style={{
+                  backgroundColor: "rgb(63 131 248 / 5%)",
+                  borderColor: "#3f83f8cc",
+                }}
+              >
+                <div className="dashboard-value-box-icon">
+                  <span>Coin disbursed</span>
+                  <div
+                    className="dashboard-value-box-icon1"
+                    style={{ borderColor: "#3f83f8cc" }}
+                  >
+                    <CurrencyExchangeOutlinedIcon
+                      style={{ color: "#3f83f8cc" }}
+                    />
+                  </div>
                 </div>
-              </div>
-              <div className="dashboard-value-box-count">
-                <span>
-                  This Week : <b>{data?.Data?.Post?.weekPost}</b>
-                </span>
-                <span>
-                  Total : <b>{data?.Data?.Post?.totalPost}</b>
-                </span>
+                <div className="dashboard-value-box-count">
+                  {/* <span>This Week : <b>{data.Data.Post.weekPost}</b></span>  */}
+                  <span>
+                    Total : <b>{data?.Data?.coinDisbursed}</b>
+                  </span>
+                </div>
               </div>
             </div>
           </div>
-          <Link href="/caretakers"  className="col-md-2">
-            <div
-              className="dashboard-value-box"
-              style={{
-                backgroundColor: "rgb(6 148 162 / .05)",
-                borderColor: "#0694a2cc",
-              }}
-            >
-              <div className="dashboard-value-box-icon">
-                <span>Caretakers</span>
-                <div
-                  className="dashboard-value-box-icon1"
-                  style={{ borderColor: "#0694a2cc" }}
-                >
-                  <GroupAddOutlinedIcon style={{ color: "#0694a2cc" }} />
-                </div>
-              </div>
-              <div className="dashboard-value-box-count">
-                {/* <span>This Week : <b>{data.Data.Post.weekPost}</b></span>  */}
-                <span>
-                  Total : <b>{data?.Data?.careTaker}</b>
-                </span>
-              </div>
-            </div>
-          </Link>
-          <div className="col-md-2">
-            <div
-              className="dashboard-value-box"
-              style={{
-                backgroundColor: "rgb(255 138 76 / .05)",
-                borderColor: "#ff8a4ccc",
-              }}
-            >
-              <div className="dashboard-value-box-icon">
-                <span>Steps count</span>
-                <div
-                  className="dashboard-value-box-icon1"
-                  style={{ borderColor: "#ff8a4ccc" }}
-                >
-                  <DirectionsWalkOutlinedIcon style={{ color: "#ff8a4ccc" }} />
-                </div>
-              </div>
-              <div className="dashboard-value-box-count">
-                <span>
-                  This Week : <b>{data?.Data?.Steps?.weekSteps}</b>
-                </span>
-                <span>
-                  Total : <b>{data?.Data?.Steps?.totalSteps}</b>
-                </span>
-              </div>
-            </div>
-          </div>
-          <div className="col-md-2">
-            <div
-              className="dashboard-value-box"
-              style={{
-                backgroundColor: "rgb(63 131 248 / 5%)",
-                borderColor: "#3f83f8cc",
-              }}
-            >
-              <div className="dashboard-value-box-icon">
-                <span>Coin disbursed</span>
-                <div
-                  className="dashboard-value-box-icon1"
-                  style={{ borderColor: "#3f83f8cc" }}
-                >
-                  <CurrencyExchangeOutlinedIcon
-                    style={{ color: "#3f83f8cc" }}
-                  />
-                </div>
-              </div>
-              <div className="dashboard-value-box-count">
-                {/* <span>This Week : <b>{data.Data.Post.weekPost}</b></span>  */}
-                <span>
-                  Total : <b>{data?.Data?.coinDisbursed}</b>
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
 
-        <div className="row">
-          <div className="col-md-12">
-            <div className="dashboard-table">
-              <Suspense fallback={<Loader />}>
-                {" "}
-                <ProjectTable />
-              </Suspense>
+          <div className="row">
+            <div className="col-md-12">
+              <div className="dashboard-table">
+                <Suspense fallback={<Loader />}>
+                  {" "}
+                  <ProjectTable />
+                </Suspense>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      )}
     </>
   );
 }
