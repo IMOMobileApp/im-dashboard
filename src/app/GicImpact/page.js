@@ -52,6 +52,7 @@ export default function Gicimpacct() {
         setLoading(false);
       });
     //  .catch(error => console.log('error', error))
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [apiRoute]);
 
   useEffect(() => {

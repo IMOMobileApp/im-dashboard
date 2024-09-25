@@ -54,6 +54,7 @@ export default function Caretakerdetail({ params }) {
         setName(result.Data.categoryName);
         setLoading(false);
       });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [apiRoute, params.slug]);
 
   useEffect(() => {

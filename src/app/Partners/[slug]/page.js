@@ -92,6 +92,7 @@ const userId = userData?.Data?.userId;
         setLoading(false);
       });
     //  .catch(error => console.log('error', error))
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [apiRoute, params.slug]);
 
   const fetchAllPartnerCategory = useCallback(() => {
@@ -108,6 +109,7 @@ const userId = userData?.Data?.userId;
       //  console.log(response.data.Data)
     });
     // .catch((error) => {  console.log(error);  });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [apiRoute]);
 
   useEffect(() => {

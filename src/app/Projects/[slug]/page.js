@@ -236,6 +236,7 @@ export default function Projectdetail({ params }) {
       .then
       //console.log(galleryimages)
       ();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [apiRoute, params.slug]);
   useEffect(() => {
     fetchProjectDetail();

@@ -55,6 +55,7 @@ export default function Dashboard() {
     }
 
     getData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   // const data = await getData()
 

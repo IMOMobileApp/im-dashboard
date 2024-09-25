@@ -51,7 +51,8 @@ export default function Caretakerdetail({ params } ){
               setLoading(false)
                           })
       //  .catch(error => console.log('error', error))
-      }, [apiRoute,params.slug,])
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      }, [apiRoute,params.slug])
 
       useEffect(() => {
         fetchCaretakerDetail();

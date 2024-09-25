@@ -1,3 +1,5 @@
+/* eslint-disable @next/next/no-page-custom-font */
+/* eslint-disable @next/next/no-css-tags */
 "use client";
 import { Inter } from "next/font/google";
 const inter = Inter({ subsets: ["latin"] });
