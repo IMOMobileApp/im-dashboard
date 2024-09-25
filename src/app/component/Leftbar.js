@@ -14,6 +14,7 @@ import EditNoteIcon from "@mui/icons-material/EditNote";
 import ForestIcon from "@mui/icons-material/Forest";
 import ParkIcon from "@mui/icons-material/Park";
 import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
+import SupervisorAccountIcon from '@mui/icons-material/SupervisorAccount';
 import LanguageIcon from "@mui/icons-material/Language";
 import GrassIcon from "@mui/icons-material/Grass";
 import FaceRetouchingNaturalIcon from "@mui/icons-material/FaceRetouchingNatural";
@@ -208,6 +209,11 @@ export default function Leftbar() {
               <li>
                 <Link href="/caretakers">
                   <Person4Icon /> <span>Vanamali</span>
+                </Link>
+              </li>
+              <li>
+                <Link href="/sub-admin">
+                  <SupervisorAccountIcon /> <span>Sub Admin</span>
                 </Link>
               </li>
               <li>

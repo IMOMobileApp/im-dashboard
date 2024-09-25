@@ -45,7 +45,7 @@ function EnhancedTableHead(props) {
   return (
     <TableHead>
       <TableRow>
-        <TableCell padding="checkbox">
+        {/* <TableCell padding="checkbox">
           <Checkbox
             color="primary"
             indeterminate={numSelected > 0 && numSelected < rowCount}
@@ -53,7 +53,7 @@ function EnhancedTableHead(props) {
             onChange={onSelectAllClick}
             inputProps={{ "aria-label": "select all" }}
           />
-        </TableCell>
+        </TableCell> */}
         {headCells.map((headCell) => (
           <TableCell
             key={headCell.id}
@@ -68,57 +68,54 @@ function EnhancedTableHead(props) {
   );
 }
 
-function EnhancedTableToolbar(props) {
-  const { numSelected } = props;
+// function EnhancedTableToolbar(props) {
+//   const { numSelected } = props;
 
-  return (
-    <Toolbar
-      sx={{
-        ...(numSelected > 0 && {
-          bgcolor: (theme) =>
-            alpha(
-              theme.palette.primary.main,
-              theme.palette.action.activatedOpacity
-            ),
-        }),
-      }}
-    >
-      {numSelected > 0 ? (
-        <Typography
-          sx={{ flex: "1 1 100%" }}
-          color="inherit"
-          variant="subtitle1"
-          component="div"
-        >
-          {" "}
-          {numSelected} selected{" "}
-        </Typography>
-      ) : (
-        <Typography
-          sx={{ flex: "1 1 100%" }}
-          variant="h6"
-          id="tableTitle"
-          component="div"
-        >
-          {" "}
-          Users{" "}
-        </Typography>
-      )}
-    </Toolbar>
-  );
-}
+//   return (
+//     <Toolbar
+//       sx={{
+//         ...(numSelected > 0 && {
+//           bgcolor: (theme) =>
+//             alpha(
+//               theme.palette.primary.main,
+//               theme.palette.action.activatedOpacity
+//             ),
+//         }),
+//       }}
+//     >
+//       {/* {numSelected > 0 ? (
+//         <Typography
+//           sx={{ flex: "1 1 100%" }}
+//           color="inherit"
+//           variant="subtitle1"
+//           component="div"
+//         >
+//           {" "}
+//           {numSelected} selected{" "}
+//         </Typography>
+//       ) : (
+//         <Typography
+//           sx={{ flex: "1 1 100%" }}
+//           variant="h6"
+//           id="tableTitle"
+//           component="div"
+//         >
+//           {" "}
+//           Users{" "}
+//         </Typography>
+//       )} */}
+//     </Toolbar>
+//   );
+// }
 
 export default function EnhancedTable({ setArrFunc }) {
   const apiRoute = process.env.API_ROUTE;
-  // const userId = process.env.USER_ID;
-const userData = JSON.parse(localStorage.getItem("loginResponse"));
-const userId = userData?.Data?.userId;
-//console.log("first", userId);
+  const userData = JSON.parse(localStorage.getItem("loginResponse"));
+  const userId = userData?.Data?.userId;
 
   const [selected, setSelected] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(25);
-  const [checked, setChecked] = useState(true);
   const [rows, getBloglist] = useState([]);
 
   /*----------------search const------------------*/
@@ -134,55 +131,54 @@ const userId = userData?.Data?.userId;
     setPage(0);
   };
   const isSelected = (_id) => selected.indexOf(_id) !== -1;
-  // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
-  // const visibleRows =  useMemo( () =>  rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage,),  [ page, rowsPerPage], );
   const visibleRows = rows.slice(
     page * rowsPerPage,
     page * rowsPerPage + rowsPerPage
   );
+  const [rowStatuses, setRowStatuses] = useState(
+    rows.map((row) => ({ ...row, status: JSON.parse(row.status) }))
+  );
 
-  const changeBlogStatus = (event) => {
-    var formdata = new FormData();
-    formdata.append("userId", `${userId}`);
-    formdata.append("blogId", event._id);
-    formdata.append("title", event.blog_title);
-    formdata.append("blog_image", event.blog_image);
-    formdata.append("detail", event.blog_detail);
-    formdata.append("desc", event.blog_desc);
-    formdata.append("status", event.status == "1" ? "0" : "1");
-    formdata.append("sdesc", event.short_desc);
-    formdata.append("seeds", event.seeds);
-    formdata.append("meta", event.meta_title);
-
-    var requestOptions = {
-      method: "POST",
-      body: formdata,
-      redirect: "follow",
-    };
-
-    fetch(`${apiRoute}/editblog`, requestOptions).then((response) =>
-      response.text()
+  const changeBlogStatus = (row) => {
+    const updatedRows = rowStatuses.map((r) =>
+      r.id === row.id ? { ...r, status: !r.status } : r
     );
-    //.then(result => console.log(result))
-    // .catch(error => console.log('error', error));
+    setRowStatuses(updatedRows);
+    const updatedStatus = !row.status ? "1" : "0";
+    axios
+      .post(`${apiRoute}/subAdminUpdate`, {
+        userId: userId,
+        subAdminId: row.subAdminId,
+        status: updatedStatus,
+      })
+      .then((response) => {
+        console.log("Status updated successfully:", response.data);
+      })
+      .catch((error) => {
+        console.error("Error updating status:", error);
+        setRowStatuses(
+          rowStatuses.map((r) =>
+            r.id === row.id ? { ...r, status: row.status } : r
+          )
+        );
+      });
   };
-
   const fetchAllBlogsAPI = useCallback(() => {
     let data = JSON.stringify({ userId: `${userId}` });
     let config = {
       method: "post",
       maxBodyLength: Infinity,
-      url: `${apiRoute}/userlist`,
+      url: `${apiRoute}/subAdminList`,
       headers: { "Content-Type": "application/json" },
       data: data,
     };
     axios.request(config).then((response) => {
-      getBloglist(response.data.Data);
+      getBloglist(response?.data?.Data);
       setOriginalRows(response.data.Data);
+      console.log(response);
     });
-    // .catch((error) => { // console.log(error);   });
   }, [apiRoute, userId]);
 
   useEffect(() => {
@@ -193,43 +189,17 @@ const userId = userData?.Data?.userId;
     if (event.target.checked) {
       const newSelected = rows.map((n) => n.userId);
       setSelected(newSelected);
-      //console.log(newSelected);
-      setArrFunc(newSelected);
+      // setArrFunc(newSelected);
       return;
     }
     setSelected([]);
   };
 
-  const handleClick = (event, userId) => {
-    const selectedIndex = selected.indexOf(userId);
-    let newSelected = [];
-
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, userId);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(
-        selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1)
-      );
-    }
-    setSelected(newSelected);
-    //console.log(newSelected);
-    setArrFunc(newSelected);
-  };
-
-  // useEffect(()=>{
-  //  console.log(selected)
-  // },[])
   /*----------------search filter------------------*/
   const requestSearch = (searchedVal) => {
     setSearched(searchedVal);
     // console.log(searchedVal)
     const filteredRows = originalRows.filter((row) => {
-      //return row.name.toLowerCase().includes(searchedVal.toString().toLowerCase());
       return Object.values(row).some(
         (value) =>
           String(value).toLowerCase().indexOf(searchedVal.toLowerCase()) !== -1
@@ -238,13 +208,14 @@ const userId = userData?.Data?.userId;
 
     getBloglist(filteredRows);
   };
+
   /*----------------search filter------------------*/
 
   return (
     <>
       <Box sx={{ width: "100%" }}>
-        <Paper sx={{ width: "100%", mb: 2 }}>
-          <EnhancedTableToolbar numSelected={selected.length} />
+        <Paper sx={{ width: "100%", mb: 2, p:2 }}>
+          {/* <EnhancedTableToolbar numSelected={selected.length} /> */}
           <TextField
             id="outlined-basic"
             label="Search Users"
@@ -280,16 +251,9 @@ const userId = userData?.Data?.userId;
                       selected={isItemSelected}
                       sx={{ cursor: "pointer" }}
                     >
-                      <TableCell padding="checkbox" data-attr="">
-                        <Checkbox
-                          color="primary"
-                          checked={isItemSelected}
-                          inputProps={{ "aria-labelledby": labelId }}
-                          onChange={(event) => handleClick(event, row.userId)}
-                        />
-                      </TableCell>
+                    
                       <TableCell align="right" data-attr="">
-                        {row.userId}
+                        {row.subAdminId}
                       </TableCell>
                       <TableCell align="right" data-attr="">
                         {" "}
@@ -307,15 +271,16 @@ const userId = userData?.Data?.userId;
                           checked={JSON.parse(row.status) == 1 ? true : false}
                           inputProps={{ "aria-label": "controlled" }}
                           onChange={() => changeBlogStatus(row)}
+                          disabled
                         />
                       </TableCell>
                       <TableCell align="right" data-attr="">{`${new Date(
-                        row.createdAt
+                        row.join_date
                       ).getDate()}/${
-                        new Date(row.createdAt).getMonth() + 1
-                      }/${new Date(row.createdAt).getFullYear()}`}</TableCell>
+                        new Date(row.join_date).getMonth() + 1
+                      }/${new Date(row.join_date).getFullYear()}`}</TableCell>
                       <TableCell align="right" data-attr="">
-                        <Link href={`Users/${row.userId}`}>
+                        <Link href={`sub-admin/${row.subAdminId}`}>
                           <span className="dashboard-table-icon">
                             <RemoveRedEyeIcon />
                           </span>
