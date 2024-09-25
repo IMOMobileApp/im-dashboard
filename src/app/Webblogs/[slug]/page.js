@@ -47,8 +47,6 @@ const modules = {
 
 export default function Blogdetail({ params }) {
   const apiRoute = process.env.API_ROUTE;
-  // //const userId = process.env.USER_ID;
-  // const userData = JSON.parse(localStorage.getItem("loginResponse"));
   const [userData, setUserData] = useState();
   useEffect(() => {
     const storedData = localStorage.getItem("loginResponse");
@@ -56,9 +54,7 @@ export default function Blogdetail({ params }) {
       setUserData(JSON.parse(storedData));
     }
   }, []);
-  //const userId = userData?.Data?.userId;
-const userId = userData?.Data?.userId;
-//console.log("first", userId);
+
   let router = useRouter();
 
   const toastId = useRef(null);
@@ -107,8 +103,8 @@ const userId = userData?.Data?.userId;
     }
   };
   /**---fetch all blog category--- */
-  const fetchAllWebcategoryAPI = useCallback(() => {
-    let data = JSON.stringify({ userId: `${userId}` });
+  const fetchAllWebcategoryAPI = () => {
+    let data = JSON.stringify({ userId: `${userData?.Data?.userId}` });
     let config = {
       method: "post",
       maxBodyLength: Infinity,
@@ -119,7 +115,7 @@ const userId = userData?.Data?.userId;
     axios.request(config).then((response) => {
       setBlogCat(response.data.Data);
     });
-  }, [apiRoute, userId]);
+  };
 
   const handleCat = (event) => {
     setPreCatId(event.target.value);
@@ -129,9 +125,13 @@ const userId = userData?.Data?.userId;
   /**----fetch all blog category----- */
 
   useEffect(() => {
+    const getDetails=()=>{
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
-    var raw = JSON.stringify({ userId: `${userId}`, webBlogId: params.slug });
+    var raw = JSON.stringify({
+      userId: `${userData?.Data?.userId}`,
+      webBlogId: params.slug,
+    });
     var requestOptions = {
       method: "POST",
       headers: myHeaders,
@@ -151,15 +151,19 @@ const userId = userData?.Data?.userId;
         setPreCatId(result.Data.catId);
         setPrevCatName(result.Data.catName); //date
         setDate(result.Data.date);
-        setMetaTitle(result.Data.metaTitle)
-        setMetaDesc(result.Data.metaDesc)
-        setMetaKeyword(result.Data.metaKeyword)
+        setMetaTitle(result.Data.metaTitle);
+        setMetaDesc(result.Data.metaDesc);
+        setMetaKeyword(result.Data.metaKeyword);
         setAuthor(result.Data.author);
         setLoading(false);
       });
-      console.log("first")
-    fetchAllWebcategoryAPI();
-  }, [fetchAllWebcategoryAPI,params.slug, apiRoute, userId]);
+    }
+    console.log("first");
+    if (userData) {
+      fetchAllWebcategoryAPI();
+      getDetails()
+    }
+  }, [ params.slug, apiRoute, userData]);
 
   useEffect(() => {
     // Update beginDate whenever date changes
@@ -175,7 +179,7 @@ const userId = userData?.Data?.userId;
     pendingPopup();
 
     let bodyContent = new FormData();
-    bodyContent.append("userId", `${userId}`);
+    bodyContent.append("userId", `${userData?.Data?.userId}`);
     bodyContent.append("webBlogId", data._id);
     bodyContent.append("catId", preCatId);
     bodyContent.append("title", title);
@@ -183,9 +187,9 @@ const userId = userData?.Data?.userId;
     bodyContent.append("date", beginDate);
     bodyContent.append("status", status);
     bodyContent.append("detail", value1);
-    bodyContent.append("metaTitle", metaTitle); 
+    bodyContent.append("metaTitle", metaTitle);
     bodyContent.append("metaDesc", metaDesc);
-    bodyContent.append("metaKeyword", metaKeyword); 
+    bodyContent.append("metaKeyword", metaKeyword);
     // bodyContent.append("desc", value1);
     // bodyContent.append("meta", data.meta_title); //
     // bodyContent.append("sdesc", shotDesc);
@@ -222,7 +226,7 @@ const userId = userData?.Data?.userId;
     myHeaders.append("Content-Type", "application/json");
 
     var raw = JSON.stringify({
-      userId: `${userId}`,
+      userId: `${userData?.Data?.userId}`,
       webBlogId: [data.webBlogId],
     });
 
@@ -395,7 +399,6 @@ const userId = userData?.Data?.userId;
                 </div>
                 <div className="col-md-8">
                   <div className="input-field">
-                    
                     {!isLoading && (
                       <LocalizationProvider dateAdapter={AdapterDayjs}>
                         <DemoContainer components={["DatePicker"]}>
@@ -411,7 +414,6 @@ const userId = userData?.Data?.userId;
                         </DemoContainer>
                       </LocalizationProvider>
                     )}
-
                   </div>
                 </div>
               </div>

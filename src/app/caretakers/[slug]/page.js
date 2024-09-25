@@ -18,7 +18,6 @@ import axios from "axios";
 export default function Caretakerdetail({ params }) {
   let router = useRouter();
   const apiRoute = process.env.API_ROUTE;
-    // const userData = JSON.parse(localStorage.getItem("loginResponse"));
   const [userData, setUserData] = useState();
   useEffect(() => {
     const storedData = localStorage.getItem("loginResponse");
@@ -26,7 +25,6 @@ export default function Caretakerdetail({ params }) {
       setUserData(JSON.parse(storedData));
     }
   }, []);
-  const userId = userData?.Data?.userId;
   const toastId = useRef(null);
   const [data, setData] = useState(); //API Data
   const [isLoading, setLoading] = useState(true);
@@ -40,7 +38,6 @@ export default function Caretakerdetail({ params }) {
   const [project, setProject] = useState([]);
   const [currentProject, setCurrentProject] = useState([]);
   const [projectId, setProjectId] = useState();
-  console.log(project,projectId);
   const [selectedImages, setSelectedImages] = useState(null);
   const onSelectFile = (e) => {
     setSelectedImages(e.target.files[0]);
@@ -48,7 +45,7 @@ export default function Caretakerdetail({ params }) {
   useEffect(() => {
     axios
       .post(`${apiRoute}/adminAssignProject`, {
-        userId: `${userId}`,
+        userId: `${userData?.Data?.userId}`,
       })
       .then(
         (response) => {
@@ -58,15 +55,15 @@ export default function Caretakerdetail({ params }) {
           console.log(error);
         }
       );
-  }, [apiRoute, userId]);
+  }, [apiRoute, userData]);
   const handleChange = (event) => {
     setProject(event.target.value);
   };
-  const fetchCaretakerDetail = useCallback(() => {
+  const fetchCaretakerDetail = () => {
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
     var raw = JSON.stringify({
-      userId: `${userId}`,
+      userId: `${userData?.Data?.userId}`,
       gardnerId: params.slug,
     });
     var requestOptions = {
@@ -93,11 +90,14 @@ export default function Caretakerdetail({ params }) {
       });
     //  .catch(error => console.log('error', error))
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [apiRoute, params.slug]);
+  }
 
   useEffect(() => {
+    if(userData){
+      console.log("first")
     fetchCaretakerDetail();
-  }, [fetchCaretakerDetail]);
+    }
+  }, [userData]);
 
   if (isLoading) return <Loader />;
   if (!data) return <p>No profile data</p>;
@@ -105,7 +105,7 @@ export default function Caretakerdetail({ params }) {
   async function uploadWithFormData() {
     pendingPopup();
     let bodyContent = new FormData();
-    bodyContent.append("userId", `${userId}`);
+    bodyContent.append("userId", `${userData?.Data?.userId}`);
     bodyContent.append("gardnerId", data.userId);
     bodyContent.append("profile_image", selectedImages);
     bodyContent.append("name", name);

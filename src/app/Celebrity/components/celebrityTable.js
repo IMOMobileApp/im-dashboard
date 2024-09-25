@@ -71,8 +71,6 @@ function EnhancedTableToolbar(props) {
 
 export default function CelebrityTable() {
   const apiRoute = process.env.API_ROUTE;
-  // //const userId = process.env.USER_ID;
-  // const userData = JSON.parse(localStorage.getItem("loginResponse"));
   const [userData, setUserData] = useState();
   useEffect(() => {
     const storedData = localStorage.getItem("loginResponse");
@@ -80,9 +78,6 @@ export default function CelebrityTable() {
       setUserData(JSON.parse(storedData));
     }
   }, []);
-  //const userId = userData?.Data?.userId;
-const userId = userData?.Data?.userId;
-//console.log("first", userId);
   
   const [selected, setSelected] =  useState([]);
   const [page, setPage] =  useState(0);
@@ -101,7 +96,7 @@ const userId = userData?.Data?.userId;
   const changeChampionStatus = (event) => { 
      setChecked(!checked)
     var formdata = new FormData();
-    formdata.append("userId", `${userId}`);
+    formdata.append("userId", `${userData?.Data?.userId}`);
     formdata.append("celebId", event.celebId);
     formdata.append("name", event.name);
     formdata.append("celeb_image", event.image);
@@ -122,8 +117,8 @@ const userId = userData?.Data?.userId;
   };
 
 
-const fetchAllChampionAPI=useCallback(()=>{
-  let data = JSON.stringify({ "userId": `${userId}` });
+const fetchAllChampionAPI=()=>{
+  let data = JSON.stringify({ "userId": `${userData?.Data?.userId}` });
   let config = {
     method: 'post',
     maxBodyLength: Infinity,
@@ -133,14 +128,16 @@ const fetchAllChampionAPI=useCallback(()=>{
   }; 
   axios.request(config)
   .then((response) => { 
-    getBloglist(response.data.Data);
+    getBloglist(response?.data?.Data);
   //  console.log(response.data.Data) 
   })
  // .catch((error) => {  console.log(error);  });
-}, [apiRoute, userId])
+}
 useEffect(()=>{
+  if(userData){
   fetchAllChampionAPI()
-},[fetchAllChampionAPI])
+  }
+},[userData])
  
 const handleSelectAllClick = (event) => {
   if (event.target.checked) { const newSelected = rows.map((n) => n._id); setSelected(newSelected);

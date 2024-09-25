@@ -12,8 +12,6 @@ import Select from "@mui/material/Select";
 
 export default function Addseo() {
   const apiRoute = process.env.API_ROUTE;
-  // //const userId = process.env.USER_ID;
-  // const userData = JSON.parse(localStorage.getItem("loginResponse"));
   const [userData, setUserData] = useState();
   useEffect(() => {
     const storedData = localStorage.getItem("loginResponse");
@@ -21,9 +19,7 @@ export default function Addseo() {
       setUserData(JSON.parse(storedData));
     }
   }, []);
-  //const userId = userData?.Data?.userId;
-const userId = userData?.Data?.userId;
-//console.log("first", userId);
+
   let router = useRouter();
   const toastId = useRef(null);
   const [isLoading, setLoading] = useState(true);
@@ -34,9 +30,10 @@ const userId = userData?.Data?.userId;
   const [type, setType] = useState("");
 
   useEffect(() => {
+    const getDetails=()=>{
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
-    var raw = JSON.stringify({ userId: `${userId}` });
+    var raw = JSON.stringify({ userId: `${userData?.Data?.userId}` });
     var requestOptions = {
       method: "POST",
       headers: myHeaders,
@@ -51,15 +48,19 @@ const userId = userData?.Data?.userId;
         setLoading(false);
       })
       .then(console.log(typeList));
+    }
+    if(userData){
+      getDetails();
+    }
     //  .catch(error => console.log('error', error))
-  }, [typeList,apiRoute, userId]);
+  }, [typeList,apiRoute, userData]);
   /*-------------------------------------------------------update Policy--------------------------------------------------------------------------------*/
   async function uploadWithFormData() {
     pendingPopup();
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
     const raw = JSON.stringify({
-      userId: `${userId}`,
+      userId: `${userData?.Data?.userId}`,
       metaTitle: title,
       metaDesc: value1,
       metaKeyword: keywords,

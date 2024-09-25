@@ -113,7 +113,6 @@ function EnhancedTableToolbar(props) {
 
 export default function BlogcategoryTable() {
   const apiRoute = process.env.API_ROUTE;
-    // const userData = JSON.parse(localStorage.getItem("loginResponse"));
   const [userData, setUserData] = useState();
   useEffect(() => {
     const storedData = localStorage.getItem("loginResponse");
@@ -121,7 +120,6 @@ export default function BlogcategoryTable() {
       setUserData(JSON.parse(storedData));
     }
   }, []);
-  const userId = userData?.Data?.userId;
 
   const [selected, setSelected] = useState([]);
   const [page, setPage] = useState(0);
@@ -150,7 +148,7 @@ export default function BlogcategoryTable() {
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
     var raw = JSON.stringify({
-      userId: `${userId}`,
+      userId: `${userData?.Data?.userId}`,
       catId: row.catId,
       catTitle: row.catTitle,
       blogCat_image: row.catImage,
@@ -170,8 +168,8 @@ export default function BlogcategoryTable() {
     //  .catch(error => console.log('error', error));
   };
 
-  const fetchAllWebcategoryAPI = useCallback(() => {
-    let data = JSON.stringify({ userId: `${userId}` });
+  const fetchAllWebcategoryAPI =() => {
+    let data = JSON.stringify({ userId: `${userData?.Data?.userId}` });
     let config = {
       method: "post",
       maxBodyLength: Infinity,
@@ -180,14 +178,16 @@ export default function BlogcategoryTable() {
       data: data,
     };
     axios.request(config).then((response) => {
-      getCatlist(response.data.Data);
+      getCatlist(response?.data?.Data);
       //  console.log(response.data.Data)
     });
     // .catch((error) => {  console.log(error);  });
-  }, [apiRoute, userId]);
+  }
   useEffect(() => {
-    fetchAllWebcategoryAPI();
-  }, [fetchAllWebcategoryAPI]);
+    if (userData) {
+      fetchAllWebcategoryAPI();
+    }
+  }, [userData]);
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {

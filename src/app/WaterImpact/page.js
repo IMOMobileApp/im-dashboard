@@ -9,7 +9,6 @@ import { toast } from "react-toastify";
 
 export default function Waterimpacct() {
   const apiRoute = process.env.API_ROUTE;
-    // const userData = JSON.parse(localStorage.getItem("loginResponse"));
   const [userData, setUserData] = useState();
   useEffect(() => {
     const storedData = localStorage.getItem("loginResponse");
@@ -17,9 +16,7 @@ export default function Waterimpacct() {
       setUserData(JSON.parse(storedData));
     }
   }, []);
-  //const userId = userData?.Data?.userId;
-const userId = userData?.Data?.userId;
-//console.log("first", userId);
+
   const toastId = useRef(null);
   const [data, setData] = useState(); //API Data
   const [isLoading, setLoading] = useState(true);
@@ -27,10 +24,10 @@ const userId = userData?.Data?.userId;
   const [o2, setO2] = useState();
   const [date, setDate] = useState();
 
-  const fetchCaretakerDetail = useCallback(() => {
+  const fetchCaretakerDetail = () => {
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
-    var raw = JSON.stringify({ userId: `${userId}` });
+    var raw = JSON.stringify({ userId: `${userData?.Data?.userId}` });
     var requestOptions = {
       method: "POST",
       headers: myHeaders,
@@ -49,11 +46,12 @@ const userId = userData?.Data?.userId;
       });
     //  .catch(error => console.log('error', error))
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [apiRoute]);
-
+  }
   useEffect(() => {
+    if(userData){
     fetchCaretakerDetail();
-  }, [fetchCaretakerDetail]);
+    }
+  }, [userData]);
 
   if (isLoading) return <Loader />;
   if (!data) return <p>No profile data</p>;
@@ -64,7 +62,7 @@ const userId = userData?.Data?.userId;
     const myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
     const raw = JSON.stringify({
-      userId: `${userId}`,
+      userId: `${userData?.Data?.userId}`,
       waterSaved: data,
       harvestSystem: co2,
       driedBorewell: o2,

@@ -183,7 +183,9 @@ const userId = userData?.Data?.userId;
     // .catch((error) => {  console.log(error);  });
   }, [apiRoute, userId]);
   useEffect(() => {
+    if(userId){
     fetchAllChampionAPI();
+    }
   }, [fetchAllChampionAPI]);
 
   const handleSelectAllClick = (event) => {

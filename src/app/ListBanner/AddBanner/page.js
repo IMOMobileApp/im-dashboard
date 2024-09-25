@@ -19,7 +19,6 @@ export default function AddnewProduct() {
       setUserData(JSON.parse(storedData));
     }
   }, []);
-  const userId = userData?.Data?.userId;
   const toastId = useRef(null);
   const [selectedImages, setSelectedImages] = useState(null);
   const [bannerName, setBannerName] = useState("banner new");
@@ -56,7 +55,7 @@ export default function AddnewProduct() {
   async function uploadWithFormData() {
     pendingPopup();
     let bodyContent = new FormData();
-    bodyContent.append("userId", `${userId}`);
+    bodyContent.append("userId", `${userData?.Data?.userId}`);
     bodyContent.append("title", bannerName);
     bodyContent.append("banner_image", selectedImages[0]);
     bodyContent.append("status", 1);
@@ -67,8 +66,6 @@ export default function AddnewProduct() {
       body: bodyContent,
     });
     const data = await response.json();
-    //  console.log(data);
-    //  console.log(userId, bannerName, selectedImages, 1, inventoryType, mediatype);
     function successPopup() {
       toast.success(`${data.Message}`);
       toast.dismiss(toastId.current);

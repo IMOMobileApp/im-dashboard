@@ -9,8 +9,6 @@ import RedeemTreeTable from "../components/RedeemTreeTable";
 
 export default function Redeemdetail({ params }) {
   const apiRoute = process.env.API_ROUTE;
-  // //const userId = process.env.USER_ID;
-  // const userData = JSON.parse(localStorage.getItem("loginResponse"));
   const [userData, setUserData] = useState();
   useEffect(() => {
     const storedData = localStorage.getItem("loginResponse");
@@ -18,11 +16,7 @@ export default function Redeemdetail({ params }) {
       setUserData(JSON.parse(storedData));
     }
   }, []);
-  //const userId = userData?.Data?.userId;
-const userId = userData?.Data?.userId;
-//console.log("first", userId);
   let router = useRouter();
-
   const toastId = useRef(null);
   const [data, setData] = useState(); //API Data
   const [careTaker, setCareTaker] = useState();
@@ -31,9 +25,10 @@ const userId = userData?.Data?.userId;
   //   const [shotDesc, setShortDesc]= useState();
 
   useEffect(() => {
+    const getDetails=()=>{
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
-    var raw = JSON.stringify({ userId: `${userId}`, orderId: params.slug });
+    var raw = JSON.stringify({ userId: `${userData?.Data?.userId}`, orderId: params.slug });
     var requestOptions = {
       method: "POST",
       headers: myHeaders,
@@ -47,8 +42,12 @@ const userId = userData?.Data?.userId;
         setCareTaker(result.careTaker);
         setLoading(false);
       });
+    }
+    if(userData){
+      getDetails();
+    }
     //  .catch(error => console.log('error', error))
-  }, [params.slug, apiRoute, userId]);
+  }, [params.slug, apiRoute, userData]);
 
   if (isLoading) return <Loader />;
   if (!data) return <p>No profile data</p>;

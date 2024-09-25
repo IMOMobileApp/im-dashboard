@@ -183,13 +183,15 @@ const userId = userData?.Data?.userId;
       data: data,
     };
     axios.request(config).then((response) => {
-      getBloglist(response.data.Data);
+      getBloglist(response?.data?.Data);
       //  console.log(response.data.Data)
     });
     // .catch((error) => {  console.log(error);  });
   }, [apiRoute, userId]);
   useEffect(() => {
+    if(userId){
     fetchAllCaretakerAPI();
+    }
   }, [fetchAllCaretakerAPI]);
 
   const handleSelectAllClick = (event) => {

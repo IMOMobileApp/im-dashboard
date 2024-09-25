@@ -41,8 +41,6 @@ const modules = {
 
 export default function Blogdetail({ params }) {
   const apiRoute = process.env.API_ROUTE;
-  // //const userId = process.env.USER_ID;
-  // const userData = JSON.parse(localStorage.getItem("loginResponse"));
   const [userData, setUserData] = useState();
   useEffect(() => {
     const storedData = localStorage.getItem("loginResponse");
@@ -50,9 +48,6 @@ export default function Blogdetail({ params }) {
       setUserData(JSON.parse(storedData));
     }
   }, []);
-  //const userId = userData?.Data?.userId;
-const userId = userData?.Data?.userId;
-//console.log("first", userId);
   let router = useRouter();
 
   const toastId = useRef(null);
@@ -93,8 +88,8 @@ const userId = userData?.Data?.userId;
   };
 
   /**---fetch all blog category--- */
-  const fetchAllAppcategoryAPI = useCallback(() => {
-    let data = JSON.stringify({ userId: `${userId}` });
+  const fetchAllAppcategoryAPI = () => {
+    let data = JSON.stringify({ userId: `${userData?.Data?.userId}` });
     let config = {
       method: "post",
       maxBodyLength: Infinity,
@@ -105,19 +100,21 @@ const userId = userData?.Data?.userId;
     axios.request(config).then((response) => {
       setBlogCat(response.data.Data);
     });
-  }, [apiRoute, userId]);
+  };
 
   const handleCat = (event) => {
     setPreCatId(event.target.value);
-    //setPrevCatName(event.target.value)
-    // console.log(event.target.value)
   };
   /**----fetch all blog category----- */
 
   useEffect(() => {
+    const getDetails=()=>{
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
-    var raw = JSON.stringify({ userId: `${userId}`, blogId: params.slug });
+    var raw = JSON.stringify({
+      userId: `${userData?.Data?.userId}`,
+      blogId: params.slug,
+    });
     var requestOptions = {
       method: "POST",
       headers: myHeaders,
@@ -139,10 +136,13 @@ const userId = userData?.Data?.userId;
         setPrevCatName(result.Data.catName);
         setLoading(false);
       });
+    }
     //  .catch(error => console.log('error', error))
-
-    fetchAllAppcategoryAPI();
-  }, [fetchAllAppcategoryAPI,params.slug, apiRoute, userId]);
+    if (userData) {
+      fetchAllAppcategoryAPI();
+      getDetails()
+    }
+  }, [params.slug, apiRoute, userData]);
 
   if (isLoading) return <Loader />;
   if (!data) return <p>No profile data</p>;
@@ -151,7 +151,7 @@ const userId = userData?.Data?.userId;
     pendingPopup();
 
     let bodyContent = new FormData();
-    bodyContent.append("userId", `${userId}`);
+    bodyContent.append("userId", `${userData?.Data?.userId}`);
     bodyContent.append("blogId", data._id);
     bodyContent.append("title", title);
     bodyContent.append("blog_image", selectedImages);
@@ -172,6 +172,7 @@ const userId = userData?.Data?.userId;
     function successPopup() {
       toast.success(`${data1.Message}`);
       toast.dismiss(toastId.current);
+      router.back();
     }
     function failPopup() {
       toast.error(`${data1.Message}`);
@@ -193,7 +194,7 @@ const userId = userData?.Data?.userId;
     myHeaders.append("Content-Type", "application/json");
 
     var raw = JSON.stringify({
-      userId: `${userId}`,
+      userId: `${userData?.Data?.userId}`,
       blogId: [data._id],
     });
 

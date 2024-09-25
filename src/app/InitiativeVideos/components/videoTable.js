@@ -166,7 +166,9 @@ const fetchAllVideoAPI=useCallback(()=>{
  // .catch((error) => {  console.log(error);  });
 }, [props.videoId,apiRoute, userId])
 useEffect(()=>{
+  if(userId){
   fetchAllVideoAPI()
+  }
 },[fetchAllVideoAPI])
  
 const handleSelectAllClick = (event) => {

@@ -16,8 +16,6 @@ import axios from "axios";
 
 export default function Categorydetail({ params }) {
   const apiRoute = process.env.API_ROUTE;
-  // //const userId = process.env.USER_ID;
-  // const userData = JSON.parse(localStorage.getItem("loginResponse"));
   const [userData, setUserData] = useState();
   useEffect(() => {
     const storedData = localStorage.getItem("loginResponse");
@@ -25,9 +23,6 @@ export default function Categorydetail({ params }) {
       setUserData(JSON.parse(storedData));
     }
   }, []);
-  //const userId = userData?.Data?.userId;
-const userId = userData?.Data?.userId;
-//console.log("first", userId);
   let router = useRouter();
   const toastId = useRef(null);
   const [data, setData] = useState(); //API Data
@@ -53,40 +48,48 @@ const userId = userData?.Data?.userId;
   };
 
   useEffect(() => {
-    var myHeaders = new Headers();
-    myHeaders.append("Content-Type", "application/json");
-    var raw = JSON.stringify({ userId: `${userId}`, quizId: params.slug });
-    var requestOptions = {
-      method: "POST",
-      headers: myHeaders,
-      body: raw,
-      redirect: "follow",
-    };
-    fetch(`${apiRoute}/quizdetail`, requestOptions)
-      .then((response) => response.json())
-      .then((result) => {
-        setData(result.Data);
-        setTitle(result.Data.quizCatName);
-        setQuestion(result.Data.quiz);
-        setOpt1(result.Data.opt1);
-        setOpt2(result.Data.opt2);
-        setOpt3(result.Data.opt3);
-        setOpt4(result.Data.opt4);
-        setAns(result.Data.ans);
-        setStatus(result.Data.status);
-        setLoading(false);
+    const getDetails = () => {
+      var myHeaders = new Headers();
+      myHeaders.append("Content-Type", "application/json");
+      var raw = JSON.stringify({
+        userId: `${userData?.Data?.userId}`,
+        quizId: params.slug,
       });
-    if (opt1 == ans) {
-      setAns(opt1);
-    } else if (opt2 == ans) {
-      setAns(opt2);
-    } else if (opt3 == ans) {
-      setAns(opt3);
-    } else if (opt4 == ans) {
-      setAns(opt4);
+      var requestOptions = {
+        method: "POST",
+        headers: myHeaders,
+        body: raw,
+        redirect: "follow",
+      };
+      fetch(`${apiRoute}/quizdetail`, requestOptions)
+        .then((response) => response.json())
+        .then((result) => {
+          setData(result.Data);
+          setTitle(result.Data.quizCatName);
+          setQuestion(result.Data.quiz);
+          setOpt1(result.Data.opt1);
+          setOpt2(result.Data.opt2);
+          setOpt3(result.Data.opt3);
+          setOpt4(result.Data.opt4);
+          setAns(result.Data.ans);
+          setStatus(result.Data.status);
+          setLoading(false);
+        });
+      if (opt1 == ans) {
+        setAns(opt1);
+      } else if (opt2 == ans) {
+        setAns(opt2);
+      } else if (opt3 == ans) {
+        setAns(opt3);
+      } else if (opt4 == ans) {
+        setAns(opt4);
+      }
+    };
+    if (userData) {
+      getDetails();
     }
     //  .catch(error => console.log('error', error))
-  }, [opt1, opt2, opt3, opt4, ans, params.slug, apiRoute, userId]);
+  }, [opt1, opt2, opt3, opt4, ans, params.slug, apiRoute, userData]);
   if (isLoading) return <Loader />;
   if (!data) return <p>No Quiz found</p>;
   /*-------------------------------------------------------update quiz-----------------------------------------------------------------------------------*/
@@ -94,7 +97,7 @@ const userId = userData?.Data?.userId;
   const uploadWithFormData = () => {
     pendingPopup();
     let data = JSON.stringify({
-      userId: `${userId}`,
+      userId: `${userData?.Data?.userId}`,
       quizId: params.slug,
       quiz: question,
       opt1: opt1,
@@ -136,7 +139,10 @@ const userId = userData?.Data?.userId;
   /**------delete quiz--------- */
   const deleteQuiz = () => {
     pendingPopup();
-    let data = JSON.stringify({ userId: `${userId}`, quizId: params.slug });
+    let data = JSON.stringify({
+      userId: `${userData?.Data?.userId}`,
+      quizId: params.slug,
+    });
     let config = {
       method: "post",
       maxBodyLength: Infinity,

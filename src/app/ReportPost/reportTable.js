@@ -93,8 +93,6 @@ function EnhancedTableToolbar(props) {
 
 export default function BlogcategoryTable() {
   const apiRoute = process.env.API_ROUTE;
-  // //const userId = process.env.USER_ID;
-  // const userData = JSON.parse(localStorage.getItem("loginResponse"));
   const [userData, setUserData] = useState();
   useEffect(() => {
     const storedData = localStorage.getItem("loginResponse");
@@ -102,9 +100,6 @@ export default function BlogcategoryTable() {
       setUserData(JSON.parse(storedData));
     }
   }, []);
-  //const userId = userData?.Data?.userId;
-const userId = userData?.Data?.userId;
-//console.log("first", userId);
 
   const [selected, setSelected] = useState([]);
   const [page, setPage] = useState(0);
@@ -129,8 +124,8 @@ const userId = userData?.Data?.userId;
     page * rowsPerPage + rowsPerPage
   );
 
-  const fetchAllWebcategoryAPI = useCallback(() => {
-    let data = JSON.stringify({ userId: `${userId}` });
+  const fetchAllWebcategoryAPI = () => {
+    let data = JSON.stringify({ userId: `${userData?.Data?.userId}` });
     let config = {
       method: "post",
       maxBodyLength: Infinity,
@@ -139,14 +134,16 @@ const userId = userData?.Data?.userId;
       data: data,
     };
     axios.request(config).then((response) => {
-      getCatlist(response.data.Data);
+      getCatlist(response?.data?.Data);
       //  console.log(response.data.Data)
     });
     // .catch((error) => {  console.log(error);  });
-  }, [apiRoute, userId]);
+  };
   useEffect(() => {
-    fetchAllWebcategoryAPI();
-  }, [fetchAllWebcategoryAPI]);
+    if (userData) {
+      fetchAllWebcategoryAPI();
+    }
+  }, [userData]);
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {

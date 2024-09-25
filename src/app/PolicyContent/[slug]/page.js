@@ -36,8 +36,6 @@ const modules = {
 
 export default function Policydetail({ params }) {
   const apiRoute = process.env.API_ROUTE;
-  // //const userId = process.env.USER_ID;
-  // const userData = JSON.parse(localStorage.getItem("loginResponse"));
   const [userData, setUserData] = useState();
   useEffect(() => {
     const storedData = localStorage.getItem("loginResponse");
@@ -45,9 +43,6 @@ export default function Policydetail({ params }) {
       setUserData(JSON.parse(storedData));
     }
   }, []);
-  //const userId = userData?.Data?.userId;
-const userId = userData?.Data?.userId;
-//console.log("first", userId);
   let router = useRouter();
 
   const toastId = useRef(null);
@@ -63,22 +58,16 @@ const userId = userData?.Data?.userId;
   };
 
   const handleQuillChange = (value) => {
-    // Replace <p> with <div> in the HTML content
-    // const modifiedContent = value.replace(/<p>/g, `<div>`).replace(/<\/p>/g, '</div>');
-    // Set the modified content to state
-    //  setValue(modifiedContent);
     setValue(value);
   };
   {
-    /*  const MemoizedReactQuill = useMemo(({ value, onChange, modules, style }) => (
-        <ReactQuill theme="snow" value={value} onChange={onChange} modules={modules} style={style} />
-	)); */
   }
 
   useEffect(() => {
+    const getDetails=()=>{
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
-    var raw = JSON.stringify({ userId: `${userId}`, policyId: params.slug });
+    var raw = JSON.stringify({ userId: `${userData?.Data?.userId}`, policyId: params.slug });
     var requestOptions = {
       method: "POST",
       headers: myHeaders,
@@ -94,8 +83,12 @@ const userId = userData?.Data?.userId;
         setSelectedImages(result.Data.policy_image);
         setLoading(false);
       });
+    }
+    if(userData){
+      getDetails();
+    }
     //  .catch(error => console.log('error', error))
-  }, [params.slug, apiRoute, userId]);
+  }, [params.slug, apiRoute, userData]);
 
   if (isLoading) return <Loader />;
   if (!data) return <p>No profile data</p>;
@@ -107,7 +100,7 @@ const userId = userData?.Data?.userId;
     pendingPopup();
 
     let bodyContent = new FormData();
-    bodyContent.append("userId", `${userId}`);
+    bodyContent.append("userId", `${userData?.Data?.userId}`);
     bodyContent.append("policyId", params.slug);
     bodyContent.append("policyName", title);
     bodyContent.append("about_image", selectedImages);

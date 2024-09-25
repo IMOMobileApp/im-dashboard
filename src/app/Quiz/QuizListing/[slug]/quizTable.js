@@ -117,8 +117,6 @@ function EnhancedTableToolbar(props) {
 
 export default function QuizTable(props) {
   const apiRoute = process.env.API_ROUTE;
-  // //const userId = process.env.USER_ID;
-  // const userData = JSON.parse(localStorage.getItem("loginResponse"));
   const [userData, setUserData] = useState();
   useEffect(() => {
     const storedData = localStorage.getItem("loginResponse");
@@ -126,9 +124,7 @@ export default function QuizTable(props) {
       setUserData(JSON.parse(storedData));
     }
   }, []);
-  //const userId = userData?.Data?.userId;
-const userId = userData?.Data?.userId;
-//console.log("first", userId);
+
   const [selected, setSelected] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(25);
@@ -155,7 +151,7 @@ const userId = userData?.Data?.userId;
     // setChecked(!checked)
     console.log(event);
     let data = JSON.stringify({
-      userId: `${userId}`,
+      userId: `${userData?.Data?.userId}`,
       quizId: event._id,
       quiz: event.quiz,
       opt1: event.opt1,
@@ -199,8 +195,11 @@ const userId = userData?.Data?.userId;
     //      .catch(error => console.log('error', error));
   };
 
-  const fetchAllquizAPI = useCallback(() => {
-    let data = JSON.stringify({ userId: `${userId}`, catId: props.url });
+  const fetchAllquizAPI = () => {
+    let data = JSON.stringify({
+      userId: `${userData?.Data?.userId}`,
+      catId: props.url,
+    });
     let config = {
       method: "post",
       maxBodyLength: Infinity,
@@ -210,14 +209,16 @@ const userId = userData?.Data?.userId;
     };
 
     axios.request(config).then((response) => {
-      getQuizlist(response.data.Data);
+      getQuizlist(response?.data?.Data);
     });
     // .catch((error) => { // console.log(error);   });
-  }, [apiRoute, userId, props.url]);
+  };
 
   useEffect(() => {
-    fetchAllquizAPI();
-  }, [fetchAllquizAPI]);
+    if (userData) {
+      fetchAllquizAPI();
+    }
+  }, [userData]);
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {

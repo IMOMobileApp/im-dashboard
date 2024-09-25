@@ -16,7 +16,6 @@ import axios from "axios";
 export default function Userdetail({ params }) {
   let router = useRouter();
   const apiRoute = process.env.API_ROUTE;
-    // const userData = JSON.parse(localStorage.getItem("loginResponse"));
   const [userData, setUserData] = useState();
   useEffect(() => {
     const storedData = localStorage.getItem("loginResponse");
@@ -24,7 +23,6 @@ export default function Userdetail({ params }) {
       setUserData(JSON.parse(storedData));
     }
   }, []);
-  const userId = userData?.Data?.userId;
   const [isLoading, setLoading] = useState(true);
   const [orderView, setOrderView] = useState(false);
   const [treeApprovalView, setTreeApprovalView] = useState(false);
@@ -170,9 +168,10 @@ export default function Userdetail({ params }) {
   };
 
   useEffect(() => {
+    const getDetails=()=>{
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
-    var raw = JSON.stringify({ userId: `${userId}`, subAdminId: params.slug });
+    var raw = JSON.stringify({ userId: `${userData?.Data?.userId}`, subAdminId: params.slug });
     var requestOptions = {
       method: "POST",
       headers: myHeaders,
@@ -217,12 +216,17 @@ export default function Userdetail({ params }) {
         setStatus(result?.Data?.status);
         setLoading(false);
       });
-  }, [params.slug, apiRoute, userId]);
+  }
+  if(userData){
+    getDetails();
+  }
+},[userData])
+  
   /*-------------------------------------------------------update Blog-----------------------------------------------------------------------------------*/
   const uploadData = useCallback(async () => {
     pendingPopup();
     let data = JSON.stringify({
-      userId: userId,
+      userId: userData?.Data?.userId,
       name: name,
       email: email,
       phone: phone,
@@ -258,7 +262,6 @@ export default function Userdetail({ params }) {
       brochureView: brochureView == true ? "1" : "0",
       seoView: seoView == true ? "1" : "0",
     });
-    console.log("data", data);
     let config = {
       method: "post",
       maxBodyLength: Infinity,
@@ -316,7 +319,7 @@ export default function Userdetail({ params }) {
     speciesView,
     treeApprovalView,
     treeView,
-    userId,
+    userData,
     userView,
     vanamaliView,
     waterImpactView,

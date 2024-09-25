@@ -106,8 +106,6 @@ function EnhancedTableToolbar(props) {
 
 export default function BlogcategoryTable() {
   const apiRoute = process.env.API_ROUTE;
-  // //const userId = process.env.USER_ID;
-  // const userData = JSON.parse(localStorage.getItem("loginResponse"));
   const [userData, setUserData] = useState();
   useEffect(() => {
     const storedData = localStorage.getItem("loginResponse");
@@ -115,14 +113,10 @@ export default function BlogcategoryTable() {
       setUserData(JSON.parse(storedData));
     }
   }, []);
-  //const userId = userData?.Data?.userId;
-const userId = userData?.Data?.userId;
-//console.log("first", userId);
 
   const [selected, setSelected] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(25);
-  //const [checked, setChecked] = useState();
   const [rows, getCatlist] = useState([]);
 
   const handleChangePage = (event, newPage) => {
@@ -146,7 +140,7 @@ const userId = userData?.Data?.userId;
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
     var raw = JSON.stringify({
-      userId: `${userId}`,
+      userId: `${userData?.Data?.userId}`,
       catId: row.catId,
       categoryName: row.categoryName,
       status: row.status == "1" ? "2" : "1",
@@ -165,8 +159,8 @@ const userId = userData?.Data?.userId;
     //  .catch(error => console.log('error', error));
   };
 
-  const fetchAllWebcategoryAPI = useCallback(() => {
-    let data = JSON.stringify({ userId: `${userId}` });
+  const fetchAllWebcategoryAPI = () => {
+    let data = JSON.stringify({ userId: `${userData?.Data?.userId}` });
     let config = {
       method: "post",
       maxBodyLength: Infinity,
@@ -175,14 +169,16 @@ const userId = userData?.Data?.userId;
       data: data,
     };
     axios.request(config).then((response) => {
-      getCatlist(response.data.Data);
+      getCatlist(response?.data?.Data);
       //  console.log(response.data.Data)
     });
     // .catch((error) => {  console.log(error);  });
-  }, [apiRoute, userId]);
+  }
   useEffect(() => {
-    fetchAllWebcategoryAPI();
-  }, [fetchAllWebcategoryAPI]);
+    if (userData) {
+      fetchAllWebcategoryAPI();
+    }
+  }, [userData]);
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {

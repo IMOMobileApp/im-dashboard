@@ -16,7 +16,6 @@ import Switch from "@mui/material/Switch";
 export default function Caretakerdetail({ params }) {
   let router = useRouter();
   const apiRoute = process.env.API_ROUTE;
-    // const userData = JSON.parse(localStorage.getItem("loginResponse"));
   const [userData, setUserData] = useState();
   useEffect(() => {
     const storedData = localStorage.getItem("loginResponse");
@@ -24,9 +23,7 @@ export default function Caretakerdetail({ params }) {
       setUserData(JSON.parse(storedData));
     }
   }, []);
-  //const userId = userData?.Data?.userId;
-const userId = userData?.Data?.userId;
-//console.log("first", userId);
+
   const toastId = useRef(null);
   const [data, setData] = useState(); //API Data
   const [isLoading, setLoading] = useState(true);
@@ -37,11 +34,11 @@ const userId = userData?.Data?.userId;
     //  console.log(selectedImages)
   };
 
-  const fetchSpeciesDetail = useCallback(() => {
+  const fetchSpeciesDetail = () => {
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
     var raw = JSON.stringify({
-      userId: `${userId}`,
+      userId: `${userData?.Data?.userId}`,
       formId: params.slug,
     });
     var requestOptions = {
@@ -60,11 +57,13 @@ const userId = userData?.Data?.userId;
       });
     //  .catch(error => console.log('error', error))
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [apiRoute, params.slug]);
+  }
 
   useEffect(() => {
+    if(userData){
     fetchSpeciesDetail();
-  }, [fetchSpeciesDetail]);
+    }
+  }, [userData]);
 
   if (isLoading) return <Loader />;
   if (!data) return <p>No data</p>;

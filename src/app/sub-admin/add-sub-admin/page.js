@@ -12,7 +12,6 @@ import { toast } from "react-toastify";
 export default function AddSubAdmin() {
   let router = useRouter();
   const apiRoute = process.env.API_ROUTE;
-    // const userData = JSON.parse(localStorage.getItem("loginResponse"));
   const [userData, setUserData] = useState();
   useEffect(() => {
     const storedData = localStorage.getItem("loginResponse");
@@ -20,7 +19,6 @@ export default function AddSubAdmin() {
       setUserData(JSON.parse(storedData));
     }
   }, []);
-  const userId = userData?.Data?.userId;
   const [orderView, setOrderView] = useState(false);
   const [treeApprovalView, setTreeApprovalView] = useState(false);
   const [userView, setUserView] = useState(false);
@@ -54,7 +52,7 @@ export default function AddSubAdmin() {
   const [email, setEmail] = useState();
   const [phone, setPhone] = useState();
   const [password, setPassword] = useState();
-  console.log(orderView, treeApprovalView);
+
   const handleOrder = (event) => {
     setOrderView(event.target.checked);
   };
@@ -139,12 +137,11 @@ export default function AddSubAdmin() {
   const handleSeo = (event) => {
     setSeoView(event.target.checked);
   };
-  console.log(orderView);
   /*-------------------------------------------------------update Blog-----------------------------------------------------------------------------------*/
   const uploadData = useCallback(async () => {
     pendingPopup();
     let data = JSON.stringify({
-      userId: userId,
+      userId: userData?.Data?.userId,
       name: name,
       email: email,
       phone: phone,
@@ -236,7 +233,7 @@ export default function AddSubAdmin() {
     speciesView,
     treeApprovalView,
     treeView,
-    userId,
+    userData,
     userView,
     vanamaliView,
     waterImpactView,

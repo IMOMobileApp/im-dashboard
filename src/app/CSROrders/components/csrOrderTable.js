@@ -116,8 +116,6 @@ function EnhancedTableToolbar(props) {
 
 export default function CSROrderTable() {
   const apiRoute = process.env.API_ROUTE;
-  // //const userId = process.env.USER_ID;
-  // const userData = JSON.parse(localStorage.getItem("loginResponse"));
   const [userData, setUserData] = useState();
   useEffect(() => {
     const storedData = localStorage.getItem("loginResponse");
@@ -125,8 +123,7 @@ export default function CSROrderTable() {
       setUserData(JSON.parse(storedData));
     }
   }, []);
-  const userId = userData?.Data?.userId;
-//console.log("first", userId);
+
   const [selected, setSelected] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(25);
@@ -149,8 +146,8 @@ export default function CSROrderTable() {
     page * rowsPerPage + rowsPerPage
   );
 
-  const fetchAllProjects = useCallback(() => {
-    let data = JSON.stringify({ userId: `${userId}` });
+  const fetchAllProjects =() => {
+    let data = JSON.stringify({ userId: `${userData?.Data?.userId}` });
     let config = {
       method: "post",
       maxBodyLength: Infinity,
@@ -159,15 +156,17 @@ export default function CSROrderTable() {
       data: data,
     };
     axios.request(config).then((response) => {
-      getProjectlist(response.data.Data);
+      getProjectlist(response?.data?.Data);
       // console.log(response.data.Data)
     });
     //  .catch((error) => {  console.log(error);  });
-  }, [apiRoute, userId]);
+  }
 
   useEffect(() => {
+    if(userData){
     fetchAllProjects();
-  }, [fetchAllProjects]);
+    }
+  }, [userData]);
 
   return (
     <>

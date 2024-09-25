@@ -10,7 +10,6 @@ import Link from "next/link";
 
 export default function Gicimpacct() {
   const apiRoute = process.env.API_ROUTE;
-    // const userData = JSON.parse(localStorage.getItem("loginResponse"));
   const [userData, setUserData] = useState();
   useEffect(() => {
     const storedData = localStorage.getItem("loginResponse");
@@ -18,8 +17,7 @@ export default function Gicimpacct() {
       setUserData(JSON.parse(storedData));
     }
   }, []);
-  const userId = userData?.Data?.userId;
-  //console.log("first", userId);
+
   const toastId = useRef(null);
   const [data, setData] = useState(); //API Data
   const [isLoading, setLoading] = useState(true);
@@ -29,10 +27,10 @@ export default function Gicimpacct() {
   const [employees, setEmployees] = useState();
   const [date, setDate] = useState();
 
-  const fetchCaretakerDetail = useCallback(() => {
+  const fetchCaretakerDetail = () => {
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
-    var raw = JSON.stringify({ userId: `${userId}` });
+    var raw = JSON.stringify({ userId: `${userData?.Data?.userId}` });
     var requestOptions = {
       method: "POST",
       headers: myHeaders,
@@ -53,11 +51,13 @@ export default function Gicimpacct() {
       });
     //  .catch(error => console.log('error', error))
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [apiRoute]);
+  }
 
   useEffect(() => {
+    if(userData){
     fetchCaretakerDetail();
-  }, [fetchCaretakerDetail]);
+    }
+  }, [userData]);
 
   if (isLoading) return <Loader />;
   if (!data) return <p>No data found</p>;
@@ -68,7 +68,7 @@ export default function Gicimpacct() {
     const myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
     const raw = JSON.stringify({
-      userId: `${userId}`,
+      userId: `${userData?.Data?.userId}`,
       saplingPlanted: data,
       co2Absorbed: co2,
       literProduced: o2,

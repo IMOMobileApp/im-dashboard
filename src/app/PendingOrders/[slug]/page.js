@@ -20,8 +20,8 @@ export default function Pendingdetail({ params }) {
     }
   }, []);
   //const userId = userData?.Data?.userId;
-const userId = userData?.Data?.userId;
-//console.log("first", userId);
+  const userId = userData?.Data?.userId;
+  //console.log("first", userId);
   let router = useRouter();
 
   const toastId = useRef(null);
@@ -32,24 +32,32 @@ const userId = userData?.Data?.userId;
   //   const [shotDesc, setShortDesc]= useState();
 
   useEffect(() => {
-    var myHeaders = new Headers();
-    myHeaders.append("Content-Type", "application/json");
-    var raw = JSON.stringify({ userId: `${userId}`, orderId: params.slug });
-    var requestOptions = {
-      method: "POST",
-      headers: myHeaders,
-      body: raw,
-      redirect: "follow",
-    };
-    fetch(`${apiRoute}/pendingorderdetail`, requestOptions)
-      .then((response) => response.json())
-      .then((result) => {
-        setData(result.Data);
-        setCareTaker(result.careTaker);
-        setLoading(false);
+    const getDetails = () => {
+      var myHeaders = new Headers();
+      myHeaders.append("Content-Type", "application/json");
+      var raw = JSON.stringify({
+        userId: `${userData?.Data?.userId}`,
+        orderId: params.slug,
       });
+      var requestOptions = {
+        method: "POST",
+        headers: myHeaders,
+        body: raw,
+        redirect: "follow",
+      };
+      fetch(`${apiRoute}/pendingorderdetail`, requestOptions)
+        .then((response) => response.json())
+        .then((result) => {
+          setData(result.Data);
+          setCareTaker(result.careTaker);
+          setLoading(false);
+        });
+    };
+    if (userData) {
+      getDetails();
+    }
     //  .catch(error => console.log('error', error))
-  }, [params.slug, apiRoute, userId]);
+  }, [params.slug, apiRoute, userData]);
 
   if (isLoading) return <Loader />;
   if (!data) return <p>No profile data</p>;

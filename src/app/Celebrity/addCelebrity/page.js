@@ -20,7 +20,6 @@ export default function Addchampion() {
       setUserData(JSON.parse(storedData));
     }
   }, []);
-  const userId = userData?.Data?.userId;
   let router = useRouter();
   const toastId = useRef(null);
   const [title, setTitle] = useState();
@@ -44,7 +43,7 @@ export default function Addchampion() {
   async function uploadWithFormData() {
     pendingPopup();
     let bodyContent = new FormData();
-    bodyContent.append("userId", `${userId}`);
+    bodyContent.append("userId", `${userData?.Data?.userId}`);
     bodyContent.append("name", title);
     bodyContent.append("celeb_image", selectedImages);
     bodyContent.append("designation", desc);

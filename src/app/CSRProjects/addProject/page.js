@@ -21,7 +21,6 @@ const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
 export default function Addproject() {
   let router = useRouter();
-    // const userData = JSON.parse(localStorage.getItem("loginResponse"));
   const [userData, setUserData] = useState();
   useEffect(() => {
     const storedData = localStorage.getItem("loginResponse");
@@ -29,8 +28,7 @@ export default function Addproject() {
       setUserData(JSON.parse(storedData));
     }
   }, []);
-  const userId = userData?.Data?.userId;
-  //console.log("first", userId);
+
   const toastId = useRef(null);
   const [description, setDescription] = useState("<p></p>");
   const [name, setName] = useState();
@@ -109,7 +107,7 @@ export default function Addproject() {
   async function uploadWithFormData() {
     pendingPopup();
     let bodyContent = new FormData();
-    bodyContent.append("userId", `${userId}`);
+    bodyContent.append("userId", `${userData?.Data?.userId}`);
     bodyContent.append("name", name);
     bodyContent.append("project_image", selectedImages);
     bodyContent.append("description", description);
@@ -181,7 +179,7 @@ export default function Addproject() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          userId: `${userId}`,
+          userId: `${userData?.Data?.userId}`,
           speciesArray: speciesArray,
         }),
       }
@@ -192,10 +190,12 @@ export default function Addproject() {
   };
 
   useEffect(() => {
+    if(userData){
     getSpecies();
     speciesArray;
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [userData]);
 
   const handleChange = (index, e) => {
     setFormValues((prevFormValues) => {

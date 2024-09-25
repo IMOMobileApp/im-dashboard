@@ -99,8 +99,6 @@ function EnhancedTableToolbar(props) {
 
 export default function ProjectTreeTable(props) {
   const apiRoute = process.env.API_ROUTE;
-  // //const userId = process.env.USER_ID;
-  // const userData = JSON.parse(localStorage.getItem("loginResponse"));
   const [userData, setUserData] = useState();
   useEffect(() => {
     const storedData = localStorage.getItem("loginResponse");
@@ -108,9 +106,7 @@ export default function ProjectTreeTable(props) {
       setUserData(JSON.parse(storedData));
     }
   }, []);
-  //const userId = userData?.Data?.userId;
-const userId = userData?.Data?.userId;
-//console.log("first", userId);
+
   const [selected, setSelected] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(25);
@@ -133,9 +129,9 @@ const userId = userData?.Data?.userId;
     page * rowsPerPage + rowsPerPage
   );
 
-  const fetchAllProjects = useCallback(() => {
+  const fetchAllProjects = () => {
     let data = JSON.stringify({
-      userId: `${userId}`,
+      userId: `${userData?.Data?.userId}`,
       proId: `${props.urlSlug}`,
     });
     let config = {
@@ -146,15 +142,17 @@ const userId = userData?.Data?.userId;
       data: data,
     };
     axios.request(config).then((response) => {
-      getProjectlist(response.data.Data);
+      getProjectlist(response?.data?.Data);
       // console.log(response.data.Data)
     });
     //  .catch((error) => {  console.log(error);  });
-  }, [props.urlSlug, apiRoute, userId]);
+  }
 
   useEffect(() => {
+    if(userData){
     fetchAllProjects();
-  }, [fetchAllProjects]);
+    }
+  }, [userData]);
 
   return (
     <>

@@ -71,7 +71,9 @@ const userId = userData?.Data?.userId;
   }, [date]);
 
   useEffect(() => {
+    if(userId){
     fetchAllWebcategoryAPI();
+    }
   }, [fetchAllWebcategoryAPI,apiRoute, userId]);
   /*-------------------------------------------------------update album--------------------------------------------------------------------------------*/
   async function uploadWithFormData() {

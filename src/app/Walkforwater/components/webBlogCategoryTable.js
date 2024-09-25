@@ -180,13 +180,15 @@ const userId = userData?.Data?.userId;
       data: data,
     };
     axios.request(config).then((response) => {
-      getCatlist(response.data.Data);
+      getCatlist(response?.data?.Data);
       //  console.log(response.data.Data)
     });
     // .catch((error) => {  console.log(error);  });
   }, [apiRoute, userId]);
   useEffect(() => {
+    if(userId){
     fetchAllWebcategoryAPI();
+    }
   }, [fetchAllWebcategoryAPI]);
 
   const handleSelectAllClick = (event) => {

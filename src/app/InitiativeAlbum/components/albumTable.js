@@ -178,7 +178,9 @@ const userId = userData?.Data?.userId;
     });
   }, [props.albumId, apiRoute, userId]);
   useEffect(() => {
+    if(userId){
     fetchAllBlogsAPI();
+    }
   }, [fetchAllBlogsAPI]);
 
   const handleSelectAllClick = (event) => {

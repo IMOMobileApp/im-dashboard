@@ -21,7 +21,12 @@ const headCells = [
   { id: "treeId", numeric: false, disablePadding: false, label: "Tree Id" },
   { id: "cat_state", numeric: false, disablePadding: false, label: "Image" },
   { id: "cat_img", numeric: false, disablePadding: false, label: "Species" },
-  { id: "cat_certificate", numeric: false, disablePadding: false, label: "Certificate" },
+  {
+    id: "cat_certificate",
+    numeric: false,
+    disablePadding: false,
+    label: "Certificate",
+  },
 ];
 
 function EnhancedTableHead(props) {
@@ -87,8 +92,6 @@ function EnhancedTableToolbar(props) {
 
 export default function RedeemTreeTable(props) {
   const apiRoute = process.env.API_ROUTE;
-  // //const userId = process.env.USER_ID;
-    // const userData = JSON.parse(localStorage.getItem("loginResponse"));
   const [userData, setUserData] = useState();
   useEffect(() => {
     const storedData = localStorage.getItem("loginResponse");
@@ -96,8 +99,6 @@ export default function RedeemTreeTable(props) {
       setUserData(JSON.parse(storedData));
     }
   }, []);
-  const userId = userData?.Data?.userId;
-  //console.log("first", userId);
   const [selected, setSelected] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(25);
@@ -120,8 +121,11 @@ export default function RedeemTreeTable(props) {
     page * rowsPerPage + rowsPerPage
   );
 
-  const fetchAllProjects = useCallback(() => {
-    let data = JSON.stringify({ userId: `${userId}`, orderId: props.orderURL });
+  const fetchAllProjects = () => {
+    let data = JSON.stringify({
+      userId: `${userData?.Data?.userId}`,
+      orderId: props.orderURL,
+    });
     let config = {
       method: "post",
       maxBodyLength: Infinity,
@@ -130,15 +134,15 @@ export default function RedeemTreeTable(props) {
       data: data,
     };
     axios.request(config).then((response) => {
-      getProjectlist(response.data.treeList);
-      // console.log(response.data.Data)
+      getProjectlist(response?.data?.treeList);
     });
-    //  .catch((error) => {  console.log(error);  });
-  }, [apiRoute, userId, props.orderURL]);
+  };
 
   useEffect(() => {
-    fetchAllProjects();
-  }, [fetchAllProjects]);
+    if (userData) {
+      fetchAllProjects();
+    }
+  }, [userData]);
 
   return (
     <>
@@ -220,7 +224,7 @@ export default function RedeemTreeTable(props) {
                           "No certificate"
                         )}
                       </TableCell>
-                      </TableRow>
+                    </TableRow>
                   );
                 })}
                 {emptyRows > 0 && (

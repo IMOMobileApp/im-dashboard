@@ -110,8 +110,6 @@ function EnhancedTableToolbar(props) {
 
 export default function EnhancedTable({ setArrFunc }) {
   const apiRoute = process.env.API_ROUTE;
-  // //const userId = process.env.USER_ID;
-  // const userData = JSON.parse(localStorage.getItem("loginResponse"));
   const [userData, setUserData] = useState();
   useEffect(() => {
     const storedData = localStorage.getItem("loginResponse");
@@ -119,9 +117,6 @@ export default function EnhancedTable({ setArrFunc }) {
       setUserData(JSON.parse(storedData));
     }
   }, []);
-  //const userId = userData?.Data?.userId;
-const userId = userData?.Data?.userId;
-//console.log("first", userId);
 
   const [selected, setSelected] = useState([]);
   const [page, setPage] = useState(0);
@@ -153,7 +148,7 @@ const userId = userData?.Data?.userId;
 
   const changeBlogStatus = (event) => {
     var formdata = new FormData();
-    formdata.append("userId", `${userId}`);
+    formdata.append("userId", `${userData?.Data?.userId}`);
     formdata.append("blogId", event._id);
     formdata.append("title", event.blog_title);
     formdata.append("blog_image", event.blog_image);
@@ -177,8 +172,8 @@ const userId = userData?.Data?.userId;
     // .catch(error => console.log('error', error));
   };
 
-  const fetchAllBlogsAPI = useCallback(() => {
-    let data = JSON.stringify({ userId: `${userId}` });
+  const fetchAllBlogsAPI = () => {
+    let data = JSON.stringify({ userId: `${userData?.Data?.userId}` });
     let config = {
       method: "post",
       maxBodyLength: Infinity,
@@ -187,15 +182,17 @@ const userId = userData?.Data?.userId;
       data: data,
     };
     axios.request(config).then((response) => {
-      getBloglist(response.data.Data);
-      setOriginalRows(response.data.Data);
+      getBloglist(response?.data?.Data);
+      setOriginalRows(response?.data?.Data);
     });
     // .catch((error) => { // console.log(error);   });
-  }, [apiRoute, userId]);
+  }
 
   useEffect(() => {
-    fetchAllBlogsAPI();
-  }, [fetchAllBlogsAPI]);
+    if (userData) {
+      fetchAllBlogsAPI();
+    }
+  }, [userData]);
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
@@ -251,7 +248,7 @@ const userId = userData?.Data?.userId;
   return (
     <>
       <Box sx={{ width: "100%" }}>
-        <Paper sx={{ width: "100%", mb: 2 }}>
+        <Paper sx={{ width: "100%", mb: 2,px:2 }}>
           <EnhancedTableToolbar numSelected={selected.length} />
           <TextField
             id="outlined-basic"

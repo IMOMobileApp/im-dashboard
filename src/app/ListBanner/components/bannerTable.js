@@ -105,8 +105,6 @@ function EnhancedTableToolbar(props) {
 }
 export default function BlogTable() {
   const apiRoute = process.env.API_ROUTE;
-  // //const userId = process.env.USER_ID;
-  // const userData = JSON.parse(localStorage.getItem("loginResponse"));
   const [userData, setUserData] = useState();
   useEffect(() => {
     const storedData = localStorage.getItem("loginResponse");
@@ -114,9 +112,6 @@ export default function BlogTable() {
       setUserData(JSON.parse(storedData));
     }
   }, []);
-  //const userId = userData?.Data?.userId;
-const userId = userData?.Data?.userId;
-//console.log("first", userId);
   const [selected, setSelected] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(25);
@@ -141,7 +136,7 @@ const userId = userData?.Data?.userId;
   const changeBannerStatus = (event) => {
     setChecked(!checked);
     var formdata = new FormData();
-    formdata.append("userId", `${userId}`);
+    formdata.append("userId", `${userData?.Data?.userId}`);
     formdata.append("bannerId", event._id);
     formdata.append("title", event.ban_title);
     formdata.append("banner_image", event.ban_image);
@@ -155,8 +150,8 @@ const userId = userData?.Data?.userId;
       .then((response) => response.text())
       .then(fetchAllBannersAPI); // fetch again all blog api after sending post request of changinh status
   };
-  const fetchAllBannersAPI = useCallback(() => {
-    let data = JSON.stringify({ userId: `${userId}` });
+  const fetchAllBannersAPI =() => {
+    let data = JSON.stringify({ userId: `${userData?.Data?.userId}` });
     let config = {
       method: "post",
       maxBodyLength: Infinity,
@@ -165,14 +160,16 @@ const userId = userData?.Data?.userId;
       data: data,
     };
     axios.request(config).then((response) => {
-      getBannerlist(response.data.Data);
+      getBannerlist(response?.data?.Data);
     });
     // .catch((error) => { // console.log(error);   });
-  }, [apiRoute, userId]);
+  }
 
   useEffect(() => {
+    if(userData){
     fetchAllBannersAPI();
-  }, [fetchAllBannersAPI]);
+    }
+  }, [userData]);
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {

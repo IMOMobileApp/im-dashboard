@@ -135,10 +135,10 @@ export default function ProjectTable() {
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
   // const visibleRows =  useMemo( () =>  rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage,),  [ page, rowsPerPage], );
-  const visibleRows = rows.slice(
-    page * rowsPerPage,
-    page * rowsPerPage + rowsPerPage
-  );
+  const visibleRows = Array.isArray(rows)
+  ? rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+  : [];
+
 
   const changeProjectStatus = (event) => {
     //setChecked(!checked)
@@ -185,13 +185,16 @@ export default function ProjectTable() {
       data: data,
     };
     axios.request(config).then((response) => {
-      getProjectlist(response.data.Data);
+      const projects = response?.data?.Data || [];
+      getProjectlist(projects); 
     });
     //  .catch((error) => {  console.log(error);  });
   }, [apiRoute, userId]);
 
   useEffect(() => {
+    if(userId){
     fetchAllProjects();
+    }
   }, [fetchAllProjects]);
 
   return (
@@ -211,7 +214,7 @@ export default function ProjectTable() {
                 rowCount={rows.length}
               />
               <TableBody>
-                {visibleRows.map((row, index) => {
+                {visibleRows.length > 0 && visibleRows.map((row, index) => {
                   const isItemSelected = isSelected(row._id);
                   const labelId = `enhanced-table-checkbox-${index}`;
 

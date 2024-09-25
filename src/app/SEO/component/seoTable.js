@@ -97,8 +97,6 @@ function EnhancedTableToolbar(props) {
 
 export default function SeoTable() {
   const apiRoute = process.env.API_ROUTE;
-  // //const userId = process.env.USER_ID;
-  // const userData = JSON.parse(localStorage.getItem("loginResponse"));
   const [userData, setUserData] = useState();
   useEffect(() => {
     const storedData = localStorage.getItem("loginResponse");
@@ -106,9 +104,6 @@ export default function SeoTable() {
       setUserData(JSON.parse(storedData));
     }
   }, []);
-  //const userId = userData?.Data?.userId;
-const userId = userData?.Data?.userId;
-//console.log("first", userId);
   const [selected, setSelected] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(25);
@@ -131,7 +126,7 @@ const userId = userData?.Data?.userId;
     page * rowsPerPage + rowsPerPage
   );
 
-  const fetchAllProjects = useCallback(() => {
+  const fetchAllProjects =() => {
     // let data = JSON.stringify({ "userId": `${userId}` });
     let config = {
       method: "post",
@@ -143,11 +138,13 @@ const userId = userData?.Data?.userId;
     axios.request(config).then((response) => {
       getProjectlist(response.data.Data);
     });
-  }, [apiRoute]);
+  }
 
   useEffect(() => {
+    if(userData){
     fetchAllProjects();
-  }, [fetchAllProjects]);
+    }
+  }, [userData]);
 
   return (
     <>

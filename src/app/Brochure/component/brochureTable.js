@@ -64,8 +64,6 @@ function EnhancedTableToolbar(props) {
 
 export default function BrochureTable() {
   const apiRoute = process.env.API_ROUTE;
-  // //const userId = process.env.USER_ID;
-  // const userData = JSON.parse(localStorage.getItem("loginResponse"));
   const [userData, setUserData] = useState();
   useEffect(() => {
     const storedData = localStorage.getItem("loginResponse");
@@ -73,8 +71,7 @@ export default function BrochureTable() {
       setUserData(JSON.parse(storedData));
     }
   }, []);
-const userId = userData?.Data?.userId;
-//console.log("first", userId);
+
   const [selected, setSelected] =  useState([]);
   const [page, setPage] =  useState(0);
   const [rowsPerPage, setRowsPerPage] =  useState(25);
@@ -91,8 +88,8 @@ const userId = userData?.Data?.userId;
 
 
 
-const fetchAllProjects=useCallback(()=>{
- let data = JSON.stringify({ "userId": `${userId}` });
+const fetchAllProjects=()=>{
+ let data = JSON.stringify({ "userId": `${userData?.Data?.userId}` });
   let config = {
     method: 'post',
     maxBodyLength: Infinity,
@@ -107,12 +104,12 @@ const fetchAllProjects=useCallback(()=>{
   })
 //  .catch((error) => {  console.log(error);  });
 
-}, [apiRoute, userId])
-
-
+}
 useEffect(() => {
+  if(userData){
   fetchAllProjects();
-}, [fetchAllProjects])
+  }
+}, [userData])
 
   return (
        <>

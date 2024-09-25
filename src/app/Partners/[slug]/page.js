@@ -20,7 +20,6 @@ import axios from "axios";
 export default function Caretakerdetail({ params }) {
   let router = useRouter();
   const apiRoute = process.env.API_ROUTE;
-    // const userData = JSON.parse(localStorage.getItem("loginResponse"));
   const [userData, setUserData] = useState();
   useEffect(() => {
     const storedData = localStorage.getItem("loginResponse");
@@ -28,31 +27,20 @@ export default function Caretakerdetail({ params }) {
       setUserData(JSON.parse(storedData));
     }
   }, []);
-  //const userId = userData?.Data?.userId;
-const userId = userData?.Data?.userId;
-//console.log("first", userId);
+
   const toastId = useRef(null);
   const [data, setData] = useState(); //API Data
   const [isLoading, setLoading] = useState(true);
   const [name, setName] = useState("");
   const [designation, setDesignation] = useState();
   const [content, setContent] = useState();
-  const [facebook, setFacebook] = useState();
-  const [twitter, setTwitter] = useState();
-  const [linkedin, setLinkedin] = useState();
   const [sequence, setSequence] = useState();
-  //const [type, setType] = useState("");
-  //const [typeId, setTypeId] = useState()
   const [status, setStatus] = useState();
-
   const [catList, setCatList] = useState();
-
   const [preCatId, setPreCatId] = useState();
   const [preCatName, setPrevCatName] = useState();
 
   const handleAns = (event) => {
-    //setType(event.target.value); console.log(event.target.name)
-    // setType(event.target.value)
     setPreCatId(event.target.value);
   };
 
@@ -61,11 +49,11 @@ const userId = userData?.Data?.userId;
     setSelectedImages(e.target.files[0]);
   };
 
-  const fetchCaretakerDetail = useCallback(() => {
+  const fetchCaretakerDetail = () => {
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
     var raw = JSON.stringify({
-      userId: `${userId}`,
+      userId: `${userData?.Data?.userId}`,
       governId: params.slug,
     });
     var requestOptions = {
@@ -81,8 +69,6 @@ const userId = userData?.Data?.userId;
         setName(result.Data.name);
         setDesignation(result.Data.designation);
         setContent(result.Data.content);
-        // setType(result.Data.type)
-        //setTypeId(result.Data.typeId)
         setSequence(result.Data.sequence);
         setPreCatId(result.Data.typeId);
         setPrevCatName(result.Data.type);
@@ -91,12 +77,10 @@ const userId = userData?.Data?.userId;
         setSelectedImages(result.Data.image);
         setLoading(false);
       });
-    //  .catch(error => console.log('error', error))
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [apiRoute, params.slug]);
+  }
 
-  const fetchAllPartnerCategory = useCallback(() => {
-    let data = JSON.stringify({ userId: `${userId}` });
+  const fetchAllPartnerCategory = () => {
+    let data = JSON.stringify({ userId: `${userData?.Data?.userId}` });
     let config = {
       method: "post",
       maxBodyLength: Infinity,
@@ -106,16 +90,17 @@ const userId = userData?.Data?.userId;
     };
     axios.request(config).then((response) => {
       setCatList(response.data.Data);
-      //  console.log(response.data.Data)
+
     });
-    // .catch((error) => {  console.log(error);  });
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [apiRoute]);
+  }
 
   useEffect(() => {
+    if(userData){
     fetchCaretakerDetail();
     fetchAllPartnerCategory();
-  }, [fetchCaretakerDetail,fetchAllPartnerCategory]);
+    }
+  }, [userData]);
 
   if (isLoading) return <Loader />;
   if (!data) return <p>No profile data</p>;
@@ -123,7 +108,7 @@ const userId = userData?.Data?.userId;
   async function uploadWithFormData() {
     pendingPopup();
     let bodyContent = new FormData();
-    bodyContent.append("userId", `${userId}`);
+    bodyContent.append("userId", `${userData?.Data?.userId}`);
     bodyContent.append("governId", data.governId);
     bodyContent.append("add_image", selectedImages);
     bodyContent.append("name", name);
@@ -166,7 +151,7 @@ const userId = userData?.Data?.userId;
     myHeaders.append("Content-Type", "application/json");
 
     var raw = JSON.stringify({
-      userId: `${userId}`,
+      userId: `${userData?.Data?.userId}`,
       governId: [data.governId],
     });
 

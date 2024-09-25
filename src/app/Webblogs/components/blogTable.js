@@ -126,8 +126,6 @@ function EnhancedTableToolbar(props) {
 
 export default function BlogTable() {
   const apiRoute = process.env.API_ROUTE;
-  // //const userId = process.env.USER_ID;
-  // const userData = JSON.parse(localStorage.getItem("loginResponse"));
   const [userData, setUserData] = useState();
   useEffect(() => {
     const storedData = localStorage.getItem("loginResponse");
@@ -135,9 +133,6 @@ export default function BlogTable() {
       setUserData(JSON.parse(storedData));
     }
   }, []);
-  //const userId = userData?.Data?.userId;
-const userId = userData?.Data?.userId;
-//console.log("first", userId);
 
   const [selected, setSelected] = useState([]);
   const [page, setPage] = useState(0);
@@ -163,7 +158,7 @@ const userId = userData?.Data?.userId;
   const changeBlogStatus = (event) => {
     setChecked(!checked);
     var formdata = new FormData();
-    formdata.append("userId", `${userId}`);
+    formdata.append("userId", `${userData?.Data?.userId}`);
     formdata.append("blogId", event._id);
     formdata.append("title", event.blog_title);
     formdata.append("blog_image", event.blog_image);
@@ -183,8 +178,8 @@ const userId = userData?.Data?.userId;
       .then(fetchAllBlogsAPI);
   };
 
-  const fetchAllBlogsAPI = useCallback(() => {
-    let data = JSON.stringify({ userId: `${userId}` });
+  const fetchAllBlogsAPI = () => {
+    let data = JSON.stringify({ userId: `${userData?.Data?.userId}` });
     let config = {
       method: "post",
       maxBodyLength: Infinity,
@@ -193,14 +188,16 @@ const userId = userData?.Data?.userId;
       data: data,
     };
     axios.request(config).then((response) => {
-      getBloglist(response.data.Data);
+      getBloglist(response?.data?.Data);
       //  console.log(response.data.Data)
     });
     // .catch((error) => {  console.log(error);  });
-  }, [apiRoute, userId]);
+  }
   useEffect(() => {
+    if(userData){
     fetchAllBlogsAPI();
-  }, [fetchAllBlogsAPI]);
+    }
+  }, [userData]);
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {

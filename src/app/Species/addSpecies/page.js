@@ -14,8 +14,6 @@ import UploadFileIcon from "@mui/icons-material/UploadFile";
 
 export default function AddSpecies() {
   const apiRoute = process.env.API_ROUTE;
-  // //const userId = process.env.USER_ID;
-  // const userData = JSON.parse(localStorage.getItem("loginResponse"));
   const [userData, setUserData] = useState();
   useEffect(() => {
     const storedData = localStorage.getItem("loginResponse");
@@ -23,9 +21,7 @@ export default function AddSpecies() {
       setUserData(JSON.parse(storedData));
     }
   }, []);
-  //const userId = userData?.Data?.userId;
-const userId = userData?.Data?.userId;
-//console.log("first", userId);
+
   let router = useRouter();
   const toastId = useRef(null);
   const [name, setName] = useState();
@@ -39,18 +35,6 @@ const userId = userData?.Data?.userId;
     //  console.log(selectedImages)
   };
 
-  // useEffect(()=>{
-  //   axios.post(`${apiRoute}/addspecies`, {
-  //     userId: `${userId}`
-  //   })
-  //   .then((response) => {
-  //     console.log(response);
-  //     setProjectId(response.data.Data)
-  //   }, (error) => {
-  //     console.log(error);
-  //   });
-  // },[])
-
   /*-------------------------------------------------------update species----------------------------------------------------------------------------*/
   async function uploadWithFormData() {
     pendingPopup();
@@ -60,7 +44,7 @@ const userId = userData?.Data?.userId;
     };
 
     let bodyContent = new FormData();
-    bodyContent.append("userId", `${userId}`);
+    bodyContent.append("userId", `${userData?.Data?.userId}`);
     bodyContent.append("name", name);
     bodyContent.append("scienceName", scienceName);
     bodyContent.append("description", shotDesc);

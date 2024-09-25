@@ -71,7 +71,6 @@ function EnhancedTableHead(props) {
 
 export default function EnhancedTable({ setArrFunc }) {
   const apiRoute = process.env.API_ROUTE;
-    // const userData = JSON.parse(localStorage.getItem("loginResponse"));
   const [userData, setUserData] = useState();
   useEffect(() => {
     const storedData = localStorage.getItem("loginResponse");
@@ -79,7 +78,6 @@ export default function EnhancedTable({ setArrFunc }) {
       setUserData(JSON.parse(storedData));
     }
   }, []);
-  const userId = userData?.Data?.userId;
 
   const [selected, setSelected] = useState([]);
   const [page, setPage] = useState(0);
@@ -90,8 +88,8 @@ export default function EnhancedTable({ setArrFunc }) {
   const [originalRows, setOriginalRows] = useState([]);
   const [searched, setSearched] = useState("");
   /*----------------search const------------------*/
-  const fetchAllBlogsAPI = useCallback(() => {
-    let data = JSON.stringify({ userId: `${userId}` });
+  const fetchAllBlogsAPI = () => {
+    let data = JSON.stringify({ userId: `${userData?.Data?.userId}` });
     let config = {
       method: "post",
       maxBodyLength: Infinity,
@@ -104,11 +102,13 @@ export default function EnhancedTable({ setArrFunc }) {
       setOriginalRows(response?.data?.Data);
       console.log(response);
     });
-  }, [apiRoute, userId]);
+  }
 
   useEffect(() => {
+    if(userData){
     fetchAllBlogsAPI();
-  }, [fetchAllBlogsAPI]);
+    }
+  }, [userData]);
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -135,7 +135,7 @@ export default function EnhancedTable({ setArrFunc }) {
     const updatedStatus = !row.status ? "1" : "0";
     axios
       .post(`${apiRoute}/subAdminUpdate`, {
-        userId: userId,
+        userId: userData?.Data?.userId,
         subAdminId: row.subAdminId,
         status: updatedStatus,
       })

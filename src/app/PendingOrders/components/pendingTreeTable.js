@@ -100,8 +100,6 @@ function EnhancedTableToolbar(props) {
 export default function PendingTreeTable(props) {
   const toastId = useRef(null);
   const apiRoute = process.env.API_ROUTE;
-  // //const userId = process.env.USER_ID;
-    // const userData = JSON.parse(localStorage.getItem("loginResponse"));
   const [userData, setUserData] = useState();
   useEffect(() => {
     const storedData = localStorage.getItem("loginResponse");
@@ -109,8 +107,6 @@ export default function PendingTreeTable(props) {
       setUserData(JSON.parse(storedData));
     }
   }, []);
-  const userId = userData?.Data?.userId;
-  //console.log("first", userId);
   const [selected, setSelected] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(25);
@@ -150,7 +146,7 @@ export default function PendingTreeTable(props) {
   const handleRejectRequest = () => {
     pendingPopup();
     let data = JSON.stringify({
-      userId: `${userId}`,
+      userId: `${userData?.Data?.userId}`,
       careId: careidNow,
       message: disapproveText,
     });
@@ -191,7 +187,7 @@ export default function PendingTreeTable(props) {
   //approve request------------------
   const handleApproveRequest = (e) => {
     pendingPopup();
-    let data = JSON.stringify({ userId: `${userId}`, careId: e });
+    let data = JSON.stringify({ userId: `${userData?.Data?.userId}`, careId: e });
     let config = {
       method: "post",
       maxBodyLength: Infinity,
@@ -251,8 +247,8 @@ export default function PendingTreeTable(props) {
     page * rowsPerPage + rowsPerPage
   );
 
-  const fetchAllProjects = useCallback(() => {
-    let data = JSON.stringify({ userId: `${userId}`, orderId: props.orderURL });
+  const fetchAllProjects = () => {
+    let data = JSON.stringify({ userId: `${userData?.Data?.userId}`, orderId: props.orderURL });
     let config = {
       method: "post",
       maxBodyLength: Infinity,
@@ -261,14 +257,16 @@ export default function PendingTreeTable(props) {
       data: data,
     };
     axios.request(config).then((response) => {
-      getProjectlist(response.data.treeList);
+      getProjectlist(response?.data?.treeList);
     });
     //  .catch((error) => {  console.log(error);  });
-  }, [apiRoute, userId, props.orderURL]);
+  };
 
   useEffect(() => {
+    if(userData){
     fetchAllProjects();
-  }, [fetchAllProjects]);
+    }
+  }, [userData]);
 
   return (
     <>

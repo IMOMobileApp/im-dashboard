@@ -19,7 +19,6 @@ import Select from "@mui/material/Select";
 export default function Caretakerdetail({ params }) {
   let router = useRouter();
   const apiRoute = process.env.API_ROUTE;
-    // const userData = JSON.parse(localStorage.getItem("loginResponse"));
   const [userData, setUserData] = useState();
   useEffect(() => {
     const storedData = localStorage.getItem("loginResponse");
@@ -27,8 +26,7 @@ export default function Caretakerdetail({ params }) {
       setUserData(JSON.parse(storedData));
     }
   }, []);
-  const userId = userData?.Data?.userId;
-  //console.log("first", userId);
+
   const toastId = useRef(null);
   const [data, setData] = useState(); //API Data
   const [isLoading, setLoading] = useState(true);
@@ -55,7 +53,7 @@ export default function Caretakerdetail({ params }) {
   async function uploadWithFormData() {
     pendingPopup();
     let bodyContent = new FormData();
-    bodyContent.append("userId", `${userId}`);
+    bodyContent.append("userId", `${userData?.Data?.userId}`);
     bodyContent.append("add_image", selectedImages);
     bodyContent.append("name", name);
     bodyContent.append("designation", designation);
@@ -68,7 +66,7 @@ export default function Caretakerdetail({ params }) {
     bodyContent.append("sequence", sequence);
 
     let response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_ROUTE}/addfounder`,
+      `${apiRoute}/addfounder`,
       { method: "POST", body: bodyContent }
     );
 
@@ -78,6 +76,7 @@ export default function Caretakerdetail({ params }) {
     function successPopup() {
       toast.success(`${data1.Message}`);
       toast.dismiss(toastId.current);
+      router.back();
     }
     function failPopup() {
       toast.error(`${data1.Message}`);

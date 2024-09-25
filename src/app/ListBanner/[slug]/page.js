@@ -17,8 +17,6 @@ import Select from "@mui/material/Select";
 
 export default function Bannerdetail({ params }) {
   const apiRoute = process.env.API_ROUTE;
-  // //const userId = process.env.USER_ID;
-  // const userData = JSON.parse(localStorage.getItem("loginResponse"));
   const [userData, setUserData] = useState();
   useEffect(() => {
     const storedData = localStorage.getItem("loginResponse");
@@ -26,9 +24,6 @@ export default function Bannerdetail({ params }) {
       setUserData(JSON.parse(storedData));
     }
   }, []);
-  //const userId = userData?.Data?.userId;
-const userId = userData?.Data?.userId;
-//console.log("first", userId);
   let router = useRouter();
   const toastId = useRef(null);
   const [data, setData] = useState(); //API Data
@@ -72,35 +67,43 @@ const userId = userData?.Data?.userId;
   };
 
   useEffect(() => {
-    var myHeaders = new Headers();
-    myHeaders.append("Content-Type", "application/json");
-    var raw = JSON.stringify({ userId: `${userId}`, bannerId: params.slug });
-    var requestOptions = {
-      method: "POST",
-      headers: myHeaders,
-      body: raw,
-      redirect: "follow",
-    };
-    fetch(`${apiRoute}/bannerdetail`, requestOptions)
-      .then((response) => response.json())
-      .then((result) => {
-        setData(result.Data);
-        setTitle(result.Data.ban_title);
-        setSelectedImages(result.Data.ban_image);
-        setStatus(result.Data.status);
-        setInventoryType(result.Data.type);
-        setMediaType(result.Data.mediaType);
-        setLoading(false);
+    const getDetails = () => {
+      var myHeaders = new Headers();
+      myHeaders.append("Content-Type", "application/json");
+      var raw = JSON.stringify({
+        userId: `${userData?.Data?.userId}`,
+        bannerId: params.slug,
       });
+      var requestOptions = {
+        method: "POST",
+        headers: myHeaders,
+        body: raw,
+        redirect: "follow",
+      };
+      fetch(`${apiRoute}/bannerdetail`, requestOptions)
+        .then((response) => response.json())
+        .then((result) => {
+          setData(result.Data);
+          setTitle(result.Data.ban_title);
+          setSelectedImages(result.Data.ban_image);
+          setStatus(result.Data.status);
+          setInventoryType(result.Data.type);
+          setMediaType(result.Data.mediaType);
+          setLoading(false);
+        });
+    };
+    if (userData) {
+      getDetails();
+    }
     //  .catch(error => console.log('error', error))
-  }, [params.slug, apiRoute, userId]);
+  }, [params.slug, apiRoute, userData]);
   if (isLoading) return <Loader />;
   if (!data) return <p>No Banner found</p>;
   /*-------------------------------------------------------update Banner-----------------------------------------------------------------------------------*/
   async function uploadWithFormData() {
     pendingPopup();
     let bodyContent = new FormData();
-    bodyContent.append("userId", `${userId}`);
+    bodyContent.append("userId", `${userData?.Data?.userId}`);
     bodyContent.append("bannerId", data._id);
     bodyContent.append("title", title);
     bodyContent.append("banner_image", selectedImages);
@@ -137,7 +140,7 @@ const userId = userData?.Data?.userId;
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
     var raw = JSON.stringify({
-      userId: `${userId}`,
+      userId: `${userData?.Data?.userId}`,
       bannerId: [data._id],
     });
     var requestOptions = {

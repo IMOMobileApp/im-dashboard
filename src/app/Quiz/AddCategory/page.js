@@ -11,7 +11,6 @@ import { useRouter } from "next/navigation";
 export default function AddnewCategory() {
   let router = useRouter();
   const apiRoute = process.env.API_ROUTE;
-  // const userData = JSON.parse(localStorage.getItem("loginResponse"));
   const [userData, setUserData] = useState();
   useEffect(() => {
     const storedData = localStorage.getItem("loginResponse");
@@ -19,9 +18,7 @@ export default function AddnewCategory() {
       setUserData(JSON.parse(storedData));
     }
   }, []);
-  //const userId = userData?.Data?.userId;
-const userId = userData?.Data?.userId;
-//console.log("first", userId);
+
   const toastId = useRef(null);
   const [selectedImages, setSelectedImages] = useState(null);
   const [categoryName, setCategoryName] = useState("");
@@ -36,7 +33,7 @@ const userId = userData?.Data?.userId;
   async function uploadWithFormData() {
     pendingPopup();
     let bodyContent = new FormData();
-    bodyContent.append("userId", `${userId}`);
+    bodyContent.append("userId", `${userData?.Data?.userId}`);
     bodyContent.append("categoryName", categoryName);
     bodyContent.append("quizCategoryImage", selectedImages);
     bodyContent.append("status", 1);

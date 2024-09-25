@@ -107,8 +107,6 @@ function EnhancedTableToolbar(props) {
 
 export default function SpeciesTable() {
   const apiRoute = process.env.API_ROUTE;
-  // //const userId = process.env.USER_ID;
-  // const userData = JSON.parse(localStorage.getItem("loginResponse"));
   const [userData, setUserData] = useState();
   useEffect(() => {
     const storedData = localStorage.getItem("loginResponse");
@@ -116,9 +114,6 @@ export default function SpeciesTable() {
       setUserData(JSON.parse(storedData));
     }
   }, []);
-  //const userId = userData?.Data?.userId;
-const userId = userData?.Data?.userId;
-//console.log("first", userId);
 
   const [selected, setSelected] = useState([]);
   const [page, setPage] = useState(0);
@@ -147,7 +142,7 @@ const userId = userData?.Data?.userId;
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
     var raw = JSON.stringify({
-      userId: `${userId}`,
+      userId: `${userData?.Data?.userId}`,
       speciesId: row._id,
       name: row.name,
       scienceName: row.scienceName,
@@ -167,8 +162,8 @@ const userId = userData?.Data?.userId;
     //  .catch(error => console.log('error', error));
   };
 
-  const fetchAllSpeciesAPI = useCallback(() => {
-    let data = JSON.stringify({ userId: `${userId}`, speciesArray: [] });
+  const fetchAllSpeciesAPI = () => {
+    let data = JSON.stringify({ userId: `${userData?.Data?.userId}`, speciesArray: [] });
     let config = {
       method: "post",
       maxBodyLength: Infinity,
@@ -177,14 +172,16 @@ const userId = userData?.Data?.userId;
       data: data,
     };
     axios.request(config).then((response) => {
-      getBloglist(response.data.Data);
+      getBloglist(response?.data?.Data);
       //  console.log(response.data.Data)
     });
     // .catch((error) => {  console.log(error);  });
-  }, [apiRoute, userId]);
+  }
   useEffect(() => {
-    fetchAllSpeciesAPI();
-  }, [fetchAllSpeciesAPI]);
+    if (userData) {
+      fetchAllSpeciesAPI();
+    }
+  }, [userData]);
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {

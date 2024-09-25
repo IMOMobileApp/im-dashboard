@@ -26,8 +26,6 @@ const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
 export default function Addblog() {
   const apiRoute = process.env.API_ROUTE;
-  // //const userId = process.env.USER_ID;
-  // const userData = JSON.parse(localStorage.getItem("loginResponse"));
   const [userData, setUserData] = useState();
   useEffect(() => {
     const storedData = localStorage.getItem("loginResponse");
@@ -35,9 +33,7 @@ export default function Addblog() {
       setUserData(JSON.parse(storedData));
     }
   }, []);
-  //const userId = userData?.Data?.userId;
-const userId = userData?.Data?.userId;
-//console.log("first", userId);
+
   let router = useRouter();
   const toastId = useRef(null);
   const [title, setTitle] = useState();
@@ -102,8 +98,8 @@ const userId = userData?.Data?.userId;
     "image",
   ];
 
-  const fetchAllWebcategoryAPI = useCallback(() => {
-    let data = JSON.stringify({ userId: `${userId}` });
+  const fetchAllWebcategoryAPI = () => {
+    let data = JSON.stringify({ userId: `${userData?.Data?.userId}` });
     let config = {
       method: "post",
       maxBodyLength: Infinity,
@@ -115,22 +111,22 @@ const userId = userData?.Data?.userId;
       setBlogCat(response.data.Data);
       setPreCatId(response.data.Data[0]); // setting the initial category name and id
     });
-  }, [apiRoute, userId]);
+  }
 
   const handleCat = (event) => {
     setPreCatId(event.target.value);
-    //setPrevCatName(event.target.value)
-    // console.log(event.target.value)
   };
   /**----fetch all blog category----- */
   useEffect(() => {
+    if(userData){
     fetchAllWebcategoryAPI();
-  }, [fetchAllWebcategoryAPI,apiRoute, userId]);
+    }
+  }, [userData,apiRoute]);
   /*-------------------------------------------------------update Blog-----------------------------------------------------------------------------------*/
   async function uploadWithFormData() {
     pendingPopup();
     let bodyContent = new FormData();
-    bodyContent.append("userId", `${userId}`);
+    bodyContent.append("userId", `${userData?.Data?.userId}`);
     bodyContent.append("catId", preCatId);
     bodyContent.append("title", title);
     bodyContent.append("blog_image", selectedImages);

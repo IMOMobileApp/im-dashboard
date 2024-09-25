@@ -2,7 +2,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import DashboardCustomizeOutlinedIcon from "@mui/icons-material/DashboardCustomizeOutlined";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Person2Icon from "@mui/icons-material/Person2";
 import ImageIcon from "@mui/icons-material/Image";
 import BookIcon from "@mui/icons-material/Book";

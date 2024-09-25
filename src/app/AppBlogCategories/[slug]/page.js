@@ -16,7 +16,6 @@ import Switch from "@mui/material/Switch";
 export default function Caretakerdetail({ params }) {
   let router = useRouter();
   const apiRoute = process.env.API_ROUTE;
-    // const userData = JSON.parse(localStorage.getItem("loginResponse"));
   const [userData, setUserData] = useState();
   useEffect(() => {
     const storedData = localStorage.getItem("loginResponse");
@@ -24,8 +23,7 @@ export default function Caretakerdetail({ params }) {
       setUserData(JSON.parse(storedData));
     }
   }, []);
-  const userId = userData?.Data?.userId;
-  //console.log("first", userId);
+
   const toastId = useRef(null);
   const [data, setData] = useState(); //API Data
   const [isLoading, setLoading] = useState(true);
@@ -38,11 +36,11 @@ export default function Caretakerdetail({ params }) {
     //  console.log(selectedImages)
   };
 
-  const fetchSpeciesDetail = useCallback(() => {
+  const fetchSpeciesDetail = () => {
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
     var raw = JSON.stringify({
-      userId: `${userId}`,
+      userId: `${userData?.Data?.userId}`,
       catId: params.slug,
     });
     var requestOptions = {
@@ -62,12 +60,14 @@ export default function Caretakerdetail({ params }) {
         setLoading(false);
       });
     //  .catch(error => console.log('error', error))
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [apiRoute, params.slug]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  };
 
   useEffect(() => {
-    fetchSpeciesDetail();
-  }, [fetchSpeciesDetail]);
+    if (userData) {
+      fetchSpeciesDetail();
+    }
+  }, [userData]);
 
   if (isLoading) return <Loader />;
   if (!data) return <p>No data</p>;
@@ -77,7 +77,7 @@ export default function Caretakerdetail({ params }) {
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
     var raw = JSON.stringify({
-      userId: `${userId}`,
+      userId: `${userData?.Data?.userId}`,
       catId: params.slug,
       catTitle: name,
       blogCat_image: selectedImages,
@@ -116,7 +116,7 @@ export default function Caretakerdetail({ params }) {
     myHeaders.append("Content-Type", "application/json");
 
     var raw = JSON.stringify({
-      userId: `${userId}`,
+      userId: `${userData?.Data?.userId}`,
       catId: params.slug,
     });
 

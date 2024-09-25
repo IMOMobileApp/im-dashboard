@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import Input from "@mui/joy/Input";
 import Button from "@mui/material/Button";
 import "react-quill/dist/quill.snow.css";
@@ -14,8 +14,6 @@ import axios from "axios";
 
 export default function AddQuiz({ params }) {
   const apiRoute = process.env.API_ROUTE;
-  // //const userId = process.env.USER_ID;
-  // const userData = JSON.parse(localStorage.getItem("loginResponse"));
   const [userData, setUserData] = useState();
   useEffect(() => {
     const storedData = localStorage.getItem("loginResponse");
@@ -23,9 +21,7 @@ export default function AddQuiz({ params }) {
       setUserData(JSON.parse(storedData));
     }
   }, []);
-  //const userId = userData?.Data?.userId;
-const userId = userData?.Data?.userId;
-//console.log("first", userId);
+
   let router = useRouter();
   const toastId = useRef(null);
   const [question, setQuestion] = useState("");
@@ -43,7 +39,7 @@ const userId = userData?.Data?.userId;
   const uploadWithFormData = () => {
     pendingPopup();
     let data = JSON.stringify({
-      userId: `${userId}`,
+      userId: `${userData?.Data?.userId}`,
       catId: params.slug,
       quiz: question,
       opt1: opt1,

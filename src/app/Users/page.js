@@ -17,20 +17,6 @@ export default function Products() {
           <div className="page-header">Users</div>
         </div>
 
-        {/* <div className='col-md-12'>
-
-                       <div  style={{backgroundColor:'#fff',marginBottom:'20px',padding:'15px 15px'}}>
-
-                       <div className='row'>
-
-                         <div className='col-md-12'><TextField id="outlined-basic" label="Search Users" variant="outlined" fullWidth/></div>
-
-                       </div>
-
-                       </div>
-
-                     </div> */}
-
         <div className="col-md-12" style={{ marginBottom: "150px" }}>
           {" "}
           <EnhancedTable />{" "}

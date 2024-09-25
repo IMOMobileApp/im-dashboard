@@ -115,8 +115,6 @@ function EnhancedTableToolbar(props) {
 
 export default function FounderTable() {
   const apiRoute = process.env.API_ROUTE;
-  // //const userId = process.env.USER_ID;
-  // const userData = JSON.parse(localStorage.getItem("loginResponse"));
   const [userData, setUserData] = useState();
   useEffect(() => {
     const storedData = localStorage.getItem("loginResponse");
@@ -124,9 +122,6 @@ export default function FounderTable() {
       setUserData(JSON.parse(storedData));
     }
   }, []);
-  //const userId = userData?.Data?.userId;
-const userId = userData?.Data?.userId;
-//console.log("first", userId);
 
   const [selected, setSelected] = useState([]);
   const [page, setPage] = useState(0);
@@ -154,7 +149,7 @@ const userId = userData?.Data?.userId;
   const changeCaretakerStatus = (event) => {
     setChecked(checked == 1 ? 1 : 5);
     var formdata = new FormData();
-    formdata.append("userId", `${userId}`);
+    formdata.append("userId", `${userData?.Data?.userId}`);
     formdata.append("founderId", event.founderId);
     formdata.append("name", event.name);
     formdata.append("add_image", event.image);
@@ -180,8 +175,8 @@ const userId = userData?.Data?.userId;
     //  .catch(error => console.log('error', error));
   };
 
-  const fetchAllCaretakerAPI = useCallback(() => {
-    let data = JSON.stringify({ userId: `${userId}` });
+  const fetchAllCaretakerAPI = () => {
+    let data = JSON.stringify({ userId: `${userData?.Data?.userId}` });
     let config = {
       method: "post",
       maxBodyLength: Infinity,
@@ -190,14 +185,16 @@ const userId = userData?.Data?.userId;
       data: data,
     };
     axios.request(config).then((response) => {
-      getBloglist(response.data.Data);
+      getBloglist(response?.data?.Data);
       //  console.log(response.data.Data)
     });
     // .catch((error) => {  console.log(error);  });
-  }, [apiRoute, userId]);
+  }
   useEffect(() => {
+    if(userData){
     fetchAllCaretakerAPI();
-  }, [fetchAllCaretakerAPI]);
+    }
+  }, [userData]);
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {

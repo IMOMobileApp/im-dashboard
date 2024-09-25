@@ -43,7 +43,6 @@ const modules = {
 export default function Projectdetail({ params }) {
   let router = useRouter();
   const apiRoute = process.env.API_ROUTE;
-    // const userData = JSON.parse(localStorage.getItem("loginResponse"));
   const [userData, setUserData] = useState();
   useEffect(() => {
     const storedData = localStorage.getItem("loginResponse");
@@ -51,8 +50,7 @@ export default function Projectdetail({ params }) {
       setUserData(JSON.parse(storedData));
     }
   }, []);
-  const userId = userData?.Data?.userId;
-  //console.log("first", userId);
+
   const toastId = useRef(null);
   const [data, setData] = useState(); //API Data
   const [isLoading, setLoading] = useState(true);
@@ -71,7 +69,7 @@ export default function Projectdetail({ params }) {
   const [imagePreview, setImagePreview] = useState();
   const [galleryimages, setGalleryimages] = useState([]);
   const [status, setStatus] = useState(1);
-  const [speciesArray, setSpeciesArray] = useState([]); //fetch and store all species array
+  const [speciesArray, setSpeciesArray] = useState([]);
   const [formValues, setFormValues] = useState([
     { name: "", total: "", planted: "" },
   ]);
@@ -148,7 +146,7 @@ export default function Projectdetail({ params }) {
   const onSelectGallery = async (e) => {
     const nowImage = e.target.files[0];
     let bodyContent = new FormData();
-    bodyContent.append("userId", `${userId}`);
+    bodyContent.append("userId", `${userData?.Data?.userId}`);
     bodyContent.append("projectId", params.slug);
     bodyContent.append("pro_image", nowImage);
     await fetch(`${apiRoute}/addprogallery`, {
@@ -180,18 +178,18 @@ export default function Projectdetail({ params }) {
       redirect: "follow",
       // Adding body or contents to send
       body: JSON.stringify({
-        userId: `${userId}`,
+        userId: `${userData?.Data?.userId}`,
         galId: [imgId],
       }),
     }).then(fetchProjectDetail());
   };
   /**---delete gallery image-------- */
   /**---fetch-project details--- */
-  const fetchProjectDetail = useCallback(() => {
+  const fetchProjectDetail = () => {
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
     var raw = JSON.stringify({
-      userId: `${userId}`,
+      userId: `${userData?.Data?.userId}`,
       proId: params.slug,
     });
     var requestOptions = {
@@ -232,13 +230,15 @@ export default function Projectdetail({ params }) {
       //console.log(galleryimages)
       ();
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [apiRoute, params.slug]);
+  }
 
   useEffect(() => {
+    if(userData){
     fetchProjectDetail();
+    }
     getSpecies();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fetchProjectDetail]);
+  }, [userData]);
   /**---fetch-project details--- */
 
   if (isLoading) return <Loader />;
@@ -251,7 +251,7 @@ export default function Projectdetail({ params }) {
     pendingPopup();
 
     let bodyContent = new FormData();
-    bodyContent.append("userId", `${userId}`);
+    bodyContent.append("userId", `${userData?.Data?.userId}`);
     bodyContent.append("proId", data.proId);
     bodyContent.append("project_image", selectedImages);
     bodyContent.append("name", name);
@@ -306,7 +306,7 @@ export default function Projectdetail({ params }) {
     myHeaders.append("Content-Type", "application/json");
 
     var raw = JSON.stringify({
-      userId: `${userId}`,
+      userId: `${userData?.Data?.userId}`,
       proId: [data.proId],
     });
 
@@ -356,7 +356,7 @@ export default function Projectdetail({ params }) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          userId: `${userId}`,
+          userId: `${userData?.Data?.userId}`,
           speciesArray: speciesArray,
         }),
       }

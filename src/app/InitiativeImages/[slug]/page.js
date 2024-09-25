@@ -98,7 +98,9 @@ export default function AddImages({ params }) {
   }, [params.slug, apiRoute, userId]);
   /**----fetch all gallery album images----- */
   useEffect(() => {
+    if(userId){
     fetchAllalbumImages();
+    }
   }, [fetchAllalbumImages, apiRoute, userId]);
 
   // useEffect(() => {

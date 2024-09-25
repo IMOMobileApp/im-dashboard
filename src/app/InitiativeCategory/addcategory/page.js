@@ -11,8 +11,6 @@ import { useRouter } from "next/navigation";
 
 export default function AddInitiativeCategory() {
   const apiRoute = process.env.API_ROUTE;
-  // //const userId = process.env.USER_ID;
-    // const userData = JSON.parse(localStorage.getItem("loginResponse"));
   const [userData, setUserData] = useState();
   useEffect(() => {
     const storedData = localStorage.getItem("loginResponse");
@@ -20,8 +18,7 @@ export default function AddInitiativeCategory() {
       setUserData(JSON.parse(storedData));
     }
   }, []);
-  const userId = userData?.Data?.userId;
-  //console.log("first", userId);
+
   let router = useRouter();
   const toastId = useRef(null);
   const [name, setName] = useState();
@@ -34,7 +31,7 @@ export default function AddInitiativeCategory() {
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
     var raw = JSON.stringify({
-      userId: `${userId}`,
+      userId: `${userData?.Data?.userId}`,
       title: name,
       status: 1,
     });

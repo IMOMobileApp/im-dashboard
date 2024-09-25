@@ -19,7 +19,7 @@ import Select from "@mui/material/Select";
 export default function Caretakerdetail({ params }) {
   let router = useRouter();
   const apiRoute = process.env.API_ROUTE;
-    // const userData = JSON.parse(localStorage.getItem("loginResponse"));
+  // const userData = JSON.parse(localStorage.getItem("loginResponse"));
   const [userData, setUserData] = useState();
   useEffect(() => {
     const storedData = localStorage.getItem("loginResponse");
@@ -27,8 +27,7 @@ export default function Caretakerdetail({ params }) {
       setUserData(JSON.parse(storedData));
     }
   }, []);
-  const userId = userData?.Data?.userId;
-  //console.log("first", userId);
+
   const toastId = useRef(null);
   const [data, setData] = useState(); //API Data
   const [isLoading, setLoading] = useState(true);
@@ -51,11 +50,11 @@ export default function Caretakerdetail({ params }) {
     setSelectedImages(e.target.files[0]);
   };
 
-  const fetchCaretakerDetail = useCallback(() => {
+  const fetchCaretakerDetail = () => {
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
     var raw = JSON.stringify({
-      userId: `${userId}`,
+      userId: `${userData?.Data?.userId}`,
       founderId: params.slug,
     });
     var requestOptions = {
@@ -81,13 +80,14 @@ export default function Caretakerdetail({ params }) {
         setSelectedImages(result.Data.image);
         setLoading(false);
       });
-    //  .catch(error => console.log('error', error))
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [apiRoute, params.slug]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  };
 
   useEffect(() => {
-    fetchCaretakerDetail();
-  }, [fetchCaretakerDetail]);
+    if (userData) {
+      fetchCaretakerDetail();
+    }
+  }, [userData]);
 
   if (isLoading) return <Loader />;
   if (!data) return <p>No profile data</p>;
@@ -95,7 +95,7 @@ export default function Caretakerdetail({ params }) {
   async function uploadWithFormData() {
     pendingPopup();
     let bodyContent = new FormData();
-    bodyContent.append("userId", `${userId}`);
+    bodyContent.append("userId", `${userData?.Data?.userId}`);
     bodyContent.append("founderId", data.founderId);
     bodyContent.append("add_image", selectedImages);
     bodyContent.append("name", name);
@@ -140,7 +140,7 @@ export default function Caretakerdetail({ params }) {
     myHeaders.append("Content-Type", "application/json");
 
     var raw = JSON.stringify({
-      userId: `${userId}`,
+      userId: `${userData?.Data?.userId}`,
       founderId: [data.founderId],
     });
 

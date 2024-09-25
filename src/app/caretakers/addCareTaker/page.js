@@ -24,12 +24,10 @@ export default function AddCareTaker() {
       setUserData(JSON.parse(storedData));
     }
   }, []);
-  const userId = userData?.Data?.userId;
   let router = useRouter();
   const toastId = useRef(null);
   const [projectId, setProjectId] = useState();
   const [oneprojectId, setOneProjectId] = useState();
-  console.log(oneprojectId,projectId)
   const [name, setName] = useState();
   const [email, setEmail] = useState();
   const [about, setAbout] = useState();
@@ -47,7 +45,7 @@ export default function AddCareTaker() {
   useEffect(() => {
     axios
       .post(`${apiRoute}/adminAssignProject`, {
-        userId: `${userId}`,
+        userId: `${userData?.Data?.userId}`,
       })
       .then(
         (response) => {
@@ -58,13 +56,13 @@ export default function AddCareTaker() {
           console.log(error);
         }
       );
-  }, [apiRoute, userId]);
+  }, [apiRoute, userData]);
 
   /*-------------------------------------------------------update Blog-----------------------------------------------------------------------------------*/
   async function uploadWithFormData() {
     pendingPopup();
     let bodyContent = new FormData();
-    bodyContent.append("userId", `${userId}`);
+    bodyContent.append("userId", `${userData?.Data?.userId}`);
     bodyContent.append("projectId", oneprojectId);
     bodyContent.append("name", name);
     bodyContent.append("profile_image", selectedImages);

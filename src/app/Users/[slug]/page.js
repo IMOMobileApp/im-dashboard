@@ -21,41 +21,42 @@ export default function Userdetail({ params }) {
       setUserData(JSON.parse(storedData));
     }
   }, []);
- 
-  const userId = userData?.Data?.userId;
-  console.log("first", userId);
 
   const [data, setData] = useState();
 
   const [isLoading, setLoading] = useState(true);
 
   useEffect(() => {
-    var myHeaders = new Headers();
+    const getDetails = () => {
+      var myHeaders = new Headers();
 
-    myHeaders.append("Content-Type", "application/json");
+      myHeaders.append("Content-Type", "application/json");
 
-    var raw = JSON.stringify({ userId: `${userId}`, findId: params.slug });
-
-    var requestOptions = {
-      method: "POST",
-      headers: myHeaders,
-      body: raw,
-      redirect: "follow",
-    };
-
-    fetch(`${apiRoute}/userdetail`, requestOptions)
-      .then((response) => response.json())
-
-      .then((result) => {
-        setData(result.Data);
-
-        setLoading(false);
+      var raw = JSON.stringify({
+        userId: `${userData?.Data?.userId}`,
+        findId: params.slug,
       });
 
-    //  .catch(error => console.log('error', error))
+      var requestOptions = {
+        method: "POST",
+        headers: myHeaders,
+        body: raw,
+        redirect: "follow",
+      };
 
-    // console.log(data?.Data);
-  }, [params.slug, apiRoute, userId]); //console.log(data?.Data);
+      fetch(`${apiRoute}/userdetail`, requestOptions)
+        .then((response) => response.json())
+
+        .then((result) => {
+          setData(result.Data);
+
+          setLoading(false);
+        });
+    };
+    if (userData) {
+      getDetails();
+    }
+  }, [params.slug, apiRoute, userData]);
 
   if (isLoading) return <Loader />;
 

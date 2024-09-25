@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, useId } from "react";
 import Input from "@mui/joy/Input";
 import Textarea from "@mui/joy/Textarea";
 import Button from "@mui/material/Button";
@@ -43,7 +43,6 @@ const modules = {
 export default function Projectdetail({ params }) {
   let router = useRouter();
   const apiRoute = process.env.API_ROUTE;
-    // const userData = JSON.parse(localStorage.getItem("loginResponse"));
   const [userData, setUserData] = useState();
   useEffect(() => {
     const storedData = localStorage.getItem("loginResponse");
@@ -51,7 +50,7 @@ export default function Projectdetail({ params }) {
       setUserData(JSON.parse(storedData));
     }
   }, []);
-  const userId = userData?.Data?.userId;
+
   const toastId = useRef(null);
   const [data, setData] = useState(); //API Data
   const [isLoading, setLoading] = useState(true);
@@ -160,7 +159,7 @@ export default function Projectdetail({ params }) {
   const onSelectGallery = async (e) => {
     const nowImage = e.target.files[0];
     let bodyContent = new FormData();
-    bodyContent.append("userId", `${userId}`);
+    bodyContent.append("userId", `${userData?.Data?.userId}`);
     bodyContent.append("projectId", params.slug);
     bodyContent.append("pro_image", nowImage);
     await fetch(`${apiRoute}/addprogallery`, {
@@ -168,7 +167,6 @@ export default function Projectdetail({ params }) {
       method: "POST",
       body: bodyContent,
     }).then(() => {
-      // Adding a delay of 4 seconds (4000 milliseconds) before calling fetchProjectDetail()
       setTimeout(() => {
         fetchProjectDetail();
       }, 100);
@@ -189,17 +187,17 @@ export default function Projectdetail({ params }) {
       redirect: "follow",
       // Adding body or contents to send
       body: JSON.stringify({
-        userId: `${userId}`,
+        userId: `${userData?.Data?.userId}`,
         galId: [imgId],
       }),
     }).then(fetchProjectDetail());
   };
 
-  const fetchProjectDetail = useCallback(() => {
+  const fetchProjectDetail =() => {
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
     var raw = JSON.stringify({
-      userId: `${userId}`,
+      userId: `${userData?.Data?.userId}`,
       proId: params.slug,
     });
     var requestOptions = {
@@ -233,17 +231,17 @@ export default function Projectdetail({ params }) {
         setLoading(false);
       })
       //  .catch(error => console.log('error', error))
-      .then
-      //console.log(galleryimages)
-      ();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [apiRoute, params.slug]);
-  useEffect(() => {
-    fetchProjectDetail();
-    getSpecies();
+      .then();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fetchProjectDetail]);
-  /**---fetch-project details--- */
+  };
+
+  useEffect(() => {
+    if (userData) {
+      fetchProjectDetail();
+      getSpecies();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userData]);
 
   if (isLoading) return <Loader />;
   if (!data) return <p>No profile data</p>;
@@ -295,7 +293,7 @@ export default function Projectdetail({ params }) {
     pendingPopup();
 
     let bodyContent = new FormData();
-    bodyContent.append("userId", `${userId}`);
+    bodyContent.append("userId", `${userData?.Data?.userId}`);
     bodyContent.append("proId", data.projectId);
     bodyContent.append("project_image", selectedPreviewImages);
     bodyContent.append("name", name);
@@ -325,7 +323,8 @@ export default function Projectdetail({ params }) {
     function successPopup() {
       toast.success(`${data1.Message}`);
       toast.dismiss(toastId.current);
-      setIsButtonEnabled(false);router.back();
+      setIsButtonEnabled(false);
+      router.back();
       router.push("/Projects");
     }
     function failPopup() {
@@ -350,7 +349,7 @@ export default function Projectdetail({ params }) {
     myHeaders.append("Content-Type", "application/json");
 
     var raw = JSON.stringify({
-      userId: `${userId}`,
+      userId: `${userData?.Data?.userId}`,
       proId: [data.projectId],
     });
 
@@ -397,7 +396,7 @@ export default function Projectdetail({ params }) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          userId: `${userId}`,
+          userId: `${userData?.Data?.userId}`,
           speciesArray: speciesArray,
         }),
       }

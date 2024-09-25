@@ -12,8 +12,6 @@ import { useRouter } from "next/navigation";
 
 export default function Seodetail({ params }) {
   const apiRoute = process.env.API_ROUTE;
-  // //const userId = process.env.USER_ID;
-  // const userData = JSON.parse(localStorage.getItem("loginResponse"));
   const [userData, setUserData] = useState();
   useEffect(() => {
     const storedData = localStorage.getItem("loginResponse");
@@ -21,9 +19,7 @@ export default function Seodetail({ params }) {
       setUserData(JSON.parse(storedData));
     }
   }, []);
-  //const userId = userData?.Data?.userId;
-const userId = userData?.Data?.userId;
-//console.log("first", userId);
+
   let router = useRouter();
 
   const toastId = useRef(null);
@@ -34,6 +30,7 @@ const userId = userData?.Data?.userId;
   const [keywords, setKeywords] = useState();
 
   useEffect(() => {
+    const getDetails=()=>{
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
     var raw = JSON.stringify({ type: params.slug });
@@ -52,8 +49,12 @@ const userId = userData?.Data?.userId;
         setKeywords(result.Data.metaKeyword);
         setLoading(false);
       });
+    }
+    if(userData){
+      getDetails();
+    }
     //  .catch(error => console.log('error', error))
-  }, [params.slug, apiRoute, userId]);
+  }, [params.slug, apiRoute, userData]);
 
   if (isLoading) return <Loader />;
   if (!data) return <p>No data</p>;
@@ -64,7 +65,7 @@ const userId = userData?.Data?.userId;
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
     const raw = JSON.stringify({
-      userId: `${userId}`,
+      userId: `${userData?.Data?.userId}`,
       metaTitle: title,
       metaDesc: value1,
       metaKeyword: keywords,

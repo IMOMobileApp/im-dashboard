@@ -181,13 +181,15 @@ export default function BlogTable() {
       data: data,
     };
     axios.request(config).then((response) => {
-      getBloglist(response.data.Data);
+      getBloglist(response?.data?.Data);
       //  console.log(response.data.Data)
     });
     // .catch((error) => {  console.log(error);  });
   }, [apiRoute, userId]);
   useEffect(() => {
+    if(userId){
     fetchAllBlogsAPI();
+    }
   }, [fetchAllBlogsAPI]);
 
   const handleSelectAllClick = (event) => {

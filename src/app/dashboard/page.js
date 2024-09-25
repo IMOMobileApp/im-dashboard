@@ -22,7 +22,7 @@ import Link from "next/link";
 export default function Dashboard() {
   const [data, setData] = useState();
   const apiRoute = process.env.API_ROUTE;
-    // const userData = JSON.parse(localStorage.getItem("loginResponse"));
+  // const userData = JSON.parse(localStorage.getItem("loginResponse"));
   const [userData, setUserData] = useState();
   useEffect(() => {
     const storedData = localStorage.getItem("loginResponse");
@@ -53,25 +53,25 @@ export default function Dashboard() {
       setData(projects);
       return projects;
     }
-
-    getData();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    if (userId) {
+      getData();
+    }
+  }, [userId]);
   // const data = await getData()
 
   return (
     <>
       {adminType === "subAdmin" ? (
         <div
-        style={{
-          fontSize: "60px",
-          fontWeight:700,
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          height: "80vh", // Takes up full viewport height
-          textAlign: "center", // Ensures text is centered if needed
-        }}
+          style={{
+            fontSize: "60px",
+            fontWeight: 700,
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "80vh", // Takes up full viewport height
+            textAlign: "center", // Ensures text is centered if needed
+          }}
         >
           DASHBOARD
         </div>

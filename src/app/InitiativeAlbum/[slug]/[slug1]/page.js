@@ -99,8 +99,10 @@ export default function Addblog({ params }) {
     });
   }, [params.slug1, apiRoute, userId]);
   useEffect(() => {
+    if(userId){
     fetchAllWebcategoryAPI();
     fetchAllalbumImages();
+    }
   }, [fetchAllalbumImages, fetchAllWebcategoryAPI, apiRoute, userId]);
 
   useEffect(() => {

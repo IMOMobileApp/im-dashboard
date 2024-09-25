@@ -11,8 +11,6 @@ import UploadFileIcon from "@mui/icons-material/UploadFile";
 
 export default function AddSpecies() {
   const apiRoute = process.env.API_ROUTE;
-  // //const userId = process.env.USER_ID;
-    // const userData = JSON.parse(localStorage.getItem("loginResponse"));
   const [userData, setUserData] = useState();
   useEffect(() => {
     const storedData = localStorage.getItem("loginResponse");
@@ -20,8 +18,7 @@ export default function AddSpecies() {
       setUserData(JSON.parse(storedData));
     }
   }, []);
-  const userId = userData?.Data?.userId;
-  //console.log("first", userId);
+
   let router = useRouter();
   const toastId = useRef(null);
   const [name, setName] = useState();
@@ -32,13 +29,11 @@ export default function AddSpecies() {
     setSelectedImages(e.target.files[0]);
   };
 
-  useEffect(() => {}, []);
-
   /*-------------------------------------------------------update species----------------------------------------------------------------------------*/
   async function uploadWithFormData() {
     pendingPopup();
     let bodyContent = new FormData();
-    bodyContent.append("userId", `${userId}`);
+    bodyContent.append("userId", `${userData?.Data?.userId}`);
     bodyContent.append("catTitle", name);
     bodyContent.append("blogCat_image", selectedImages);
     bodyContent.append("status", status);

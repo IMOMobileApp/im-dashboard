@@ -17,7 +17,6 @@ import Select from "@mui/material/Select";
 export default function Caretakerdetail() {
   let router = useRouter();
   const apiRoute = process.env.API_ROUTE;
-    // const userData = JSON.parse(localStorage.getItem("loginResponse"));
   const [userData, setUserData] = useState();
   useEffect(() => {
     const storedData = localStorage.getItem("loginResponse");
@@ -25,9 +24,7 @@ export default function Caretakerdetail() {
       setUserData(JSON.parse(storedData));
     }
   }, []);
-  //const userId = userData?.Data?.userId;
-const userId = userData?.Data?.userId;
-//console.log("first", userId);
+
   const toastId = useRef(null);
   const [name, setName] = useState("");
   const [designation, setDesignation] = useState();
@@ -48,7 +45,7 @@ const userId = userData?.Data?.userId;
   async function uploadWithFormData() {
     pendingPopup();
     let bodyContent = new FormData();
-    bodyContent.append("userId", `${userId}`);
+    bodyContent.append("userId", `${userData?.Data?.userId}`);
     bodyContent.append("add_image", selectedImages);
     bodyContent.append("name", name);
     bodyContent.append("designation", designation);
@@ -283,7 +280,7 @@ const userId = userData?.Data?.userId;
                     onClick={uploadWithFormData}
                   >
                     {" "}
-                    Update Details
+                    Add Details
                   </Button>
                 </div>
               </div>

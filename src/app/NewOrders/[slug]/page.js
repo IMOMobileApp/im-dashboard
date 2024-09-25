@@ -27,9 +27,10 @@ export default function Blogdetail({ params }) {
   const [isLoading, setLoading] = useState(true);
 
   useEffect(() => {
+    const getDetails=()=>{
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
-    var raw = JSON.stringify({ userId: `${userId}`, orderId: params.slug });
+    var raw = JSON.stringify({ userId: `${userData?.Data?.userId}`, orderId: params.slug });
     var requestOptions = {
       method: "POST",
       headers: myHeaders,
@@ -43,8 +44,12 @@ export default function Blogdetail({ params }) {
         setCareTaker(result.careTaker);
         setLoading(false);
       });
+    }
+    if(userData){
+      getDetails();
+    }
     //  .catch(error => console.log('error', error))
-  }, [params.slug, apiRoute, userId]);
+  }, [params.slug, apiRoute, userData]);
 
   if (isLoading) return <Loader />;
   if (!data) return <p>No profile data</p>;

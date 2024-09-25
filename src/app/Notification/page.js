@@ -21,7 +21,6 @@ export default function Addnotification() {
       setUserData(JSON.parse(storedData));
     }
   }, []);
-  const userId = userData?.Data?.userId;
   let router = useRouter();
   const toastId = useRef(null);
   const [title, setTitle] = useState();
@@ -36,7 +35,7 @@ export default function Addnotification() {
     myHeaders.append("Content-Type", "application/json");
 
     const raw = JSON.stringify({
-      userId: `${userId}`,
+      userId: `${userData?.Data?.userId}`,
       toId: arr,
       title: title,
       message: shotDesc,
@@ -70,26 +69,6 @@ export default function Addnotification() {
     {
       data1.Status === true ? router.push("/Notification") : "";
     }
-
-    //  let bodyContent = new FormData();
-    //  bodyContent.append("userId", `${userId}`);
-    //  bodyContent.append("title", title);
-    //  bodyContent.append("message", shotDesc);
-    //  bodyContent.append("toId", arr);
-    //  let response = await fetch(`${apiRoute}/customnotification`, { method: "POST", body: bodyContent, });
-    //  const data1 = await response.json();
-    //  function successPopup(){
-    //   toast.success(`${data1.Message}` )
-    //   toast.dismiss(toastId.current);
-    //                          }
-    // function failPopup(){
-    // toast.error(`${data1.Message}`)
-    // toast.dismiss(toastId.current);
-    //                     }
-    // function pendingPopup(){
-    //   toastId.current =  toast.loading('Sending Notification') }
-    // { data1.Status === true  ?    successPopup() : failPopup()}
-    // { data1.Status === true  ? router.push('/Notification') : ''}
   }
   /**----------------------------------------------------------------update blog--------------------------------------------- */
   /**---------------------------------------------------------------------------------------------------------------------------------------- */

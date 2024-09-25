@@ -17,7 +17,6 @@ import Textarea from "@mui/joy/Textarea";
 export default function Caretakerdetail({ params }) {
   let router = useRouter();
   const apiRoute = process.env.API_ROUTE;
-    // const userData = JSON.parse(localStorage.getItem("loginResponse"));
   const [userData, setUserData] = useState();
   useEffect(() => {
     const storedData = localStorage.getItem("loginResponse");
@@ -25,8 +24,7 @@ export default function Caretakerdetail({ params }) {
       setUserData(JSON.parse(storedData));
     }
   }, []);
-  const userId = userData?.Data?.userId;
-  //console.log("first", userId);
+
   const toastId = useRef(null);
   const [data, setData] = useState(); //API Data
   const [isLoading, setLoading] = useState(true);
@@ -41,11 +39,11 @@ export default function Caretakerdetail({ params }) {
     //  console.log(selectedImages)
   };
 
-  const fetchSpeciesDetail = useCallback(() => {
+  const fetchSpeciesDetail = () => {
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
     var raw = JSON.stringify({
-      userId: `${userId}`,
+      userId: `${userData?.Data?.userId}`,
       speciesId: params.slug,
     });
     var requestOptions = {
@@ -67,11 +65,13 @@ export default function Caretakerdetail({ params }) {
       });
     //  .catch(error => console.log('error', error))
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [apiRoute, params.slug]);
+  }
 
   useEffect(() => {
+    if(userData){
     fetchSpeciesDetail();
-  }, [fetchSpeciesDetail]);
+    }
+  }, [userData]);
 
   if (isLoading) return <Loader />;
   if (!data) return <p>No profile data</p>;
@@ -84,7 +84,7 @@ export default function Caretakerdetail({ params }) {
     };
 
     let bodyContent = new FormData();
-    bodyContent.append("userId", `${userId}`);
+    bodyContent.append("userId", `${userData?.Data?.userId}`);
     bodyContent.append("speciesId", params.slug);
     bodyContent.append("name", name);
     bodyContent.append("scienceName", scienceName);
@@ -104,6 +104,7 @@ export default function Caretakerdetail({ params }) {
     function successPopup() {
       toast.success(`${data1.Message}`);
       toast.dismiss(toastId.current);
+      router.back()
     }
     function failPopup() {
       toast.error(`${data1.Message}`);
@@ -116,35 +117,6 @@ export default function Caretakerdetail({ params }) {
     {
       data1.Status === true ? successPopup() : failPopup();
     }
-
-    //   pendingPopup()
-    //   var myHeaders = new Headers();
-    // myHeaders.append("Content-Type", "application/json");
-    // var raw = JSON.stringify({
-    //   "userId": `${userId}`,
-    //   "speciesId": params.slug,
-    //   "name": name,
-    //   "scienceName": scienceName,
-    //   "status": status
-    // });
-
-    //    let response = await fetch(`${process.env.NEXT_PUBLIC_API_ROUTE}/updatespecies`, { method: "POST", body: raw, headers: myHeaders,});
-
-    //    const data1 = await response.json();
-    //   // console.log(data1)
-
-    //    function successPopup(){
-    //     toast.success(`${data1.Message}` )
-    //     toast.dismiss(toastId.current);
-    //                            }
-    //   function failPopup(){
-    //   toast.error(`${data1.Message}`)
-    //   toast.dismiss(toastId.current);
-    //                       }
-    //   function pendingPopup(){
-    //     toastId.current =  toast.loading('Updating Detail') }
-
-    //   { data1.Status === true  ?    successPopup() : failPopup()}
   }
   /**----------------------------------------------------------------update caretaker--------------------------------------------- */
 

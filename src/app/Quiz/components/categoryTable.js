@@ -116,8 +116,6 @@ function EnhancedTableToolbar(props) {
 
 export default function CategoryTable() {
   const apiRoute = process.env.API_ROUTE;
-  // //const userId = process.env.USER_ID;
-  // const userData = JSON.parse(localStorage.getItem("loginResponse"));
   const [userData, setUserData] = useState();
   useEffect(() => {
     const storedData = localStorage.getItem("loginResponse");
@@ -125,9 +123,6 @@ export default function CategoryTable() {
       setUserData(JSON.parse(storedData));
     }
   }, []);
-  //const userId = userData?.Data?.userId;
-const userId = userData?.Data?.userId;
-//console.log("first", userId);
   const [selected, setSelected] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(25);
@@ -152,7 +147,7 @@ const userId = userData?.Data?.userId;
   const changeCategoryStatus = (event) => {
     setChecked(!checked);
     var formdata = new FormData();
-    formdata.append("userId", `${userId}`);
+    formdata.append("userId", `${userData?.Data?.userId}`);
     formdata.append("quizId", event._id);
     formdata.append("categoryName", event.categoryName);
     formdata.append("banner_image", event.categoryImage);
@@ -172,8 +167,8 @@ const userId = userData?.Data?.userId;
     //.catch(error => console.log('error', error));
   };
 
-  const fetchAllcategoriesAPI = useCallback(() => {
-    let data = JSON.stringify({ userId: `${userId}` });
+  const fetchAllcategoriesAPI = () => {
+    let data = JSON.stringify({ userId: `${userData?.Data?.userId}` });
     let config = {
       method: "post",
       maxBodyLength: Infinity,
@@ -183,14 +178,16 @@ const userId = userData?.Data?.userId;
     };
 
     axios.request(config).then((response) => {
-      getCategorylist(response.data.Data);
+      getCategorylist(response?.data?.Data);
     });
     // .catch((error) => { // console.log(error);   });
-  }, [apiRoute, userId]);
+  }
 
   useEffect(() => {
+    if(userData){
     fetchAllcategoriesAPI();
-  }, [fetchAllcategoriesAPI]);
+    }
+  }, [userData]);
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {

@@ -37,8 +37,6 @@ const modules = {
 
 export default function Championdetail({ params }) {
   const apiRoute = process.env.API_ROUTE;
-  // //const userId = process.env.USER_ID;
-  // const userData = JSON.parse(localStorage.getItem("loginResponse"));
   const [userData, setUserData] = useState();
   useEffect(() => {
     const storedData = localStorage.getItem("loginResponse");
@@ -46,11 +44,8 @@ export default function Championdetail({ params }) {
       setUserData(JSON.parse(storedData));
     }
   }, []);
-  //const userId = userData?.Data?.userId;
-const userId = userData?.Data?.userId;
-//console.log("first", userId);
-  let router = useRouter();
 
+  let router = useRouter();
   const toastId = useRef(null);
   const [data, setData] = useState(); //API Data
   const [isLoading, setLoading] = useState(true);
@@ -89,30 +84,38 @@ const userId = userData?.Data?.userId;
   };
 
   useEffect(() => {
-    var myHeaders = new Headers();
-    myHeaders.append("Content-Type", "application/json");
-    var raw = JSON.stringify({ userId: `${userId}`, champId: params.slug });
-    var requestOptions = {
-      method: "POST",
-      headers: myHeaders,
-      body: raw,
-      redirect: "follow",
-    };
-    fetch(`${apiRoute}/detailchampion`, requestOptions)
-      .then((response) => response.json())
-      .then((result) => {
-        setData(result.Data);
-        setValue(result.Data.champ_detail);
-        setTitle(result.Data.champ_title);
-        setShortDesc(result.Data.short_desc);
-        setSelectedImages(result.Data.champ_image);
-        setStatus(result.Data.status);
-        setVoiceText(result.Data.voiceText);
-        setSequence(result.Data.sequence);
-        setLoading(false);
+    const getDetails = () => {
+      var myHeaders = new Headers();
+      myHeaders.append("Content-Type", "application/json");
+      var raw = JSON.stringify({
+        userId: `${userData?.Data?.userId}`,
+        champId: params.slug,
       });
+      var requestOptions = {
+        method: "POST",
+        headers: myHeaders,
+        body: raw,
+        redirect: "follow",
+      };
+      fetch(`${apiRoute}/detailchampion`, requestOptions)
+        .then((response) => response.json())
+        .then((result) => {
+          setData(result.Data);
+          setValue(result.Data.champ_detail);
+          setTitle(result.Data.champ_title);
+          setShortDesc(result.Data.short_desc);
+          setSelectedImages(result.Data.champ_image);
+          setStatus(result.Data.status);
+          setVoiceText(result.Data.voiceText);
+          setSequence(result.Data.sequence);
+          setLoading(false);
+        });
+    };
+    if (userData) {
+      getDetails();
+    }
     //  .catch(error => console.log('error', error))
-  }, [params.slug, apiRoute, userId]);
+  }, [params.slug, apiRoute, userData]);
 
   if (isLoading) return <Loader />;
   if (!data) return <p>No profile data</p>;
@@ -121,7 +124,7 @@ const userId = userData?.Data?.userId;
     pendingPopup();
 
     let bodyContent = new FormData();
-    bodyContent.append("userId", `${userId}`);
+    bodyContent.append("userId", `${userData?.Data?.userId}`);
     bodyContent.append("champId", data._id);
     bodyContent.append("title", title);
     bodyContent.append("champ_image", selectedImages);
@@ -163,7 +166,7 @@ const userId = userData?.Data?.userId;
     myHeaders.append("Content-Type", "application/json");
 
     var raw = JSON.stringify({
-      userId: `${userId}`,
+      userId: `${userData?.Data?.userId}`,
       champId: [data._id],
     });
 

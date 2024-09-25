@@ -65,7 +65,9 @@ export default function AddImages({ params }) {
     });
   }, [params.slug, apiRoute, userId]);
   useEffect(() => {
+    if(userId){
     fetchAllalbumImages();
+    }
   }, [fetchAllalbumImages, apiRoute, userId]);
 
   const onSelectGallery = async (e) => {

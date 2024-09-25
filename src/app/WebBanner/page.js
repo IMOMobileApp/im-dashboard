@@ -17,8 +17,6 @@ import Select from "@mui/material/Select";
 
 export default function Bannerdetail({ params }) {
   const apiRoute = process.env.API_ROUTE;
-  // //const userId = process.env.USER_ID;
-  // const userData = JSON.parse(localStorage.getItem("loginResponse"));
   const [userData, setUserData] = useState();
   useEffect(() => {
     const storedData = localStorage.getItem("loginResponse");
@@ -26,9 +24,6 @@ export default function Bannerdetail({ params }) {
       setUserData(JSON.parse(storedData));
     }
   }, []);
-  //const userId = userData?.Data?.userId;
-const userId = userData?.Data?.userId;
-//console.log("first", userId);
   let router = useRouter();
   const toastId = useRef(null);
   const [data, setData] = useState(); //API Data
@@ -49,34 +44,39 @@ const userId = userData?.Data?.userId;
   };
 
   useEffect(() => {
-    var myHeaders = new Headers();
-    myHeaders.append("Content-Type", "application/json");
-    var raw = JSON.stringify({ userId: `${userId}` });
-    var requestOptions = {
-      method: "POST",
-      headers: myHeaders,
-      body: raw,
-      redirect: "follow",
+    const getDetails = () => {
+      var myHeaders = new Headers();
+      myHeaders.append("Content-Type", "application/json");
+      var raw = JSON.stringify({ userId: `${userData?.Data?.userId}` });
+      var requestOptions = {
+        method: "POST",
+        headers: myHeaders,
+        body: raw,
+        redirect: "follow",
+      };
+      fetch(`${apiRoute}/webbannerdetail`, requestOptions)
+        .then((response) => response.json())
+        .then((result) => {
+          setData(result.Data);
+          setTitle(result.Data.title);
+          setSelectedImages(result.Data.desktopImage);
+          setSelectedMobileImages(result.Data.mobileImage);
+          setUrl(result.Data.url);
+          setLoading(false);
+        });
     };
-    fetch(`${apiRoute}/webbannerdetail`, requestOptions)
-      .then((response) => response.json())
-      .then((result) => {
-        setData(result.Data);
-        setTitle(result.Data.title);
-        setSelectedImages(result.Data.desktopImage);
-        setSelectedMobileImages(result.Data.mobileImage);
-        setUrl(result.Data.url);
-        setLoading(false);
-      });
+    if (userData) {
+      getDetails();
+    }
     //  .catch(error => console.log('error', error))
-  }, [params.slug, apiRoute, userId]);
+  }, [params.slug, apiRoute, userData]);
   if (isLoading) return <Loader />;
   if (!data) return <p>No Banner found</p>;
   /*-------------------------------------------------------update Banner-----------------------------------------------------------------------------------*/
   async function uploadWithFormData() {
     pendingPopup();
     let bodyContent = new FormData();
-    bodyContent.append("userId", `${userId}`);
+    bodyContent.append("userId", `${userData?.Data?.userId}`);
     bodyContent.append("banId", "65f810ed59b0f3921406b0fe");
     bodyContent.append("title", title);
     bodyContent.append("desktopImage", selectedImages);

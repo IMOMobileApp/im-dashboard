@@ -70,8 +70,6 @@ function EnhancedTableToolbar(props) {
 
 export default function CertificateTable() {
   const apiRoute = process.env.API_ROUTE;
-  // //const userId = process.env.USER_ID;
-  // const userData = JSON.parse(localStorage.getItem("loginResponse"));
   const [userData, setUserData] = useState();
   useEffect(() => {
     const storedData = localStorage.getItem("loginResponse");
@@ -79,9 +77,6 @@ export default function CertificateTable() {
       setUserData(JSON.parse(storedData));
     }
   }, []);
-  //const userId = userData?.Data?.userId;
-const userId = userData?.Data?.userId;
-//console.log("first", userId);
 
   const [selected, setSelected] =  useState([]);
   const [page, setPage] =  useState(0);
@@ -100,8 +95,8 @@ const userId = userData?.Data?.userId;
   
 
 
-const fetchAllBlogsAPI=useCallback(()=>{
-  let data = JSON.stringify({ "userId": `${userId}` });
+const fetchAllBlogsAPI=()=>{
+  let data = JSON.stringify({ "userId": `${userData?.Data?.userId}` });
   let config = {
     method: 'post',
     maxBodyLength: Infinity,
@@ -110,14 +105,16 @@ const fetchAllBlogsAPI=useCallback(()=>{
     data : data
   }; 
   axios.request(config)
-  .then((response) => { getChallengelist(response.data.Data);  })
+  .then((response) => { getChallengelist(response?.data?.Data);  })
  // .catch((error) => { // console.log(error);   });
 
-}, [apiRoute, userId])
+}
 
 useEffect(() => {
+  if(userData){
   fetchAllBlogsAPI();
-}, [fetchAllBlogsAPI]);
+}
+}, [userData]);
 
 
 const handleSelectAllClick = (event) => {
