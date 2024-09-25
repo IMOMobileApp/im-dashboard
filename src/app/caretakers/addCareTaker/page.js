@@ -16,14 +16,13 @@ import Select from "@mui/material/Select";
 
 export default function AddCareTaker() {
   const apiRoute = process.env.API_ROUTE;
-  // const userId = process.env.USER_ID;
-const userData = JSON.parse(localStorage.getItem("loginResponse"));
-const userId = userData?.Data?.userId;
-//console.log("first", userId);
+  const userData = JSON.parse(localStorage.getItem("loginResponse"));
+  const userId = userData?.Data?.userId;
   let router = useRouter();
   const toastId = useRef(null);
   const [projectId, setProjectId] = useState();
   const [oneprojectId, setOneProjectId] = useState();
+  console.log(oneprojectId,projectId)
   const [name, setName] = useState();
   const [email, setEmail] = useState();
   const [about, setAbout] = useState();
@@ -45,8 +44,8 @@ const userId = userData?.Data?.userId;
       })
       .then(
         (response) => {
-          console.log(response);
-          setProjectId(response.data.Data);
+          console.log("response", response?.data?.Data);
+          setProjectId(response?.data?.Data);
         },
         (error) => {
           console.log(error);

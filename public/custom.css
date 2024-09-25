@@ -141,6 +141,7 @@ svg {
   box-shadow: 0 1px 2px #0000000d;
   background-color: #fff;
   overflow-y: scroll;
+  z-index: 50;
   height: 100vh; /* Adjust height as needed */
   /* Hide scrollbar */
   ::-webkit-scrollbar {
@@ -196,8 +197,9 @@ svg {
 }
 
 .logout-btn {
-  padding: 0 50px;
+  padding: 0 30px;
   margin-bottom: 50px;
+  margin-top: 20px;
 }
 .logout-btn button {
   width: 100%;

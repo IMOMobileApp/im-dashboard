@@ -26,7 +26,7 @@ const Home = ({ children }) => {
   const { showDay } = useSelector((state) => state.toggleDay);
 
   return (
-    <>
+
       <div
         className={showDay ? "day page-wrapper" : "night page-wrapper"}
         style={{ display: "flex" }}
@@ -47,7 +47,6 @@ const Home = ({ children }) => {
           </div>
         </div>
       </div>
-    </>
   );
 };
 export default withAuth(Home);

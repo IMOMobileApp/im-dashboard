@@ -80,6 +80,7 @@ export default function Leftbar() {
                 width={200}
               />
             </Link>
+            
           </div>
           {adminType === "subAdmin" ? (
             <div className="leftbar-links">

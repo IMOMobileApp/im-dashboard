@@ -12,13 +12,14 @@ import FormData from "form-data";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Switch from "@mui/material/Switch";
+import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
+import axios from "axios";
 
 export default function Caretakerdetail({ params }) {
   let router = useRouter();
   const apiRoute = process.env.API_ROUTE;
   const userData = JSON.parse(localStorage.getItem("loginResponse"));
   const userId = userData?.Data?.userId;
-  //console.log("first", userId);
   const toastId = useRef(null);
   const [data, setData] = useState(); //API Data
   const [isLoading, setLoading] = useState(true);
@@ -29,12 +30,31 @@ export default function Caretakerdetail({ params }) {
   const [status, setStatus] = useState();
   const [password, setPassword] = useState();
   const [name, setName] = useState();
-  const [project, setProject] = useState();
+  const [project, setProject] = useState([]);
+  const [currentProject, setCurrentProject] = useState([]);
+  const [projectId, setProjectId] = useState();
+  console.log(project,projectId);
   const [selectedImages, setSelectedImages] = useState(null);
   const onSelectFile = (e) => {
     setSelectedImages(e.target.files[0]);
   };
-
+  useEffect(() => {
+    axios
+      .post(`${apiRoute}/adminAssignProject`, {
+        userId: `${userId}`,
+      })
+      .then(
+        (response) => {
+          setProjectId(response?.data?.Data);
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
+  }, [apiRoute, userId]);
+  const handleChange = (event) => {
+    setProject(event.target.value);
+  };
   const fetchCaretakerDetail = useCallback(() => {
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
@@ -51,16 +71,17 @@ export default function Caretakerdetail({ params }) {
     fetch(`${apiRoute}/gardnerdetail`, requestOptions)
       .then((response) => response.json())
       .then((result) => {
-        setData(result.Data);
-        setUserName(result.Data.userName);
-        setEmail(result.Data.email);
-        setPhone(result.Data.phone);
-        setAbout(result.Data.about);
-        setStatus(result.Data.status);
-        setPassword(result.Data.password);
-        setName(result.Data.name);
-        setSelectedImages(result.Data.userImage);
-        setProject(result.Data.projectName);
+        setData(result?.Data);
+        setUserName(result?.Data?.userName);
+        setEmail(result?.Data?.email);
+        setPhone(result?.Data?.phone);
+        setAbout(result?.Data?.about);
+        setStatus(result?.Data?.status);
+        setPassword(result?.Data?.password);
+        setName(result?.Data?.name);
+        setSelectedImages(result?.Data?.userImage);
+        setProject(result?.Data?.projectName);
+        setCurrentProject(result?.Data?.projectName)
         setLoading(false);
       });
     //  .catch(error => console.log('error', error))
@@ -81,11 +102,11 @@ export default function Caretakerdetail({ params }) {
     bodyContent.append("profile_image", selectedImages);
     bodyContent.append("name", name);
     bodyContent.append("email", email);
+    bodyContent.append("projectId", project);
+    bodyContent.append("about", about);
     bodyContent.append("status", status);
     bodyContent.append("phone", phone);
     bodyContent.append("password", password);
-    bodyContent.append("about", about);
-    bodyContent.append("projectName", project);
 
     let response = await fetch(
       `${process.env.NEXT_PUBLIC_API_ROUTE}/gardneredit`,
@@ -98,6 +119,7 @@ export default function Caretakerdetail({ params }) {
     function successPopup() {
       toast.success(`${data1.Message}`);
       toast.dismiss(toastId.current);
+      router.back();
     }
     function failPopup() {
       toast.error(`${data1.Message}`);
@@ -258,7 +280,7 @@ export default function Caretakerdetail({ params }) {
 
               <div className="row">
                 <div className="col-md-4">
-                  <div className="input-head">Project</div>
+                  <div className="input-head">Current Project</div>
                 </div>
                 <div className="col-md-8">
                   <div className="input-field">
@@ -267,9 +289,45 @@ export default function Caretakerdetail({ params }) {
                       variant="soft"
                       size="lg"
                       style={{ padding: "12px 15px", fontSize: "15px" }}
-                      value={project}
-                      onChange={(e) => setProject(e.target.value)}
+                      value={currentProject}
+                      disabled
+                      // onChange={(e) => setCurrentProject(e.target.value)}
                     />
+                  </div>
+                </div>
+              </div>
+
+              <div className="row">
+                <div className="col-md-4">
+                  <div className="input-head">Update Project</div>
+                </div>
+                <div className="col-md-8">
+                  <div className="input-field">
+                    <FormControl fullWidth>
+                      <InputLabel id="demo-simple-select-label">
+                        Project
+                      </InputLabel>
+                      <Select
+                        labelId="demo-simple-select-label"
+                        id="demo-simple-select"
+                        value={project}
+                        label="Project"
+                        onChange={handleChange}
+                        placeholder={project}
+                      >
+                        {projectId &&
+                          projectId.map((item, i) => {
+                            return (
+                              <MenuItem
+                                value={item.projectId}
+                                key={item.projectId}
+                              >
+                                {item.name}
+                              </MenuItem>
+                            );
+                          })}
+                      </Select>
+                    </FormControl>
                   </div>
                 </div>
               </div>
