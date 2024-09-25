@@ -20,7 +20,14 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 
 export default function AddInitiativeImage({ params }) {
   const apiRoute = process.env.API_ROUTE;
-  const userData = JSON.parse(localStorage.getItem("loginResponse"));
+    // const userData = JSON.parse(localStorage.getItem("loginResponse"));
+  const [userData, setUserData] = useState();
+  useEffect(() => {
+    const storedData = localStorage.getItem("loginResponse");
+    if (storedData) {
+      setUserData(JSON.parse(storedData));
+    }
+  }, []);
   const userId = userData?.Data?.userId;
   let router = useRouter();
   const toastId = useRef(null);

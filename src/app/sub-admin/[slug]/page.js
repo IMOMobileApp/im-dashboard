@@ -16,7 +16,14 @@ import axios from "axios";
 export default function Userdetail({ params }) {
   let router = useRouter();
   const apiRoute = process.env.API_ROUTE;
-  const userData = JSON.parse(localStorage.getItem("loginResponse"));
+    // const userData = JSON.parse(localStorage.getItem("loginResponse"));
+  const [userData, setUserData] = useState();
+  useEffect(() => {
+    const storedData = localStorage.getItem("loginResponse");
+    if (storedData) {
+      setUserData(JSON.parse(storedData));
+    }
+  }, []);
   const userId = userData?.Data?.userId;
   const [isLoading, setLoading] = useState(true);
   const [orderView, setOrderView] = useState(false);

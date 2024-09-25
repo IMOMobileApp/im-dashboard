@@ -1,5 +1,5 @@
 "use client";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import Input from "@mui/joy/Input";
 import Textarea from "@mui/joy/Textarea";
 import Button from "@mui/material/Button";
@@ -12,8 +12,16 @@ import { useRouter } from "next/navigation";
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 export default function Addblog() {
   const apiRoute = process.env.API_ROUTE;
-  // const userId = process.env.USER_ID;
-const userData = JSON.parse(localStorage.getItem("loginResponse"));
+  // //const userId = process.env.USER_ID;
+  // const userData = JSON.parse(localStorage.getItem("loginResponse"));
+  const [userData, setUserData] = useState();
+  useEffect(() => {
+    const storedData = localStorage.getItem("loginResponse");
+    if (storedData) {
+      setUserData(JSON.parse(storedData));
+    }
+  }, []);
+  //const userId = userData?.Data?.userId;
 const userId = userData?.Data?.userId;
 //console.log("first", userId);
   let router = useRouter();

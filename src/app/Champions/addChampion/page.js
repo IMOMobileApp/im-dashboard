@@ -1,5 +1,5 @@
 "use client";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import Input from "@mui/joy/Input";
 import Textarea from "@mui/joy/Textarea";
 import Switch from "@mui/material/Switch";
@@ -14,10 +14,14 @@ import { useRouter } from "next/navigation";
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 export default function Addchampion() {
   const apiRoute = process.env.API_ROUTE;
-  // const userId = process.env.USER_ID;
-const userData = JSON.parse(localStorage.getItem("loginResponse"));
-const userId = userData?.Data?.userId;
-//console.log("first", userId);
+  const [userData, setUserData] = useState();
+  useEffect(() => {
+    const storedData = localStorage.getItem("loginResponse");
+    if (storedData) {
+      setUserData(JSON.parse(storedData));
+    }
+  }, []);
+  const userId = userData?.Data?.userId;
   let router = useRouter();
   const toastId = useRef(null);
   const [title, setTitle] = useState();

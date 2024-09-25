@@ -19,7 +19,14 @@ import Select from "@mui/material/Select";
 export default function Caretakerdetail({ params }) {
   let router = useRouter();
   const apiRoute = process.env.API_ROUTE;
-  const userData = JSON.parse(localStorage.getItem("loginResponse"));
+    // const userData = JSON.parse(localStorage.getItem("loginResponse"));
+  const [userData, setUserData] = useState();
+  useEffect(() => {
+    const storedData = localStorage.getItem("loginResponse");
+    if (storedData) {
+      setUserData(JSON.parse(storedData));
+    }
+  }, []);
   const userId = userData?.Data?.userId;
   //console.log("first", userId);
   const toastId = useRef(null);

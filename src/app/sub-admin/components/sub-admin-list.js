@@ -68,49 +68,17 @@ function EnhancedTableHead(props) {
   );
 }
 
-// function EnhancedTableToolbar(props) {
-//   const { numSelected } = props;
-
-//   return (
-//     <Toolbar
-//       sx={{
-//         ...(numSelected > 0 && {
-//           bgcolor: (theme) =>
-//             alpha(
-//               theme.palette.primary.main,
-//               theme.palette.action.activatedOpacity
-//             ),
-//         }),
-//       }}
-//     >
-//       {/* {numSelected > 0 ? (
-//         <Typography
-//           sx={{ flex: "1 1 100%" }}
-//           color="inherit"
-//           variant="subtitle1"
-//           component="div"
-//         >
-//           {" "}
-//           {numSelected} selected{" "}
-//         </Typography>
-//       ) : (
-//         <Typography
-//           sx={{ flex: "1 1 100%" }}
-//           variant="h6"
-//           id="tableTitle"
-//           component="div"
-//         >
-//           {" "}
-//           Users{" "}
-//         </Typography>
-//       )} */}
-//     </Toolbar>
-//   );
-// }
 
 export default function EnhancedTable({ setArrFunc }) {
   const apiRoute = process.env.API_ROUTE;
-  const userData = JSON.parse(localStorage.getItem("loginResponse"));
+    // const userData = JSON.parse(localStorage.getItem("loginResponse"));
+  const [userData, setUserData] = useState();
+  useEffect(() => {
+    const storedData = localStorage.getItem("loginResponse");
+    if (storedData) {
+      setUserData(JSON.parse(storedData));
+    }
+  }, []);
   const userId = userData?.Data?.userId;
 
   const [selected, setSelected] = useState([]);

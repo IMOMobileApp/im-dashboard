@@ -1,5 +1,5 @@
 "use client";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import Input from "@mui/joy/Input";
 import Button from "@mui/material/Button";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
@@ -12,10 +12,14 @@ import Link from "next/link";
 
 export default function AddnewProduct() {
   const apiRoute = process.env.API_ROUTE;
-  // const userId = process.env.USER_ID;
-const userData = JSON.parse(localStorage.getItem("loginResponse"));
-const userId = userData?.Data?.userId;
-//console.log("first", userId);
+  const [userData, setUserData] = useState();
+  useEffect(() => {
+    const storedData = localStorage.getItem("loginResponse");
+    if (storedData) {
+      setUserData(JSON.parse(storedData));
+    }
+  }, []);
+  const userId = userData?.Data?.userId;
   const toastId = useRef(null);
   const [selectedImages, setSelectedImages] = useState(null);
   const [bannerName, setBannerName] = useState("banner new");
@@ -25,9 +29,6 @@ const userId = userData?.Data?.userId;
 
   const onSelectFile = (e) => {
     setSelectedImages(e.target.files);
-    // console.log(e.target.files)
-    // console.log(selectedImages)
-    // console.log(selectedImages)
   };
 
   const [mediaImage, setImage] = useState("image");

@@ -11,8 +11,15 @@ import { useRouter } from "next/navigation";
 
 export default function AddInitiativeCategory() {
   const apiRoute = process.env.API_ROUTE;
-  // const userId = process.env.USER_ID;
-  const userData = JSON.parse(localStorage.getItem("loginResponse"));
+  // //const userId = process.env.USER_ID;
+    // const userData = JSON.parse(localStorage.getItem("loginResponse"));
+  const [userData, setUserData] = useState();
+  useEffect(() => {
+    const storedData = localStorage.getItem("loginResponse");
+    if (storedData) {
+      setUserData(JSON.parse(storedData));
+    }
+  }, []);
   const userId = userData?.Data?.userId;
   //console.log("first", userId);
   let router = useRouter();

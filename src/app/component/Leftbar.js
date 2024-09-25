@@ -34,7 +34,15 @@ export default function Leftbar() {
   const logoBlack = process.env.LOGO_BLACK;
   const logoWhite = process.env.LOGO_WHITE;
   const apiRoute = process.env.API_ROUTE;
-  const userData = JSON.parse(localStorage.getItem("loginResponse"));
+    // const userData = JSON.parse(localStorage.getItem("loginResponse"));
+  const [userData, setUserData] = useState();
+  useEffect(() => {
+    const storedData = localStorage.getItem("loginResponse");
+    if (storedData) {
+      setUserData(JSON.parse(storedData));
+    }
+  }, []);
+  const userId = userData?.Data?.userId;
   const adminType = userData?.Data?.adminType;
   const adminRoles = userData?.Data?.adminRoles;
 

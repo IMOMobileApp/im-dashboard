@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import Input from "@mui/joy/Input";
 import Button from "@mui/material/Button";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
@@ -11,8 +11,15 @@ import { useRouter } from "next/navigation";
 export default function AddnewCategory() {
   let router = useRouter();
   const apiRoute = process.env.API_ROUTE;
-  // const userId = process.env.USER_ID;
-const userData = JSON.parse(localStorage.getItem("loginResponse"));
+  // const userData = JSON.parse(localStorage.getItem("loginResponse"));
+  const [userData, setUserData] = useState();
+  useEffect(() => {
+    const storedData = localStorage.getItem("loginResponse");
+    if (storedData) {
+      setUserData(JSON.parse(storedData));
+    }
+  }, []);
+  //const userId = userData?.Data?.userId;
 const userId = userData?.Data?.userId;
 //console.log("first", userId);
   const toastId = useRef(null);

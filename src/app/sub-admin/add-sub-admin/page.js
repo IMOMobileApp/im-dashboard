@@ -12,7 +12,14 @@ import { toast } from "react-toastify";
 export default function AddSubAdmin() {
   let router = useRouter();
   const apiRoute = process.env.API_ROUTE;
-  const userData = JSON.parse(localStorage.getItem("loginResponse"));
+    // const userData = JSON.parse(localStorage.getItem("loginResponse"));
+  const [userData, setUserData] = useState();
+  useEffect(() => {
+    const storedData = localStorage.getItem("loginResponse");
+    if (storedData) {
+      setUserData(JSON.parse(storedData));
+    }
+  }, []);
   const userId = userData?.Data?.userId;
   const [orderView, setOrderView] = useState(false);
   const [treeApprovalView, setTreeApprovalView] = useState(false);
