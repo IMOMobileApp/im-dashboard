@@ -21,8 +21,6 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 
 export default function Addblog({ params }) {
   const apiRoute = process.env.API_ROUTE;
-  // //const userId = process.env.USER_ID;
-    // const userData = JSON.parse(localStorage.getItem("loginResponse"));
   const [userData, setUserData] = useState();
   useEffect(() => {
     const storedData = localStorage.getItem("loginResponse");
@@ -30,8 +28,6 @@ export default function Addblog({ params }) {
       setUserData(JSON.parse(storedData));
     }
   }, []);
-  const userId = userData?.Data?.userId;
-  //console.log("first", userId);
   let router = useRouter();
   const toastId = useRef(null);
 
@@ -57,9 +53,10 @@ export default function Addblog({ params }) {
     }
   };
 
-  const fetchAllWebcategoryAPI = useCallback(() => {
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const fetchAllWebcategoryAPI = () => {
     let data = JSON.stringify({
-      userId: `${userId}`,
+      userId: `${userData?.Data?.userId}`,
       catId: `${params.slug1}`,
     });
     let config = {
@@ -77,13 +74,11 @@ export default function Addblog({ params }) {
       setDate(response.data.Data.date);
       setLoading(false);
     });
-  }, [params.slug1, apiRoute, userId]);
-
-  /**----fetch all album----- */
-  /**---fetch all gallery album images--- */
-  const fetchAllalbumImages = useCallback(() => {
+  }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const fetchAllalbumImages = () => {
     let data = JSON.stringify({
-      userId: `${userId}`,
+      userId: `${userData?.Data?.userId}`,
       catId: `${params.slug1}`,
     });
     let config = {
@@ -97,13 +92,13 @@ export default function Addblog({ params }) {
       setGalleryimages(response.data.Data);
       setLoading(false);
     });
-  }, [params.slug1, apiRoute, userId]);
+  }
   useEffect(() => {
-    if(userId){
+    if(userData){
     fetchAllWebcategoryAPI();
     fetchAllalbumImages();
     }
-  }, [fetchAllalbumImages, fetchAllWebcategoryAPI, apiRoute, userId]);
+  }, [userData]);
 
   useEffect(() => {
     if (date) {
@@ -115,7 +110,7 @@ export default function Addblog({ params }) {
     const nowImage = Array.from(e.target.files);
     console.log(nowImage, typeof nowImage);
     let bodyContent = new FormData();
-    bodyContent.append("userId", `${userId}`);
+    bodyContent.append("userId", `${userData?.Data?.userId}`);
     bodyContent.append("catId", `${params.slug1}`);
     //bodyContent.append("album_image", nowImage);
     bodyContent.append("status", status);
@@ -156,7 +151,7 @@ export default function Addblog({ params }) {
       redirect: "follow",
       // Adding body or contents to send
       body: JSON.stringify({
-        userId: `${userId}`,
+        userId: `${userData?.Data?.userId}`,
         albumId: [imgId],
       }),
     }).then(fetchAllalbumImages());
@@ -171,7 +166,7 @@ export default function Addblog({ params }) {
     console.log(title, selectedImages, status, date);
 
     let bodyContent = new FormData();
-    bodyContent.append("userId", `${userId}`);
+    bodyContent.append("userId", `${userData?.Data?.userId}`);
     bodyContent.append("catId", `${params.slug1}`);
     bodyContent.append("title", title);
     bodyContent.append("albumCat_image", selectedImages);

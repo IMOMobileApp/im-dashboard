@@ -17,8 +17,6 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 
 export default function Addblog({ params }) {
   const apiRoute = process.env.API_ROUTE;
-  // //const userId = process.env.USER_ID;
-  // const userData = JSON.parse(localStorage.getItem("loginResponse"));
   const [userData, setUserData] = useState();
   useEffect(() => {
     const storedData = localStorage.getItem("loginResponse");
@@ -26,9 +24,7 @@ export default function Addblog({ params }) {
       setUserData(JSON.parse(storedData));
     }
   }, []);
-  //const userId = userData?.Data?.userId;
-const userId = userData?.Data?.userId;
-//console.log("first", userId);
+
   let router = useRouter();
   const toastId = useRef(null);
   const [title, setTitle] = useState();
@@ -44,9 +40,9 @@ const userId = userData?.Data?.userId;
       setStatus("1");
     }
   };
-  const fetchAllWebcategoryAPI = useCallback(() => {
+  const fetchAllWebcategoryAPI = () => {
     let data = JSON.stringify({
-      userId: `${userId}`,
+      userId: `${userData?.Data?.userId}`,
       videoId: `${params.slug1}`,
     });
     let config = {
@@ -62,7 +58,7 @@ const userId = userData?.Data?.userId;
       setStatus(response.data.Data.status);
       setDate(response.data.Data.date);
     });
-  }, [params.slug1,apiRoute, userId]);
+  }
 
   useEffect(() => {
     if (date) {
@@ -71,14 +67,14 @@ const userId = userData?.Data?.userId;
   }, [date]);
 
   useEffect(() => {
-    if(userId){
+    if(userData){
     fetchAllWebcategoryAPI();
     }
-  }, [fetchAllWebcategoryAPI,apiRoute, userId]);
+  }, [userData]);
   /*-------------------------------------------------------update album--------------------------------------------------------------------------------*/
   async function uploadWithFormData() {
     let data = JSON.stringify({
-      userId: `${userId}`,
+      userId: `${userData?.Data?.userId}`,
       videoId: `${params.slug1}`,
       initiativeId: `${params.slug}`,
       title: title,

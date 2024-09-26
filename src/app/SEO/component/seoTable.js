@@ -127,7 +127,6 @@ export default function SeoTable() {
   );
 
   const fetchAllProjects =() => {
-    // let data = JSON.stringify({ "userId": `${userId}` });
     let config = {
       method: "post",
       maxBodyLength: Infinity,

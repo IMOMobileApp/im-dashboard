@@ -130,46 +130,6 @@ export default function Policydetail({ params }) {
     }
   }
   /**----------------------------------------------------------------update blog--------------------------------------------- */
-  /**--------------------------------------------------------------------delete Blog------------------------------ */
-  // async function deleteBlog(){
-  //   pendingPopup1()
-  //   var myHeaders = new Headers();
-  //   myHeaders.append("Content-Type", "application/json");
-
-  //   var raw = JSON.stringify({ "userId": `${userId}`, "blogId": [data._id]});
-
-  //   var requestOptions = {method: 'POST',headers: myHeaders,body: raw,redirect: 'follow'};
-  //  let deleteResponse = await fetch(`${apiRoute}/deleteblog`, requestOptions)
-  //     let deleteData = await deleteResponse.json()
-  //     function successPopup1(){
-  //       toast.success(`${deleteData.Message}` )
-  //       toast.dismiss(toastId.current);
-  //                              }
-  //     function failPopup1(){
-  //     toast.error(`${deleteData.Message}`)
-  //     toast.dismiss(toastId.current);
-  //                         }
-  //     function pendingPopup1(){
-  //       toastId.current =  toast.loading('Deleting Blog') }
-  //     { deleteData.Status === true  ?    successPopup1() : failPopup1()}
-  //     { deleteData.Status === true  ? router.push('/Blogs') : ''}
-
-  // }
-  /**--------------------------------------------------------------------delete Blog------------------------------- */
-
-  //   (function () {
-  //     if (typeof EventTarget !== "undefined") {
-  //         let func = EventTarget.prototype.addEventListener;
-  //         EventTarget.prototype.addEventListener = function (type, fn, capture) {
-  //             this.func = func;
-  //             if(typeof capture !== "boolean"){
-  //                 capture = capture || {};
-  //                 capture.passive = false;
-  //             }
-  //             this.func(type, fn, capture);
-  //         };
-  //     };
-  // }());
   /**---------------------------------------------------------------------------------------------------------------------------------------- */
   return (
     <>

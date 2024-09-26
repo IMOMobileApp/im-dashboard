@@ -114,8 +114,6 @@ function EnhancedTableToolbar(props) {
 
 export default function CertificateTable() {
   const apiRoute = process.env.API_ROUTE;
-  // //const userId = process.env.USER_ID;
-  // const userData = JSON.parse(localStorage.getItem("loginResponse"));
   const [userData, setUserData] = useState();
   useEffect(() => {
     const storedData = localStorage.getItem("loginResponse");
@@ -123,9 +121,6 @@ export default function CertificateTable() {
       setUserData(JSON.parse(storedData));
     }
   }, []);
-  //const userId = userData?.Data?.userId;
-  const userId = userData?.Data?.userId;
-  //console.log("first", userId);
 
   const [selected, setSelected] = useState([]);
   const [page, setPage] = useState(0);
@@ -150,8 +145,8 @@ export default function CertificateTable() {
     page * rowsPerPage + rowsPerPage
   );
 
-  const fetchAllBlogsAPI = useCallback(() => {
-    let data = JSON.stringify({ userId: `${userId}` });
+  const fetchAllBlogsAPI = () => {
+    let data = JSON.stringify({ userId: `${userData?.Data?.userId}` });
     let config = {
       method: "post",
       maxBodyLength: Infinity,
@@ -163,13 +158,13 @@ export default function CertificateTable() {
       getChallengelist(response?.data?.Data);
     });
     // .catch((error) => { // console.log(error);   });
-  }, [apiRoute, userId]);
+  }
 
   useEffect(() => {
-    if(userId){
+    if(userData){
     fetchAllBlogsAPI();
     }
-  }, [fetchAllBlogsAPI]);
+  }, [userData]);
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {

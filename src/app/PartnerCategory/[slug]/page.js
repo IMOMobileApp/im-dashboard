@@ -109,46 +109,7 @@ export default function Caretakerdetail({ params }) {
       data1.Status === true ? successPopup() : failPopup();
     }
   }
-  /**----------------------------------------------------------------update caretaker--------------------------------------------- */
-  /**--------------------------------------------------------------------delete ------------------------------ */
-  /*
-async function deleteBlog(){
-  pendingPopup1()
-  var myHeaders = new Headers();
-  myHeaders.append("Content-Type", "application/json");
-  
-  var raw = JSON.stringify({
-    "userId": `${userId}`,
-    "governId": [data.governId]
-  });
-  
-  var requestOptions = {
-    method: 'POST',
-    headers: myHeaders,
-    body: raw,
-    redirect: 'follow'
-  };
-  
- let deleteResponse = await fetch(`${apiRoute}/deletegovernance`, requestOptions)
-    let deleteData = await deleteResponse.json()
 
-    function successPopup1(){
-      toast.success(`${deleteData.Message}` )
-      toast.dismiss(toastId.current);
-                             }
-    function failPopup1(){
-    toast.error(`${deleteData.Message}`)
-    toast.dismiss(toastId.current);
-                        }
-    function pendingPopup1(){
-      toastId.current =  toast.loading('Deleting Partner') }
-  
-    { deleteData.Status === true  ?    successPopup1() : failPopup1()}
-    { deleteData.Status === true  ? router.push('/PartnerCategory') : ''}
-   
-
-}
-*/
   /**--------------------------------------------------------------------delete ------------------------------- */
 
   /**---------------------------------------------------------------------------------------------------------------------------------------- */

@@ -115,8 +115,6 @@ function EnhancedTableToolbar(props) {
 
 export default function BlogcategoryTable() {
   const apiRoute = process.env.API_ROUTE;
-  // //const userId = process.env.USER_ID;
-  // const userData = JSON.parse(localStorage.getItem("loginResponse"));
   const [userData, setUserData] = useState();
   useEffect(() => {
     const storedData = localStorage.getItem("loginResponse");
@@ -124,14 +122,10 @@ export default function BlogcategoryTable() {
       setUserData(JSON.parse(storedData));
     }
   }, []);
-  //const userId = userData?.Data?.userId;
-const userId = userData?.Data?.userId;
-//console.log("first", userId);
 
   const [selected, setSelected] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(25);
-  //const [checked, setChecked] = useState();
   const [rows, getCatlist] = useState([]);
 
   const toastId = useRef(null);
@@ -170,8 +164,8 @@ const userId = userData?.Data?.userId;
   ];
   /**------download queries------ */
 
-  const fetchAllWebcategoryAPI = useCallback(() => {
-    let data = JSON.stringify({ userId: `${userId}` });
+  const fetchAllWebcategoryAPI = () => {
+    let data = JSON.stringify({ userId: `${userData?.Data?.userId}` });
     let config = {
       method: "post",
       maxBodyLength: Infinity,
@@ -184,12 +178,12 @@ const userId = userData?.Data?.userId;
       //  console.log(response.data.Data)
     });
     // .catch((error) => {  console.log(error);  });
-  }, [apiRoute, userId]);
+  }
   useEffect(() => {
-    if(userId){
+    if(userData){
     fetchAllWebcategoryAPI();
     }
-  }, [fetchAllWebcategoryAPI]);
+  }, [userData]);
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
@@ -228,7 +222,7 @@ const userId = userData?.Data?.userId;
     pendingPopup();
     console.log(e.target.value);
     const raw = JSON.stringify({
-      userId: userId,
+      userId: userData?.Data?.userId,
       formId: formId,
       type: type,
       status: e.target.value,

@@ -19,8 +19,6 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 export default function Addblog({ params }){
 
   const apiRoute = process.env.API_ROUTE;
-  // //const userId = process.env.USER_ID;
-  // const userData = JSON.parse(localStorage.getItem("loginResponse"));
   const [userData, setUserData] = useState();
   useEffect(() => {
     const storedData = localStorage.getItem("loginResponse");
@@ -28,9 +26,6 @@ export default function Addblog({ params }){
       setUserData(JSON.parse(storedData));
     }
   }, []);
-  //const userId = userData?.Data?.userId;
-const userId = userData?.Data?.userId;
-//console.log("first", userId);
     let router= useRouter()
     const toastId = useRef(null);
     const [title, setTitle]= useState();
@@ -47,46 +42,18 @@ const userId = userData?.Data?.userId;
         else{setStatus('1')}
       }
 
- 
-
-
-/**---fetch all album--- */
-// const fetchAllWebcategoryAPI=useCallback(()=>{
-//   let data = JSON.stringify({
-//      "userId": `${userId}` ,
-//      "title":'',
-//      "album_image":'',
-//      "initiativeId":'',
-//      "status":'',
-    
-//     });
-//   let config = {
-//     method: 'post',
-//     maxBodyLength: Infinity,
-//     url: `${apiRoute}/addalbumcat`,
-//     headers: {  'Content-Type': 'application/json' },
-//     data : data
-//   }; 
-//   axios.request(config)
-//   .then((response) => { 
-//     setData(response.data.Data);
-//   })
-// }, [apiRoute, userId])
-
-
-
 /**----fetch all album----- */
 useEffect(
   ()=>{
     //  fetchAllWebcategoryAPI()
-    }, [apiRoute, userId]);
+    }, [apiRoute, userData]);
   /*-------------------------------------------------------update album--------------------------------------------------------------------------------*/
   async function uploadWithFormData() {
     pendingPopup()
      console.log(title, selectedImages, status)
 
      let bodyContent = new FormData();
-     bodyContent.append("userId", `${userId}`); 
+     bodyContent.append("userId", `${userData?.Data?.userId}`); 
      bodyContent.append("title", title);
      bodyContent.append("albumCat_image", selectedImages);
      bodyContent.append("status", status);

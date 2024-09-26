@@ -107,7 +107,6 @@ function EnhancedTableToolbar(props) {
 
 export default function ProjectTable() {
   const apiRoute = process.env.API_ROUTE;
-    // const userData = JSON.parse(localStorage.getItem("loginResponse"));
   const [userData, setUserData] = useState();
   useEffect(() => {
     const storedData = localStorage.getItem("loginResponse");
@@ -115,9 +114,7 @@ export default function ProjectTable() {
       setUserData(JSON.parse(storedData));
     }
   }, []);
-  const userId = userData?.Data?.userId;
 
-  //console.log("first", userId);
   const [selected, setSelected] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(25);
@@ -143,7 +140,7 @@ export default function ProjectTable() {
   const changeProjectStatus = (event) => {
     //setChecked(!checked)
     let bodyContent = new FormData();
-    bodyContent.append("userId", `${userId}`);
+    bodyContent.append("userId", `${userData?.Data?.userId}`);
 
     bodyContent.append("area", event.area);
     bodyContent.append("description", event.description);
@@ -175,8 +172,9 @@ export default function ProjectTable() {
       .catch((error) => console.log("error", error));
   };
 
-  const fetchAllProjects = useCallback(() => {
-    let data = JSON.stringify({ userId: `${userId}` });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const fetchAllProjects = () => {
+    let data = JSON.stringify({ userId: `${userData?.Data?.userId}` });
     let config = {
       method: "post",
       maxBodyLength: Infinity,
@@ -189,13 +187,13 @@ export default function ProjectTable() {
       getProjectlist(projects); 
     });
     //  .catch((error) => {  console.log(error);  });
-  }, [apiRoute, userId]);
+  }
 
   useEffect(() => {
-    if(userId){
+    if(userData){
     fetchAllProjects();
     }
-  }, [fetchAllProjects]);
+  }, [userData]);
 
   return (
     <>

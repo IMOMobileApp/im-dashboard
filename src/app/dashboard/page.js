@@ -22,7 +22,6 @@ import Link from "next/link";
 export default function Dashboard() {
   const [data, setData] = useState();
   const apiRoute = process.env.API_ROUTE;
-  // const userData = JSON.parse(localStorage.getItem("loginResponse"));
   const [userData, setUserData] = useState();
   useEffect(() => {
     const storedData = localStorage.getItem("loginResponse");
@@ -36,7 +35,7 @@ export default function Dashboard() {
   myHeaders.append("Content-Type", "application/json");
 
   var raw = JSON.stringify({
-    userId: `${userId}`,
+    userId: `${userData?.Data?.userId}`,
   });
   var requestOptions = {
     method: "POST",
@@ -53,10 +52,11 @@ export default function Dashboard() {
       setData(projects);
       return projects;
     }
-    if (userId) {
+    if (userData) {
       getData();
     }
-  }, [userId]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userData]);
   // const data = await getData()
 
   return (

@@ -103,8 +103,6 @@ function EnhancedTableToolbar(props) {
 
 export default function VideoTable(props) {
   const apiRoute = process.env.API_ROUTE;
-  // //const userId = process.env.USER_ID;
-  // const userData = JSON.parse(localStorage.getItem("loginResponse"));
   const [userData, setUserData] = useState();
   useEffect(() => {
     const storedData = localStorage.getItem("loginResponse");
@@ -112,9 +110,6 @@ export default function VideoTable(props) {
       setUserData(JSON.parse(storedData));
     }
   }, []);
-  //const userId = userData?.Data?.userId;
-const userId = userData?.Data?.userId;
-//console.log("first", userId);
 
   const [selected, setSelected] = useState([]);
   const [page, setPage] = useState(0);
@@ -145,7 +140,7 @@ const userId = userData?.Data?.userId;
     setChecked(!checked);
 
     let data = JSON.stringify({
-      userId: `${userId}`,
+      userId: `${userData?.Data?.userId}`,
       title: event.title,
       newsId: event.newsId,
       upload_image: event.image,
@@ -173,7 +168,7 @@ const userId = userData?.Data?.userId;
   /**---delete-video-url--- */
   const deleteVideoUrl = (event) => {
     let data = JSON.stringify({
-      userId: `${userId}`,
+      userId: `${userData?.Data?.userId}`,
       newsId: [event.newsId],
     });
     let config = {
@@ -194,9 +189,9 @@ const userId = userData?.Data?.userId;
   /**---delete-video-url--- */
 
   /**---fetch all video url--- */
-  const fetchAllVideoAPI = useCallback(() => {
+  const fetchAllVideoAPI = () => {
     let data = JSON.stringify({
-      userId: `${userId}`,
+      userId: `${userData?.Data?.userId}`,
       initiativeId: props.videoId,
     });
     let config = {
@@ -211,12 +206,12 @@ const userId = userData?.Data?.userId;
       //  console.log(response.data.Data)
     });
     // .catch((error) => {  console.log(error);  });
-  }, [props.videoId, apiRoute, userId]);
+  }
   useEffect(() => {
-    if(userId){
+    if(userData){
     fetchAllVideoAPI();
     }
-  }, [fetchAllVideoAPI]);
+  }, [userData]);
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {

@@ -20,8 +20,6 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 export default function Addblog({ params }){
 
   const apiRoute = process.env.API_ROUTE;
-  // //const userId = process.env.USER_ID;
-  // const userData = JSON.parse(localStorage.getItem("loginResponse"));
   const [userData, setUserData] = useState();
   useEffect(() => {
     const storedData = localStorage.getItem("loginResponse");
@@ -29,9 +27,7 @@ export default function Addblog({ params }){
       setUserData(JSON.parse(storedData));
     }
   }, []);
-  //const userId = userData?.Data?.userId;
-const userId = userData?.Data?.userId;
-//console.log("first", userId);
+
     let router= useRouter()
     const toastId = useRef(null);
     const [title, setTitle]= useState();
@@ -78,7 +74,7 @@ const userId = userData?.Data?.userId;
 
     nowUrl.forEach((image, index) => {  bodyContent.append("urls", image);  });
 
-     bodyContent.append("userId", `${userId}`); 
+     bodyContent.append("userId", `${userData?.Data?.userId}`); 
      bodyContent.append("title", title);
      bodyContent.append("upload_image", selectedImages);
      bodyContent.append("initiativeId",`${params.slug}`);

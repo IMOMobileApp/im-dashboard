@@ -103,8 +103,6 @@ function EnhancedTableToolbar(props) {
 
 export default function AlbumTable(props) {
   const apiRoute = process.env.API_ROUTE;
-  // //const userId = process.env.USER_ID;
-  // const userData = JSON.parse(localStorage.getItem("loginResponse"));
   const [userData, setUserData] = useState();
   useEffect(() => {
     const storedData = localStorage.getItem("loginResponse");
@@ -112,9 +110,6 @@ export default function AlbumTable(props) {
       setUserData(JSON.parse(storedData));
     }
   }, []);
-  //const userId = userData?.Data?.userId;
-const userId = userData?.Data?.userId;
-//console.log("first", userId);
 
   const [selected, setSelected] = useState([]);
   const [page, setPage] = useState(0);
@@ -142,7 +137,7 @@ const userId = userData?.Data?.userId;
   const changeBlogStatus = (event) => {
     setChecked(!checked);
     var formdata = new FormData();
-    formdata.append("userId", `${userId}`);
+    formdata.append("userId", `${userData?.Data?.userId}`);
     formdata.append("catId", event.catId);
     formdata.append("title", event.title);
     formdata.append("albumCat_image", event.image);
@@ -161,9 +156,10 @@ const userId = userData?.Data?.userId;
     //  .catch(error => console.log('error', error));
   };
 
-  const fetchAllBlogsAPI = useCallback(() => {
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const fetchAllBlogsAPI = () => {
     let data = JSON.stringify({
-      userId: `${userId}`,
+      userId: `${userData?.Data?.userId}`,
       initiativeId: props.albumId,
     });
     let config = {
@@ -176,12 +172,12 @@ const userId = userData?.Data?.userId;
     axios.request(config).then((response) => {
       getBloglist(response.data.Data);
     });
-  }, [props.albumId, apiRoute, userId]);
+  }
   useEffect(() => {
-    if(userId){
+    if(userData){
     fetchAllBlogsAPI();
     }
-  }, [fetchAllBlogsAPI]);
+  }, [userData]);
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {

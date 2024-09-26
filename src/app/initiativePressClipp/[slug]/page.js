@@ -11,8 +11,6 @@ import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 
 export default function AddImages({ params }) {
   const apiRoute = process.env.API_ROUTE;
-  // //const userId = process.env.USER_ID;
-    // const userData = JSON.parse(localStorage.getItem("loginResponse"));
   const [userData, setUserData] = useState();
   useEffect(() => {
     const storedData = localStorage.getItem("loginResponse");
@@ -20,8 +18,7 @@ export default function AddImages({ params }) {
       setUserData(JSON.parse(storedData));
     }
   }, []);
-  const userId = userData?.Data?.userId;
-  //console.log("first", userId);
+
   let router = useRouter();
   const toastId = useRef(null);
 
@@ -47,9 +44,9 @@ export default function AddImages({ params }) {
     }
   };
 
-  const fetchAllalbumImages = useCallback(() => {
+  const fetchAllalbumImages = () => {
     let data = JSON.stringify({
-      userId: `${userId}`,
+      userId: `${userData?.Data?.userId}`,
       initiativeId: `${params.slug}`,
     });
     let config = {
@@ -63,18 +60,18 @@ export default function AddImages({ params }) {
       setGalleryimages(response.data.Data);
       setLoading(false);
     });
-  }, [params.slug, apiRoute, userId]);
+  }
   useEffect(() => {
-    if(userId){
+    if(userData){
     fetchAllalbumImages();
     }
-  }, [fetchAllalbumImages, apiRoute, userId]);
+  }, [userData]);
 
   const onSelectGallery = async (e) => {
     const nowImage = e.target.files[0];
     console.log(nowImage);
     let bodyContent = new FormData();
-    bodyContent.append("userId", `${userId}`);
+    bodyContent.append("userId", `${userData?.Data?.userId}`);
     bodyContent.append("catId", `${params.slug1}`);
     bodyContent.append("status", status);
 
@@ -104,7 +101,7 @@ export default function AddImages({ params }) {
       redirect: "follow",
       // Adding body or contents to send
       body: JSON.stringify({
-        userId: `${userId}`,
+        userId: `${userData?.Data?.userId}`,
         imageId: [imgId],
       }),
     }).then(fetchAllalbumImages());
@@ -119,7 +116,7 @@ export default function AddImages({ params }) {
     console.log(title, selectedImages, status, date);
 
     let bodyContent = new FormData();
-    bodyContent.append("userId", `${userId}`);
+    bodyContent.append("userId", `${userData?.Data?.userId}`);
     bodyContent.append("catId", `${params.slug1}`);
     bodyContent.append("title", title);
     bodyContent.append("albumCat_image", selectedImages);

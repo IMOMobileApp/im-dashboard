@@ -169,30 +169,6 @@ export default function QuizTable(props) {
       data: data,
     };
     axios.request(config).then(fetchAllquizAPI);
-    //  .then((response) => {
-
-    //    var formdata = new FormData();
-    //    formdata.append("userId", `${userId}`)
-    //    formdata.append("quizId", event._id)
-    //    formdata.append('quiz', event.quiz)
-    //    formdata.append("opt1", event.opt1)
-    //    formdata.append("opt2", event.opt2)
-    //    formdata.append('opt3', event.opt3)
-    //    formdata.append('opt4', event.opt4)
-    //    formdata.append('ans', event.ans)
-    //   formdata.append("status", event.status=='1' ? '0' : '1');
-
-    //    var requestOptions = {
-    //      method: 'POST',
-    //      body: formdata,
-    //      redirect: 'follow'
-    //    };
-    //    fetch(`${apiRoute}/editquiz`, requestOptions)
-    //      .then(response => response.text())
-    //      .then(result => console.log(result))
-    //      .then(console.log(requestOptions.body))
-    //      .then(fetchAllquizAPI) // fetch again all quiz api after sending post request of changinh status
-    //      .catch(error => console.log('error', error));
   };
 
   const fetchAllquizAPI = () => {

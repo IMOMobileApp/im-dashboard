@@ -20,8 +20,6 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 
 export default function AddInitiativeImage({ params }) {
   const apiRoute = process.env.API_ROUTE;
-  // //const userId = process.env.USER_ID;
-    // const userData = JSON.parse(localStorage.getItem("loginResponse"));
   const [userData, setUserData] = useState();
   useEffect(() => {
     const storedData = localStorage.getItem("loginResponse");
@@ -29,8 +27,7 @@ export default function AddInitiativeImage({ params }) {
       setUserData(JSON.parse(storedData));
     }
   }, []);
-  const userId = userData?.Data?.userId;
-  //console.log("first", userId);
+
   let router = useRouter();
   const toastId = useRef(null);
 
@@ -49,62 +46,14 @@ export default function AddInitiativeImage({ params }) {
     //  console.log(selectedImages)
     console.log(e.target.files[0].name);
   };
-  //   const changeStatus=()=>{
-  //   if(status == 1){  setStatus('0')  }
-  //     else{setStatus('1')}
-  //   }
 
-  /**----fetch all album----- */
-  // useEffect(() => {
-  //   // Update beginDate whenever date changes
-  //   if (date) {
-  //     setBeginDate(dayjs(date).format('YYYY-MM-DD'));
-  //   }
-  // }, [date]);
-
-  /**---------------add gallery album image----------- */
-  //   const onSelectGallery=async (e)=>{
-  //       const nowImage = Array.from(e.target.files);
-  //       console.log(nowImage, typeof(nowImage))
-  //       let bodyContent = new FormData();
-  // 	  bodyContent.append("userId", `${userId}`);
-  //       bodyContent.append("catId", `${params.slug1}`);
-  //       //bodyContent.append("album_image", nowImage);
-  //       bodyContent.append("status", status);
-  //  // Append each image separately with a unique key and append in bodyContent
-  //  nowImage.forEach((image, index) => {
-  //   bodyContent.append("album_image", image);
-  // });
-  //       await fetch(`${apiRoute}/addalbum`, {
-  //       // Adding method type
-  //       method: "POST",
-  //       // Adding body or contents to send
-  //       body: bodyContent,
-  //   })
-
-  //   .then(
-  //     () => {
-  //       // Adding a delay of 4 seconds (4000 milliseconds) before calling fetchProjectDetail()
-  //       setTimeout(() => {
-  //         fetchAllalbumImages();
-  //       }, 100);
-  //     }
-  //   )
-  //   }
-  /**---------------add gallery album images----------- */
-  /**---delete album gallery image-------- */
-
-  /**---delete album gallery image-------- */
-
-  //   if (isLoading) return <Loader />
-  // if (!data) return <p>No profile data</p>
   /*-------------------------------------------------------update album--------------------------------------------------------------------------------*/
   async function uploadWithFormData() {
     pendingPopup();
     console.log(title, selectedImages, status, date);
 
     let bodyContent = new FormData();
-    bodyContent.append("userId", `${userId}`);
+    bodyContent.append("userId", `${userData?.Data?.userId}`);
     bodyContent.append("title", title);
     bodyContent.append("upload_image", selectedImages);
     bodyContent.append("status", 1);
