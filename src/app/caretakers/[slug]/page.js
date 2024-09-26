@@ -41,7 +41,6 @@ export default function Caretakerdetail({ params }) {
   const [currentProjectId, setCurrentProjectId] = useState([]);
   const [projectId, setProjectId] = useState();
   const [selectedImages, setSelectedImages] = useState(null);
-  console.log("Project",projectUpdate,"current",currentProjectId)
   const onSelectFile = (e) => {
     setSelectedImages(e.target.files[0]);
   };
