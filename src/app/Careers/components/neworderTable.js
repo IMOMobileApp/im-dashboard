@@ -24,6 +24,7 @@ import Chip from "@mui/material/Chip";
 
 import Button from "@mui/material/Button";
 import { CSVLink } from "react-csv";
+import Loader from "@/app/component/Loader";
 
 const headCells = [
   { id: "cat_name", numeric: false, disablePadding: false, label: "Name" },
@@ -213,6 +214,7 @@ export default function NewOrderTable() {
 
   return (
     <>
+    {visibleRows && visibleRows.length > 0 ? (
       <Box sx={{ width: "100%" }}>
         <Paper sx={{ width: "100%", mb: 2 }}>
           <EnhancedTableToolbar numSelected={selected.length} />
@@ -361,6 +363,7 @@ export default function NewOrderTable() {
           />
         </Paper>
       </Box>
+    ):( <Loader />)}
     </>
   );
 }

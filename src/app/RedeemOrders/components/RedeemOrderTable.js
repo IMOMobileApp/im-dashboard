@@ -16,7 +16,7 @@ import Typography from "@mui/material/Typography";
 import Paper from "@mui/material/Paper";
 import Image from "next/image";
 import BorderColorIcon from "@mui/icons-material/BorderColor";
-
+import Loader from "@/app/component/Loader";
 const headCells = [
   { id: "cat_id", numeric: false, disablePadding: false, label: "Order Id" },
   { id: "cat_img", numeric: false, disablePadding: false, label: "User Name" },
@@ -167,6 +167,7 @@ export default function RedeemOrderTable() {
 
   return (
     <>
+     {visibleRows && visibleRows.length > 0 ? (
       <Box sx={{ width: "100%" }}>
         <Paper sx={{ width: "100%", mb: 2 }}>
           <EnhancedTableToolbar numSelected={selected.length} />
@@ -252,6 +253,7 @@ export default function RedeemOrderTable() {
           />
         </Paper>
       </Box>
+     ):(<Loader/>)}
     </>
   );
 }

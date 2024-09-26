@@ -18,7 +18,7 @@ import Switch from "@mui/material/Switch";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import Link from "next/link";
 import TextField from "@mui/material/TextField";
-
+import Loader from "@/app/component/Loader";
 const headCells = [
   { id: "cat_id", numeric: true, disablePadding: false, label: "User Id" },
   { id: "cat_img", numeric: true, disablePadding: false, label: "Name" },
@@ -247,6 +247,7 @@ export default function EnhancedTable({ setArrFunc }) {
 
   return (
     <>
+     {visibleRows && visibleRows.length>0?(
       <Box sx={{ width: "100%" }}>
         <Paper sx={{ width: "100%", mb: 2,px:2 }}>
           <EnhancedTableToolbar numSelected={selected.length} />
@@ -348,7 +349,7 @@ export default function EnhancedTable({ setArrFunc }) {
             onRowsPerPageChange={handleChangeRowsPerPage}
           />
         </Paper>
-      </Box>
+      </Box>):(<Loader/>)}
     </>
   );
 }

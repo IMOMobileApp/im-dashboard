@@ -16,7 +16,7 @@ import Typography from "@mui/material/Typography";
 import Paper from "@mui/material/Paper";
 import Image from "next/image";
 import VisibilityIcon from "@mui/icons-material/Visibility";
-
+import Loader from "@/app/component/Loader";
 const headCells = [
   { id: "cat_id", numeric: false, disablePadding: false, label: "Project Id" },
   { id: "cat_img", numeric: false, disablePadding: false, label: "Image" },
@@ -148,6 +148,7 @@ export default function ProjectTable() {
 
   return (
     <>
+     {visibleRows && visibleRows.length>0?(
       <Box sx={{ width: "100%" }}>
         <Paper sx={{ width: "100%", mb: 2 }}>
           <EnhancedTableToolbar numSelected={selected.length} />
@@ -246,6 +247,7 @@ export default function ProjectTable() {
           />
         </Paper>
       </Box>
+     ):(<Loader/>)}
     </>
   );
 }

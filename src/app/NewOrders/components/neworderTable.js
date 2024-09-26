@@ -16,6 +16,7 @@ import Typography from "@mui/material/Typography";
 import Paper from "@mui/material/Paper";
 import Image from "next/image";
 import BorderColorIcon from "@mui/icons-material/BorderColor";
+import Loader from "@/app/component/Loader";
 
 const headCells = [
   { id: "cat_id", numeric: false, disablePadding: false, label: "Order Id" },
@@ -164,92 +165,96 @@ export default function NewOrderTable() {
 
   return (
     <>
-      <Box sx={{ width: "100%" }}>
-        <Paper sx={{ width: "100%", mb: 2 }}>
-          <EnhancedTableToolbar numSelected={selected.length} />
-          <TableContainer>
-            <Table
-              className="tabel-responsive"
-              aria-labelledby="tableTitle"
-              size="medium"
-            >
-              <EnhancedTableHead
-                numSelected={selected.length}
-                rowCount={rows.length}
-              />
-              <TableBody>
-                {visibleRows.map((row, index) => {
-                  const isItemSelected = isSelected(row._id);
-                  const labelId = `enhanced-table-checkbox-${index}`;
+      {visibleRows && visibleRows.length > 0 ? (
+        <Box sx={{ width: "100%" }}>
+          <Paper sx={{ width: "100%", mb: 2 }}>
+            <EnhancedTableToolbar numSelected={selected.length} />
+            <TableContainer>
+              <Table
+                className="tabel-responsive"
+                aria-labelledby="tableTitle"
+                size="medium"
+              >
+                <EnhancedTableHead
+                  numSelected={selected.length}
+                  rowCount={rows.length}
+                />
+                <TableBody>
+                  {visibleRows.map((row, index) => {
+                    const isItemSelected = isSelected(row._id);
+                    const labelId = `enhanced-table-checkbox-${index}`;
 
-                  return (
-                    <TableRow
-                      hover
-                      role="checkbox"
-                      aria-checked={isItemSelected}
-                      tabIndex={-1}
-                      key={row._id}
-                      selected={isItemSelected}
-                      sx={{ cursor: "pointer" }}
-                    >
-                      {/* <TableCell align="left">
+                    return (
+                      <TableRow
+                        hover
+                        role="checkbox"
+                        aria-checked={isItemSelected}
+                        tabIndex={-1}
+                        key={row._id}
+                        selected={isItemSelected}
+                        sx={{ cursor: "pointer" }}
+                      >
+                        {/* <TableCell align="left">
                       <div style={{position:'relative',width:'50px',height:'50px',borderRadius:'50%',border:'1px solid #e2e2e2',marginLeft:'auto',overflow: 'hidden'}}><Image src={row.image} alt="product image" width={50} height={50}/>
                       </div></TableCell> */}
 
-                      <TableCell align="left" data-attr="">
-                        {row.orderId}
-                      </TableCell>
-                      <TableCell align="left" data-attr="">{`${new Date(
-                        row.createdAt
-                      ).getDate()}/${
-                        new Date(row.createdAt).getMonth() + 1
-                      }/${new Date(row.createdAt).getFullYear()}`}</TableCell>
+                        <TableCell align="left" data-attr="">
+                          {row.orderId}
+                        </TableCell>
+                        <TableCell align="left" data-attr="">{`${new Date(
+                          row.createdAt
+                        ).getDate()}/${
+                          new Date(row.createdAt).getMonth() + 1
+                        }/${new Date(row.createdAt).getFullYear()}`}</TableCell>
 
-                      <TableCell align="left" data-attr="">
-                        {row.userName}
-                      </TableCell>
-                      <TableCell align="left" data-attr="">
-                        {row.projectName}
-                      </TableCell>
-                      <TableCell align="left" data-attr="">
-                        {row.treeSpecies}
-                      </TableCell>
-                      <TableCell align="left" data-attr="">
-                        {row.qty}
-                      </TableCell>
-                      <TableCell align="left" data-attr="">
-                        {row.amount}
-                      </TableCell>
-                      <TableCell align="left" data-attr="">
-                        <Link href={`NewOrders/${row._id}`}>
-                          <span className="dashboard-table-icon">
-                            <BorderColorIcon />
-                          </span>
-                        </Link>
-                      </TableCell>
+                        <TableCell align="left" data-attr="">
+                          {row.userName}
+                        </TableCell>
+                        <TableCell align="left" data-attr="">
+                          {row.projectName}
+                        </TableCell>
+                        <TableCell align="left" data-attr="">
+                          {row.treeSpecies}
+                        </TableCell>
+                        <TableCell align="left" data-attr="">
+                          {row.qty}
+                        </TableCell>
+                        <TableCell align="left" data-attr="">
+                          {row.amount}
+                        </TableCell>
+                        <TableCell align="left" data-attr="">
+                          <Link href={`NewOrders/${row._id}`}>
+                            <span className="dashboard-table-icon">
+                              <BorderColorIcon />
+                            </span>
+                          </Link>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+                  {emptyRows > 0 && (
+                    <TableRow style={{ height: 53 * emptyRows }}>
+                      {" "}
+                      <TableCell colSpan={6} />{" "}
                     </TableRow>
-                  );
-                })}
-                {emptyRows > 0 && (
-                  <TableRow style={{ height: 53 * emptyRows }}>
-                    {" "}
-                    <TableCell colSpan={6} />{" "}
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </TableContainer>
-          <TablePagination
-            rowsPerPageOptions={[5, 10, 25]}
-            component="div"
-            count={rows.length}
-            rowsPerPage={rowsPerPage}
-            page={page}
-            onPageChange={handleChangePage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
-          />
-        </Paper>
-      </Box>
+                  )}
+                </TableBody>
+              </Table>
+            </TableContainer>
+            <TablePagination
+              rowsPerPageOptions={[5, 10, 25]}
+              component="div"
+              count={rows.length}
+              rowsPerPage={rowsPerPage}
+              page={page}
+              onPageChange={handleChangePage}
+              onRowsPerPageChange={handleChangeRowsPerPage}
+            />
+          </Paper>
+        </Box>
+      ) : (
+        <Loader />
+      )}
     </>
   );
 }
