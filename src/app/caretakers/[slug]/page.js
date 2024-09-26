@@ -36,9 +36,12 @@ export default function Caretakerdetail({ params }) {
   const [password, setPassword] = useState();
   const [name, setName] = useState();
   const [project, setProject] = useState([]);
+  const [projectUpdate, setProjectUpdate] = useState([]);
   const [currentProject, setCurrentProject] = useState([]);
+  const [currentProjectId, setCurrentProjectId] = useState([]);
   const [projectId, setProjectId] = useState();
   const [selectedImages, setSelectedImages] = useState(null);
+  console.log("Project",projectUpdate,"current",currentProjectId)
   const onSelectFile = (e) => {
     setSelectedImages(e.target.files[0]);
   };
@@ -58,6 +61,7 @@ export default function Caretakerdetail({ params }) {
   }, [apiRoute, userData]);
   const handleChange = (event) => {
     setProject(event.target.value);
+    setProjectUpdate(event.target.value)
   };
   const fetchCaretakerDetail = () => {
     var myHeaders = new Headers();
@@ -85,7 +89,9 @@ export default function Caretakerdetail({ params }) {
         setName(result?.Data?.name);
         setSelectedImages(result?.Data?.userImage);
         setProject(result?.Data?.projectName);
+        setProjectUpdate(result?.Data?.projectId)
         setCurrentProject(result?.Data?.projectName)
+        setCurrentProjectId(result?.Data?.projectId)
         setLoading(false);
       });
     //  .catch(error => console.log('error', error))
@@ -97,6 +103,7 @@ export default function Caretakerdetail({ params }) {
       console.log("first")
     fetchCaretakerDetail();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userData]);
 
   if (isLoading) return <Loader />;
@@ -110,7 +117,7 @@ export default function Caretakerdetail({ params }) {
     bodyContent.append("profile_image", selectedImages);
     bodyContent.append("name", name);
     bodyContent.append("email", email);
-    bodyContent.append("projectId", project);
+    bodyContent.append("projectId", projectUpdate);
     bodyContent.append("about", about);
     bodyContent.append("status", status);
     bodyContent.append("phone", phone);
@@ -299,7 +306,6 @@ export default function Caretakerdetail({ params }) {
                       style={{ padding: "12px 15px", fontSize: "15px" }}
                       value={currentProject}
                       disabled
-                      // onChange={(e) => setCurrentProject(e.target.value)}
                     />
                   </div>
                 </div>

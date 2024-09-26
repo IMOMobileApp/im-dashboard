@@ -16,7 +16,7 @@ import Select from "@mui/material/Select";
 
 export default function AddCareTaker() {
   const apiRoute = process.env.API_ROUTE;
-    // const userData = JSON.parse(localStorage.getItem("loginResponse"));
+  // const userData = JSON.parse(localStorage.getItem("loginResponse"));
   const [userData, setUserData] = useState();
   useEffect(() => {
     const storedData = localStorage.getItem("loginResponse");
@@ -246,6 +246,7 @@ export default function AddCareTaker() {
                 <div className="col-md-8">
                   <div className="input-field">
                     <Input
+                      type="number"
                       placeholder=""
                       variant="soft"
                       size="lg"
