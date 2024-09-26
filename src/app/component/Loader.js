@@ -17,7 +17,7 @@ export default function Loader() {
         open={open}
       >
         {/* <CircularProgress color="inherit" /> */}
-        <Image src="/loader.gif" alt="loader" width={50} height={50} />
+        <Image src="/logo-black.png" alt="loader" width={50} height={50} />
       </Backdrop>
     </div>
   );
