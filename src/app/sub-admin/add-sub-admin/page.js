@@ -7,6 +7,8 @@ import "react-quill/dist/quill.snow.css";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Grid, Switch } from "@mui/material";
+import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye"
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import { toast } from "react-toastify";
 
 export default function AddSubAdmin() {
@@ -47,11 +49,15 @@ export default function AddSubAdmin() {
   const [bannerView, setBannerView] = useState(false);
   const [brochureView, setBrochureView] = useState(false);
   const [seoView, setSeoView] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const toastId = useRef(null);
   const [name, setName] = useState();
   const [email, setEmail] = useState();
   const [phone, setPhone] = useState();
   const [password, setPassword] = useState();
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
 
   const handleOrder = (event) => {
     setOrderView(event.target.checked);
@@ -100,11 +106,15 @@ export default function AddSubAdmin() {
   };
   const handleCertificate = (event) => {
     setCertificateView(event.target.checked);
+    setGicView(event.target.checked);
+    setWfwView(event.target.checked);
   };
   const handleGic = (event) => {
+    setCertificateView(event.target.checked);
     setGicView(event.target.checked);
   };
   const handleWfw = (event) => {
+    setCertificateView(event.target.checked);
     setWfwView(event.target.checked);
   };
   const handleGift = (event) => {
@@ -115,26 +125,40 @@ export default function AddSubAdmin() {
   };
   const handleWebsite = (event) => {
     setWebsiteView(event.target.checked);
+    setInitiativeView(event.target.checked);
+    setBrochureView(event.target.checked);
+    setBannerView(event.target.checked);
+    setWaterImpactView(event.target.checked); 
+    setGitImpactView(event.target.checked);
+    setWebBlogView(event.target.checked);
+    setSeoView(event.target.checked);
   };
   const handleWebBlog = (event) => {
+    setWebsiteView(event.target.checked);
     setWebBlogView(event.target.checked);
   };
   const handleInitiative = (event) => {
+    setWebsiteView(event.target.checked);
     setInitiativeView(event.target.checked);
   };
   const handleGitImpact = (event) => {
+    setWebsiteView(event.target.checked);
     setGitImpactView(event.target.checked);
   };
   const handleWater = (event) => {
+    setWebsiteView(event.target.checked);
     setWaterImpactView(event.target.checked);
   };
   const handleBanner = (event) => {
+    setWebsiteView(event.target.checked);
     setBannerView(event.target.checked);
   };
   const handleBochure = (event) => {
+    setWebsiteView(event.target.checked);
     setBrochureView(event.target.checked);
   };
   const handleSeo = (event) => {
+    setWebsiteView(event.target.checked);
     setSeoView(event.target.checked);
   };
   /*-------------------------------------------------------update Blog-----------------------------------------------------------------------------------*/
@@ -329,7 +353,7 @@ export default function AddSubAdmin() {
                 <div className="col-md-8">
                   <div className="input-field">
                     <Input
-                      type="password"
+                      type={showPassword ? "text" : "password"}
                       placeholder=""
                       variant="soft"
                       size="lg"
@@ -337,6 +361,22 @@ export default function AddSubAdmin() {
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                     />
+                     <span
+                      onClick={togglePasswordVisibility}
+                      style={{
+                        position: "absolute",
+                        right: "40px",
+                        top: "40%",
+                        transform: "translateY(-50%)",
+                        cursor: "pointer",
+                      }}
+                    >
+                      {showPassword ? (
+                        <VisibilityOffIcon />
+                      ) : (
+                        <RemoveRedEyeIcon />
+                      )}
+                    </span>
                   </div>
                 </div>
               </div>
