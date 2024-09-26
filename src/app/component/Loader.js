@@ -10,7 +10,7 @@ import Image from "next/image";
 export default function Loader() {
   const [open, setOpen] = React.useState(true);
   const loader = process.env.LOADER;
-
+  const apiRoute = process.env.API_ROUTE;
   return (
     <div>
       <Backdrop
