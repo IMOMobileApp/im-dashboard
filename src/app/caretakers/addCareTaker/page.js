@@ -13,6 +13,7 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
+import Image from "next/image";
 
 export default function AddCareTaker() {
   const apiRoute = process.env.API_ROUTE;
@@ -31,13 +32,30 @@ export default function AddCareTaker() {
   const [name, setName] = useState();
   const [email, setEmail] = useState();
   const [about, setAbout] = useState();
-  const [selectedImages, setSelectedImages] = useState(null);
+  const [selectedImages, setSelectedImages] = useState();
+  const [imagePreview, setImagePreview] = useState();
   const [phone, setPhone] = useState();
   const [password, setPassword] = useState();
   const onSelectFile = (e) => {
     setSelectedImages(e.target.files[0]);
-  };
+    const selectedFile = e.target.files[0];
 
+    if (selectedFile) {
+      const reader = new FileReader();
+
+      reader.onload = (event) => {
+        const fileURL = event.target.result;
+        setImagePreview(fileURL);
+      };
+
+      reader.onerror = (error) => {
+        console.error("Error reading file:", error);
+        setError({ ...error, logo: false });
+      };
+
+      reader.readAsDataURL(selectedFile);
+    }
+  };
   const handleChange = (event) => {
     setOneProjectId(event.target.value);
   };
@@ -178,7 +196,14 @@ export default function AddCareTaker() {
                     className="input-field"
                     style={{ border: "1px dashed #d5d6d7", padding: "20px" }}
                   >
-                    {/* <Image src={data.blog_image} alt={data.blog_title}  width={200} height={200}/> */}
+                    {imagePreview && (
+                      <Image
+                        src={imagePreview}
+                        alt={"data.blog_title"}
+                        width={200}
+                        height={200}
+                      />
+                    )}
                     <Button
                       component="label"
                       variant="contained"
@@ -195,7 +220,7 @@ export default function AddCareTaker() {
                         style={{ opacity: "0" }}
                       />
                     </Button>
-                    {/* { selectedImages === ! null ? '' : selectedImages.name} */}
+                    {selectedImages === !null ? "" : selectedImages?.name}
                   </div>
                 </div>
               </div>
