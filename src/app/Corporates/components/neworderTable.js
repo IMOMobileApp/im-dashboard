@@ -36,7 +36,7 @@ const headCells = [
   { id: "cat_state", numeric: false, disablePadding: false, label: "State" },
   { id: "cat_date", numeric: false, disablePadding: false, label: "Date" },
   { id: "cat_status", numeric: false, disablePadding: false, label: "Status" },
-  { id: "cat_action", numeric: false, disablePadding: false, label: " Action" },
+  { id: "cat_action", numeric: false, disablePadding: false, label: " Change Status" },
 ];
 
 function EnhancedTableHead(props) {
@@ -303,29 +303,71 @@ export default function NewOrderTable() {
                           }}
                         />
                       </TableCell>
-                      <TableCell align="left" data-attr="">
-                        <FormControl sx={{ m: 1, minWidth: 150 }} size="small">
-                          <InputLabel id={`demo-select-small-label-${index}`}>
-                            Change Status
-                          </InputLabel>
-                          <Select
-                            labelId={`demo-select-small-label-${index}`}
-                            id={`demo-select-small-${index}`}
-                            value={row.status}
-                            label="Change Status"
-                            onChange={(e) => {
-                              handleChange(e, row.formId, row.type);
+                      <TableCell
+                        align="left"
+                        data-attr=""
+                        style={{
+                          width: "20%",
+                        }}
+                      >
+                        <div style={{ width: "100%" }}>
+                          <select
+                             labelId={`demo-select-small-label-${index}`}
+                             id={`demo-select-small-${index}`}
+                             value={row.status}
+                             label="Change Status"
+                             onChange={(e) => {
+                               handleChange(e, row.formId, row.type);
+                             }}
+                            style={{
+                              width: "100%", // Full width for responsiveness
+                              padding: "12px", // Slightly more padding for better touch targets
+                              borderRadius: "6px", // Softer, larger rounded corners for modern look
+                              border: "1px solid #ccc",
+                              // borderColor: "#1976d2",
+                              backgroundColor: "#fff", // Clean white background
+                              cursor: "pointer", // Pointer cursor for better UX
+                              outline: "none", // Remove default outline
+                              fontSize: "16px", // Default font size for readability
+                              boxShadow: "0 2px 6px rgba(0, 0, 0, 0.1)", // Subtle shadow for depth
+                              transition:
+                                "border-color 0.3s ease, box-shadow 0.3s ease", // Smooth transitions
+
+                              // Focus state styles for better user experience
+                              ":focus": {
+                                borderColor: "#004ba0", // Darker blue border when focused
+                                boxShadow: "0 0 8px rgba(25, 118, 210, 0.5)", // Blue glow when focused
+                              },
+
+                              // Hover state for interaction feedback
+                              ":hover": {
+                                borderColor: "#004ba0", // Change border color on hover
+                                backgroundColor: "#f5f5f5", // Light gray background on hover
+                              },
+
+                              // Responsive adjustments (optional, based on design preference)
+                              "@media (max-width: 768px)": {
+                                fontSize: "14px", // Smaller font for tablets
+                                padding: "10px", // Adjust padding for smaller screens
+                              },
+                              "@media (max-width: 480px)": {
+                                fontSize: "12px", // Smaller font for mobile devices
+                                padding: "8px", // Adjust padding for mobile screens
+                              },
                             }}
                           >
-                            <MenuItem value={1}> Pending </MenuItem>
-                            <MenuItem value={2}>Site visit</MenuItem>
-                            <MenuItem value={3}>Not Reachable</MenuItem>
-                            <MenuItem value={4}>In Progress</MenuItem>
-                            <MenuItem value={5}>Rejected</MenuItem>
-                            <MenuItem value={6}>Business completed</MenuItem>
-                            <MenuItem value={7}>Vis. & Est.</MenuItem>
-                          </Select>
-                        </FormControl>
+                            <option value="" disabled>
+                              Select Status
+                            </option>
+                            <option value={1}>Pending</option>
+                            <option value={2}>Site visit</option>
+                            <option value={3}>Not Reachable</option>
+                            <option value={4}>In Progress</option>
+                            <option value={5}>Rejected</option>
+                            <option value={6}>Business completed</option>
+                            <option value={7}>Vis. & Est.</option>
+                          </select>
+                        </div>
                       </TableCell>
                     </TableRow>
                   );

@@ -38,7 +38,12 @@ const headCells = [
   },
   { id: "cat_date", numeric: false, disablePadding: false, label: " Date" },
   { id: "cat_status", numeric: false, disablePadding: false, label: "Status" },
-  { id: "cat_action", numeric: false, disablePadding: false, label: " Action" },
+  {
+    id: "cat_action",
+    numeric: false,
+    disablePadding: false,
+    label: " Change Status",
+  },
 ];
 
 function EnhancedTableHead(props) {
@@ -214,156 +219,203 @@ export default function NewOrderTable() {
 
   return (
     <>
-    {visibleRows && visibleRows.length > 0 ? (
-      <Box sx={{ width: "100%" }}>
-        <Paper sx={{ width: "100%", mb: 2 }}>
-          <EnhancedTableToolbar numSelected={selected.length} />
-          <div
-            style={{
-              textAlign: "right",
-              marginTop: "10px",
-              textTransform: "capitalize",
-            }}
-          >
-            <Button variant="outlined" style={{ textTransform: "capitalize" }}>
-              <CSVLink data={csvData} filename={"Career Queries.csv"}>
-                Download Career List
-              </CSVLink>
-            </Button>
-          </div>
-          <TableContainer>
-            <Table
-              className="tabel-responsive"
-              aria-labelledby="tableTitle"
-              size="medium"
+      {visibleRows && visibleRows.length > 0 ? (
+        <Box sx={{ width: "100%" }}>
+          <Paper sx={{ width: "100%", mb: 2 }}>
+            <EnhancedTableToolbar numSelected={selected.length} />
+            <div
+              style={{
+                textAlign: "right",
+                marginTop: "10px",
+                textTransform: "capitalize",
+              }}
             >
-              <EnhancedTableHead
-                numSelected={selected.length}
-                rowCount={rows.length}
-              />
-              <TableBody>
-                {visibleRows.map((row, index) => {
-                  const isItemSelected = isSelected(row._id);
-                  const labelId = `enhanced-table-checkbox-${index}`;
+              <Button
+                variant="outlined"
+                style={{ textTransform: "capitalize" }}
+              >
+                <CSVLink data={csvData} filename={"Career Queries.csv"}>
+                  Download Career List
+                </CSVLink>
+              </Button>
+            </div>
+            <TableContainer>
+              <Table
+                className="tabel-responsive"
+                aria-labelledby="tableTitle"
+                size="medium"
+              >
+                <EnhancedTableHead
+                  numSelected={selected.length}
+                  rowCount={rows.length}
+                />
+                <TableBody>
+                  {visibleRows.map((row, index) => {
+                    const isItemSelected = isSelected(row._id);
+                    const labelId = `enhanced-table-checkbox-${index}`;
 
-                  return (
-                    <TableRow
-                      hover
-                      role="checkbox"
-                      aria-checked={isItemSelected}
-                      tabIndex={-1}
-                      key={row._id}
-                      selected={isItemSelected}
-                      sx={{ cursor: "pointer" }}
-                    >
-                      {/* <TableCell align="left">
+                    return (
+                      <TableRow
+                        hover
+                        role="checkbox"
+                        aria-checked={isItemSelected}
+                        tabIndex={-1}
+                        key={row._id}
+                        selected={isItemSelected}
+                        sx={{ cursor: "pointer" }}
+                      >
+                        {/* <TableCell align="left">
                       <div style={{position:'relative',width:'50px',height:'50px',borderRadius:'50%',border:'1px solid #e2e2e2',marginLeft:'auto',overflow: 'hidden'}}><Image src={row.image} alt="product image" width={50} height={50}/>
                       </div></TableCell> */}
 
-                      <TableCell align="left" data-attr="">
-                        {row.name}
-                      </TableCell>
-                      <TableCell align="left" data-attr="">
-                        {row.email}
-                      </TableCell>
-                      <TableCell align="left" data-attr="">
-                        {row.mobile}
-                      </TableCell>
-                      <TableCell align="left" data-attr="">
-                        <Button
-                          variant="contained"
-                          color="success"
-                          style={{
-                            padding: "10px 20px",
-                            fontSize: "13px",
-                            marginLeft: "10px",
-                          }}
-                        >
-                          <Link
-                            href={row.uploadFile}
-                            style={{ color: "#fff" }}
-                            target="_blank"
-                          >
-                            {" "}
-                            Download
-                          </Link>
-                        </Button>
-                      </TableCell>
-                      <TableCell align="left" data-attr="">{`${new Date(
-                        row.createdAt
-                      ).getDate()}/${
-                        new Date(row.createdAt).getMonth() + 1
-                      }/${new Date(row.createdAt).getFullYear()}`}</TableCell>
-                      <TableCell align="left" data-attr="">
-                        <Chip
-                          label={row.statusMessage}
-                          style={{
-                            backgroundColor:
-                              row.status == 1
-                                ? "#fcae1e"
-                                : row.status == 2
-                                ? "#FF0000"
-                                : row.status == 3
-                                ? "#FFA500"
-                                : row.status == 4
-                                ? "#0000FF"
-                                : row.status == 5
-                                ? "#808080"
-                                : row.status == 6
-                                ? "#6ae46a"
-                                : "#008000",
-                            color: "#fff",
-                          }}
-                        />
-                      </TableCell>
-                      <TableCell align="left" data-attr="">
-                        <FormControl sx={{ m: 1, minWidth: 150 }} size="small">
-                          <InputLabel id={`demo-select-small-label-${index}`}>
-                            Change Status
-                          </InputLabel>
-                          <Select
-                            labelId={`demo-select-small-label-${index}`}
-                            id={`demo-select-small-${index}`}
-                            value={row.status}
-                            label="Change Status"
-                            onChange={(e) => {
-                              handleChange(e, row.formId, row.type);
+                        <TableCell align="left" data-attr="">
+                          {row.name}
+                        </TableCell>
+                        <TableCell align="left" data-attr="">
+                          {row.email}
+                        </TableCell>
+                        <TableCell align="left" data-attr="">
+                          {row.mobile}
+                        </TableCell>
+                        <TableCell align="left" data-attr="">
+                          <Button
+                            variant="contained"
+                            color="success"
+                            style={{
+                              padding: "10px 20px",
+                              fontSize: "13px",
+                              marginLeft: "10px",
                             }}
                           >
-                            <MenuItem value={1}> Pending </MenuItem>
-                            <MenuItem value={2}>Site visit</MenuItem>
-                            <MenuItem value={3}>Not Reachable</MenuItem>
-                            <MenuItem value={4}>In Progress</MenuItem>
-                            <MenuItem value={5}>Rejected</MenuItem>
-                            <MenuItem value={6}>Business completed</MenuItem>
-                            <MenuItem value={7}>Vis. & Est.</MenuItem>
-                          </Select>
-                        </FormControl>
-                      </TableCell>
+                            <Link
+                              href={row.uploadFile}
+                              style={{ color: "#fff" }}
+                              target="_blank"
+                            >
+                              {" "}
+                              Download
+                            </Link>
+                          </Button>
+                        </TableCell>
+                        <TableCell align="left" data-attr="">{`${new Date(
+                          row.createdAt
+                        ).getDate()}/${
+                          new Date(row.createdAt).getMonth() + 1
+                        }/${new Date(row.createdAt).getFullYear()}`}</TableCell>
+                        <TableCell align="left" data-attr="">
+                          <Chip
+                            label={row.statusMessage}
+                            style={{
+                              backgroundColor:
+                                row.status == 1
+                                  ? "#fcae1e"
+                                  : row.status == 2
+                                  ? "#FF0000"
+                                  : row.status == 3
+                                  ? "#FFA500"
+                                  : row.status == 4
+                                  ? "#0000FF"
+                                  : row.status == 5
+                                  ? "#808080"
+                                  : row.status == 6
+                                  ? "#6ae46a"
+                                  : "#008000",
+                              color: "#fff",
+                            }}
+                          />
+                        </TableCell>
+                        <TableCell
+                          align="left"
+                          data-attr=""
+                          style={{
+                            width: "20%",
+                          }}
+                        >
+                          <div style={{ width: "100%" }}>
+                            <select
+                              labelId={`demo-select-small-label-${index}`}
+                              id={`demo-select-small-${index}`}
+                              value={row.status}
+                              label="Change Status"
+                              onChange={(e) => {
+                                handleChange(e, row.formId, row.type);
+                              }}
+                              style={{
+                                width: "100%", // Full width for responsiveness
+                                padding: "12px", // Slightly more padding for better touch targets
+                                borderRadius: "6px", // Softer, larger rounded corners for modern look
+                                border: "1px solid #ccc",
+                                // borderColor: "#1976d2",
+                                backgroundColor: "#fff", // Clean white background
+                                cursor: "pointer", // Pointer cursor for better UX
+                                outline: "none", // Remove default outline
+                                fontSize: "16px", // Default font size for readability
+                                boxShadow: "0 2px 6px rgba(0, 0, 0, 0.1)", // Subtle shadow for depth
+                                transition:
+                                  "border-color 0.3s ease, box-shadow 0.3s ease", // Smooth transitions
+
+                                // Focus state styles for better user experience
+                                ":focus": {
+                                  borderColor: "#004ba0", // Darker blue border when focused
+                                  boxShadow: "0 0 8px rgba(25, 118, 210, 0.5)", // Blue glow when focused
+                                },
+
+                                // Hover state for interaction feedback
+                                ":hover": {
+                                  borderColor: "#004ba0", // Change border color on hover
+                                  backgroundColor: "#f5f5f5", // Light gray background on hover
+                                },
+
+                                // Responsive adjustments (optional, based on design preference)
+                                "@media (max-width: 768px)": {
+                                  fontSize: "14px", // Smaller font for tablets
+                                  padding: "10px", // Adjust padding for smaller screens
+                                },
+                                "@media (max-width: 480px)": {
+                                  fontSize: "12px", // Smaller font for mobile devices
+                                  padding: "8px", // Adjust padding for mobile screens
+                                },
+                              }}
+                            >
+                              <option value="" disabled>
+                                Select Status
+                              </option>
+                              <option value={1}>Pending</option>
+                              <option value={2}>Site visit</option>
+                              <option value={3}>Not Reachable</option>
+                              <option value={4}>In Progress</option>
+                              <option value={5}>Rejected</option>
+                              <option value={6}>Business completed</option>
+                              <option value={7}>Vis. & Est.</option>
+                            </select>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+                  {emptyRows > 0 && (
+                    <TableRow style={{ height: 53 * emptyRows }}>
+                      {" "}
+                      <TableCell colSpan={6} />{" "}
                     </TableRow>
-                  );
-                })}
-                {emptyRows > 0 && (
-                  <TableRow style={{ height: 53 * emptyRows }}>
-                    {" "}
-                    <TableCell colSpan={6} />{" "}
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </TableContainer>
-          <TablePagination
-            rowsPerPageOptions={[5, 10, 25]}
-            component="div"
-            count={rows.length}
-            rowsPerPage={rowsPerPage}
-            page={page}
-            onPageChange={handleChangePage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
-          />
-        </Paper>
-      </Box>
-    ):( <Loader />)}
+                  )}
+                </TableBody>
+              </Table>
+            </TableContainer>
+            <TablePagination
+              rowsPerPageOptions={[5, 10, 25]}
+              component="div"
+              count={rows.length}
+              rowsPerPage={rowsPerPage}
+              page={page}
+              onPageChange={handleChangePage}
+              onRowsPerPageChange={handleChangeRowsPerPage}
+            />
+          </Paper>
+        </Box>
+      ) : (
+        <Loader />
+      )}
     </>
   );
 }
